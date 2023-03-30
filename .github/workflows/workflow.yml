@@ -7,8 +7,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
     steps:
-    - name: Checkout master
+    - name: Checkout main
       uses: actions/checkout@main
 
     - name: Install doctl
