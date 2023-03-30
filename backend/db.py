@@ -5,7 +5,7 @@ db = SqliteDatabase('exam.db')
 class Candidate(Model):
     canditate_id = AutoField()
     birth_date = DateField()
-    canditate_number = IntegerField()
+    canditate_number = CharField(max_length=10)
 
     class Meta:
         database = db
@@ -15,7 +15,7 @@ class Exam(Model):
     exam_year = IntegerField()
     total_score = IntegerField()
     candidate_id = ForeignKeyField(Candidate, backref='exams')
-    subject = CharField(100)
+    subject = CharField(max_length=100)
 
     class Meta:
         database = db
