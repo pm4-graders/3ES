@@ -3,12 +3,15 @@ on:
     branches:
       - main
     paths: 'frontend/**'
-    
+  workflow_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
     steps:
-    - name: Checkout master
+    - name: Checkout main
       uses: actions/checkout@main
 
     - name: Install doctl
@@ -26,7 +29,7 @@ jobs:
       run: docker push ${{ secrets.REGISTRY_NAME }}/frontend:$(echo $GITHUB_SHA | head -c7)
 
     - name: Update deployment file
-      run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|${{ secrets.REGISTRY_NAME }}/frontend:'${TAG}'|' $GITHUB_WORKSPACE/kubernetes/deployment.yml
+      run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|${{ secrets.REGISTRY_NAME }}/frontend:'${TAG}'|' $GITHUB_WORKSPACE/frontend/kubernetes/deployment.yml
 
     - name: Save DigitalOcean kubeconfig with short-lived credentials
       run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.CLUSTER_NAME }}
@@ -40,7 +43,7 @@ jobs:
     #  run: "kubectl patch serviceaccount default -p '{\"imagePullSecrets\": [{\"name\": \"registry-<your-registry-name>`\"}]}'"
 
     - name: Deploy to DigitalOcean Kubernetes
-      run: kubectl apply -f $GITHUB_WORKSPACE/kubernetes/deployment.yml
+      run: kubectl apply -f $GITHUB_WORKSPACE/frontend/kubernetes/deployment.yml
 
     - name: Verify deployment
       run: kubectl rollout status deployment/frontend
