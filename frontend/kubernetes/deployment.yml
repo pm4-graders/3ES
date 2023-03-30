@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: registry.digitalocean.com/graders-3es/frontend:b51a332
+        image: registry.digitalocean.com/graders-3es/frontend
         ports:
         - containerPort: 8080
         resources:
