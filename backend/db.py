@@ -4,7 +4,7 @@ db = SqliteDatabase('exam.db')
 
 
 class Candidate(Model):
-    canditate_id = AutoField()
+    candidate_id = AutoField()
     number = CharField(max_length=20)
     date_of_birth = DateField()
 
