@@ -1,7 +1,6 @@
 import { ref} from 'vue'
 import { defineStore } from 'pinia'
-import { get } from '@/utilities/fetch'
-import { Webresource} from '@/utilities/fetch'
+import { get, Webresource } from '@/utilities/fetch'
 import { requestToWebresource } from '../utilities/fetch'
 
 export const useResultStore = defineStore('result', () => {

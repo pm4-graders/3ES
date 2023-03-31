@@ -1,5 +1,5 @@
 <script setup>
-import { defineEmits, defineProps, computed } from 'vue'
+import { defineEmits, defineProps} from 'vue'
 
 const emit = defineEmits(['close'])
 

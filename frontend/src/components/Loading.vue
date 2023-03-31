@@ -51,9 +51,5 @@ const props = defineProps({
 .success-wrapper {
   background: #fff;
 }
-
-
-.spinner {
-}
 </style>
 

@@ -36,8 +36,7 @@ export function makeServer({ environment = 'development' } = {}) {
         return {
           success: true
         }
-          , { timing: 1000 }
-      })
+      }, { timing: 1000 })
     }
   })
 
