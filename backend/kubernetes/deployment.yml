@@ -1,14 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend
+  name: backend
   labels:
-    app: frontend
+    app: backend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: frontend
+      app: backend
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -17,11 +17,11 @@ spec:
   template:
     metadata:
       labels:
-        app: frontend
+        app: backend
     spec:
       containers:
-      - name: frontend
-        image: registry.digitalocean.com/graders-3es/frontend
+      - name: backend
+        image: registry.digitalocean.com/graders-3es/backend
         ports:
         - containerPort: 8080
         resources:
@@ -35,7 +35,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: frontend-service
+  name: backend-service
 spec:
   type: LoadBalancer
   ports:
@@ -44,4 +44,4 @@ spec:
       port: 80
       targetPort: 80
   selector:
-    app: frontend
+    app: backend
