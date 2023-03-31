@@ -13,13 +13,6 @@ const props = defineProps({
 });
 
 
-const style = computed(() => {
-  return {
-    'display': 'block'
-  }
-});
-
-
 </script>
 <template>
   <Transition>

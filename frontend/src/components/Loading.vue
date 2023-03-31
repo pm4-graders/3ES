@@ -7,19 +7,19 @@ const props = defineProps({
 
     type: Boolean
   }
-});
+})
 </script>
 
 <template>
-  <template v-if="props.loading || props.successBadge">
-    <div class="loading-block">
-      <div v-if="!props.successBadge" class="spinner-wrapper">
-        <div class="spinner spinner-border text-primary" role="status">
-          <span class="visually-hidden">Loading...</span>
+  <template v-if='props.loading || props.successBadge'>
+    <div class='loading-block'>
+      <div v-if='!props.successBadge' class='spinner-wrapper'>
+        <div class='spinner spinner-border text-primary' role='status'>
+          <span class='visually-hidden'>Loading...</span>
         </div>
       </div>
-      <div v-if="props.successBadge" class="success-wrapper">
-        <i class="fa-solid fa-circle-check fa-3x text-success"></i>
+      <div v-if='props.successBadge' class='success-wrapper'>
+        <i class='fa-solid fa-circle-check fa-3x text-success'></i>
       </div>
       <slot></slot>
     </div>
@@ -29,7 +29,7 @@ const props = defineProps({
   </template>
 </template>
 
-<style lang="scss" scoped>
+<style lang='scss' scoped>
 .loading-block {
   position: relativ;
 }
@@ -53,6 +53,7 @@ const props = defineProps({
 }
 
 
-.spinner {}
+.spinner {
+}
 </style>
 

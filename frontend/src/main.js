@@ -10,7 +10,7 @@ import '@fortawesome/fontawesome-free/css/solid.css'
 import './assets/main.scss'
 
 import { makeServer } from "./mock/server"
-if (process.env.NODE_ENV === "development") {
+if (import.meta.env.MODE === "development") {
   makeServer()
 }
 

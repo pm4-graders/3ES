@@ -1,10 +1,9 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted} from 'vue';
 import Modal from '@/components/Modal.vue';
 import Loading from '@/components/Loading.vue';
 import { useCameraStore } from '../stores/camera';
 import { storeToRefs } from 'pinia';
-import {Request}from '@/utilities/fetch'
 
 
 const cameraRef = ref(null);
@@ -18,7 +17,9 @@ const {snapshotUrl, currentRequest} = storeToRefs(store)
 const createCameraElement = () => {
   const constraints = (window.constraints = {
     audio: false,
-    video: true
+    video: {
+      facingMode: 'environment'
+    }
   })
   navigator.mediaDevices
     .getUserMedia(constraints)
@@ -47,10 +48,6 @@ const takePhoto = () => {
 
 }
 
-const showModal = computed(() => {
-  return currentRequest.value.comp('Prepared', 'Failed')
-})
-
 
 const reset = () => {
   store.clearCurrentRequest();
@@ -72,7 +69,7 @@ const reset = () => {
     <Modal :show="!currentRequest.comp('Nil')" @close="reset">
       <Loading :loading="currentRequest.comp('Fetching')"
         :success-badge="currentRequest.comp('Success')">
-        <img :src="snapshotUrl" class="img-fluid w-100 mb-3">
+        <img alt="Dein Scan" :src="snapshotUrl" class="img-fluid w-100 mb-3">
         <div class="alert alert-danger" v-if="currentRequest.comp('Failed')">
           {{ store.currentRequest.errorMsg}}</div>
         <button @click="store.uploadResult()" class="btn btn-primary w-100">

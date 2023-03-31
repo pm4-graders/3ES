@@ -22,7 +22,7 @@ Webresource.e = {
   Nil: 'Nil'
 }
 
-const requestToWebresource = (request, resource) =>
+const requestToWebresource = (request) =>
   Request.case(
     {
       Failed: (request) => Webresource.FailedOf({ request }),
