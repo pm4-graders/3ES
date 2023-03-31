@@ -10,12 +10,17 @@
     "test:e2e": "start-server-and-test preview http://localhost:4173 'cypress run --e2e'",
     "test:e2e:dev": "start-server-and-test 'vite dev --port 4173' http://localhost:4173 'cypress open --e2e'",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
-    "format": "prettier --write src/"
+    "format": "prettier --write src/",
+    "cert": "rm -rf .cert && mkdir -p .cert && mkcert -key-file ./.cert/key.pem -cert-file ./.cert/cert.pem 'localhost'"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.4.0",
     "bootstrap": "^5.2.3",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.4",
     "pinia": "^2.0.32",
     "sass": "^1.59.3",
+    "union-type": "^0.4.1",
     "vue": "^3.2.47",
     "vue-router": "^4.1.6"
   },
@@ -29,9 +34,14 @@
     "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-vue": "^9.9.0",
     "jsdom": "^21.1.0",
+    "miragejs": "^0.1.47",
     "prettier": "^2.8.4",
     "start-server-and-test": "^2.0.0",
     "vite": "^4.1.4",
+    "vite-plugin-mkcert": "^1.14.0",
     "vitest": "^0.29.1"
+  },
+  "resolutions": {
+    "umi-request/qs": "6.9.6"
   }
 }

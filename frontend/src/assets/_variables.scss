@@ -1,1 +1,211 @@
-$primary: green;
+// Brand colors
+// Colors
+$primary: rgb(99, 91, 255);
+$secondary: #212529;
+$success: #5cb85c;
+$warning: #f0ad4e;
+$danger: #d9534f;
+$info: #5bc0de;
+$light: #f8f9fa;
+$dark: #343a40;
+
+// Grays
+$gray-100: #f6f9fc;
+$gray-200: #e9ecef;
+$gray-300: #dee2e6;
+$gray-400: #ced4da;
+$gray-500: #adb5bd;
+$gray-600: #6c757d;
+$gray-700: #495057;
+$gray-800: #343a40;
+$gray-900: #212529;
+
+// Body
+$body-color: #212529;
+$body-bg: #f6f9fc;
+
+$focus-shadow: rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(58 151 212 / 36%) 0px 0px 0px 4px, rgb(0 0 0 / 12%) 0px 1px 1px 0px, rgb(69 56 255 / 80%) 0px 0px 0px 1px, rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(60 66 87 / 8%) 0px 3px 9px 0px, rgb(60 66 87 / 8%) 0px 2px 5px 0px;
+
+// Buttons
+$btn-primary-color: #fff;
+$btn-primary-bg: $primary;
+$btn-primary-border: $primary;
+$btn-secondary-color: $secondary;
+$btn-secondary-bg: $secondary;
+$btn-secondary-border: $secondary;
+
+$btn-hover-bg: $primary;
+$btn-hover-color: #fff;
+$btn-hover-border-color: $btn-hover-bg;
+$btn-active-bg: $primary;
+$btn-active-color: #fff;
+$btn-active-border-color: $btn-active-bg;
+$btn-active-shadow: $focus-shadow;
+$btn-focus-shadow: $focus-shadow;
+$btn-hover-shadow: $focus-shadow;
+
+// Forms
+$input-border-color: $gray-400;
+$input-border-focus-color: $primary;
+$input-color: $gray-800;
+$input-bg: #fff;
+$input-box-shadow: none;
+$custom-select-bg: #fff;
+$custom-select-border-color: $gray-400;
+$custom-select-indicator-color: $gray-500;
+$custom-select-focus-border-color: $primary;
+$custom-select-focus-indicator-color: $primary;
+$form-group-margin-bottom: 1rem;
+
+// Modals
+$modal-content-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+$modal-content-border-radius: 4px;
+$modal-header-bg: $gray-100;
+$modal-header-border-bottom-color: $gray-200;
+$modal-footer-bg: $gray-100;
+$modal-footer-border-top-color: $gray-200;
+$modal-title-margin-bottom: 0;
+
+// Alerts
+$alert-padding: 1rem;
+$alert-bg-color: $secondary;
+$alert-border-color: $gray-300;
+$alert-link-font-weight: 700;
+
+// Navbar
+$navbar-bg: $secondary;
+$navbar-border-color: $gray-300;
+
+// Pagination
+$pagination-color: $gray-700;
+$pagination-bg: #fff;
+$pagination-border-color: $gray-400;
+$pagination-hover-color: $gray-500;
+$pagination-hover-bg: $gray-200;
+$pagination-active-color: #fff;
+$pagination-active-bg: $primary;
+$pagination-active-border-color: $primary;
+
+// Progress bars
+$progress-bg: $gray-200;
+$progress-bar-color: #fff;
+$progress-bar-bg: $primary;
+$progress-bar-border-radius: 1rem;
+$progress-bar-box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+
+// Cards
+$card-bg: #fff;
+$card-border-width: 1px;
+$card-border-color: $gray-300;
+$card-border-radius: 4px;
+$card-header-bg: $gray-100;
+$card-header-border-color: $gray-200;
+$card-footer-bg: $gray-100;
+$card-footer-border-color: $gray-200;
+
+// Tables
+$table-bg: #fff;
+$table-border-color: $gray-300;
+$table-head-bg: $gray-200;
+
+// Dropdowns
+$dropdown-bg: #fff;
+$dropdown-border-color: $gray-300;
+$dropdown-divider-bg: $gray-400;
+$dropdown-item-hover-color: $gray-900;
+
+// Tooltips
+$tooltip-color: #fff;
+$tooltip-bg: $gray-700;
+
+// Popovers
+$popover-bg: $gray-700;
+$popover-title-bg: $gray-900;
+$popover-arrow-width: 10px;
+$popover-arrow-color: $gray-700;
+$popover-arrow-outer-width: ($popover-arrow-width + 1);
+
+// Badges
+$badge-color: #fff;
+$badge-bg: $primary;
+$badge-font-weight: 700;
+$badge-pill-padding-x: 0.4em;
+$badge-pill-border-radius: 10rem;
+
+// Spinners
+$spinner-border-color: #fff;
+$spinner-border-width: 0.25rem;
+
+// Toasts
+$toast-bg: $gray-800;
+$toast-color: #fff;
+$toast-box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
+$toast-border-width: 0;
+
+// Forms: Validation states and alerts
+$state-success-text-color: $gray-900;
+$state-success-bg: #d4edda;
+$state-success-border: #c3e6cb;
+
+$state-info-text-color: $gray-900;
+$state-info-bg: #d1ecf1;
+$state-info-border: #bee5eb;
+
+$state-warning-text-color: $gray-900;
+$state-warning-bg: #fff3cd;
+$state-warning-border: #ffeeba;
+
+$state-danger-text-color: #fff;
+$state-danger-bg: #f8d7da;
+$state-danger-border: #f5c2c7;
+
+$alert-success-bg: $state-success-bg;
+$alert-success-text-color: $state-success-text-color;
+$alert-success-border: $state-success-border;
+
+$alert-info-bg: $state-info-bg;
+$alert-info-text-color: $state-info-text-color;
+$alert-info-border: $state-info-border;
+
+$alert-warning-bg: $state-warning-bg;
+$alert-warning-text-color: $state-warning-text-color;
+$alert-warning-border: $state-warning-border;
+
+$alert-danger-bg: $state-danger-bg;
+$alert-danger-text-color: $state-danger-text-color;
+$alert-danger-border: $state-danger-border;
+
+// List
+$list-group-stripe-bg: #FFFFFF;
+$list-group-stripe-border-color: #F3F6F9;
+$list-group-stripe-box-shadow: 0 0 0 0.125rem #F3F6F9;
+$list-group-stripe-color: #32325D;
+
+$list-group-stripe-item-border-color: #F3F6F9;
+$list-group-stripe-item-active-bg: #6772E5;
+$list-group-stripe-item-active-border-color: #6772E5;
+$list-group-stripe-item-active-color: #FFFFFF;
+$list-group-stripe-item-active-hover-bg: #5469D4;
+$list-group-stripe-item-active-hover-border-color: #5469D4;
+$list-group-stripe-item-active-hover-color: #FFFFFF;
+$list-group-stripe-item-hover-bg: #F3F6F9;
+$list-group-stripe-item-hover-border-color: #F3F6F9;
+$list-group-stripe-item-hover-color: #32325D;
+$list-group-stripe-item-radius: 0.375rem;
+$list-group-stripe-item-border-radius-top-left: $list-group-stripe-item-radius;
+$list-group-stripe-item-border-radius-top-right: $list-group-stripe-item-radius;
+$list-group-stripe-item-border-radius-bottom-left: $list-group-stripe-item-radius;
+$list-group-stripe-item-border-radius-bottom-right: $list-group-stripe-item-radius;
+
+$list-padding-x: 1rem;
+$list-padding-y: 0.5rem;
+$list-group-border-radius: 10px;
+$list-group-item-padding-y: 1rem;
+$list-group-item-padding-x: 1.25rem;
+$list-group-item-hover-color: #f5f5f5;
+$list-group-item-active-color: $primary;
+$list-group-item-active-bg: #f5f5f5;
+$list-group-item-active-border-color: #f5f5f5;
+$list-group-item-disabled-color: #7b7b7b;
+$list-group-item-disabled-bg: #f5f5f5;
+$list-group-item-disabled-border-color: #f5f5f5;
