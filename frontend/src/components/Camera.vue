@@ -1,11 +1,18 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
+import Modal from '@/components/Modal.vue';
+import Loading from '@/components/Loading.vue';
+import { useCameraStore } from '../stores/camera';
+import { storeToRefs } from 'pinia';
+import {Request}from '@/utilities/fetch'
 
 
-const isPhotoTaken = ref(false);
 const cameraRef = ref(null);
-const cameraWrapperRef= ref(null);
 const canvasRef = ref(null);
+
+
+const store = useCameraStore();
+const {snapshotUrl, currentRequest} = storeToRefs(store)
 
 
 const createCameraElement = () => {
@@ -23,70 +30,57 @@ const createCameraElement = () => {
     })
 }
 onMounted(createCameraElement);
+onMounted(() => {
+  cameraRef.value.addEventListener("loadedmetadata", e => {
+    canvasRef.value.width = e.target.videoWidth;
+    canvasRef.value.height = e.target.videoHeight;
+  })
+});
 
 const takePhoto = () => {
   const context = canvasRef.value.getContext('2d')
-  context.imageSmoothingEnabled = true
 
   context.drawImage(cameraRef.value, 0, 0, canvasRef.value.width, canvasRef.value.height);
-  isPhotoTaken.value = true;
+  canvasRef.value.toBlob(blob => {
+    store.setSnapshot(blob)
+  }, 'image/png', 1)
 
 }
 
-const canvasStyle = () => {
-  if(!cameraRef.value) {
-    return {};
-  }
-  const rect = cameraRef.value.getBoundingClientRect()
-  return {
-    width: `${rect.width}px`,
-    height: `${rect.height}px`,
-  }
+const showModal = computed(() => {
+  return currentRequest.value.comp('Prepared', 'Failed')
+})
+
+
+const reset = () => {
+  store.clearCurrentRequest();
 }
 
 </script>
 <template>
-  <div class="video-container">
-    <div class="camera-video-wrapper" ref="cameraWrapperRef">
-      <video class="camera-video" ref="cameraRef" autoplay playsinline ></video>
+  <div class="video-container" v-if="currentRequest">
+    <div class="camera-video-wrapper">
+      <video class="camera-video" ref="cameraRef" autoplay playsinline></video>
     </div>
-    <canvas v-show="isPhotoTaken" :style="canvasStyle()" class="canvas-photo" ref="canvasRef"></canvas>
+    <canvas class="canvas-photo" v-show="false" ref="canvasRef"></canvas>
 
     <div class="actions">
-      <button @click="takePhoto" class="btn btn-primary">Snap!</button>
+      <button @click="takePhoto" class="btn btn-primary btn-lg">
+        <i class="fa-solid fa-camera"></i>
+      </button>
     </div>
+    <Modal :show="!currentRequest.comp('Nil')" @close="reset">
+      <Loading :loading="currentRequest.comp('Fetching')"
+        :success-badge="currentRequest.comp('Success')">
+        <img :src="snapshotUrl" class="img-fluid w-100 mb-3">
+        <div class="alert alert-danger" v-if="currentRequest.comp('Failed')">
+          {{ store.currentRequest.errorMsg}}</div>
+        <button @click="store.uploadResult()" class="btn btn-primary w-100">
+          <i class="fa-solid fa-upload"></i>
+          Senden</button>
+      </Loading>
+    </Modal>
   </div>
 </template>
 
-<style lang="scss" scoped>
-.video-container {
-  position: relative;
-  display: flex;
-    justify-content: center;
-    
-
-  .camera-video {
-    max-width: 100%;
-    width: 800px;
-    height: auto;
-  }
-
-  .canvas-photo {
-    position: absolute;
-    left: 0;
-    top: 0;
-
-  }
-
-  >.actions {
-    position: absolute;
-    display: flex;
-    justify-content: center;
-    left: 0;
-    bottom: 0;
-    padding: 1rem;
-    width: 100%;
-  }
-}
-</style>
 
