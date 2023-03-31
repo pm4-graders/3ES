@@ -1,3 +1,3 @@
-fastapi
-uvicorn[standard]
-peweee
+fastapi==0.95.0
+uvicorn==0.21.1
+peewee==3.16.0 
