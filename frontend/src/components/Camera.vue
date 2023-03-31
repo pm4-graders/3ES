@@ -60,7 +60,7 @@ const reset = () => {
 <template>
   <div class="video-container" v-if="currentRequest">
     <div class="camera-video-wrapper">
-      <video class="camera-video" ref="cameraRef" autoplay playsinline></video>
+      <video class="camera-video" ref="cameraRef" autoplay playsinline muted></video>
     </div>
     <canvas class="canvas-photo" v-show="false" ref="canvasRef"></canvas>
 
