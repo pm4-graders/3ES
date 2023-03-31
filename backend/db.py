@@ -2,29 +2,32 @@ from peewee import *
 
 db = SqliteDatabase('exam.db')
 
+
 class Candidate(Model):
     canditate_id = AutoField()
-    birth_date = DateField()
-    canditate_number = CharField(max_length=10)
-    examinationYear = IntegerField()
+    number = CharField(max_length=20)
+    date_of_birth = DateField()
 
     class Meta:
         database = db
 
+
 class Exam(Model):
     exam_id = AutoField()
-    exam_year = IntegerField()
-    total_score = IntegerField()
+    year = IntegerField()
     subject = CharField(max_length=100)
+    total_score = FloatField()
     candidate_id = ForeignKeyField(Candidate, backref='exams')
 
     class Meta:
         database = db
 
+
 class Exercise(Model):
     exercise_id = AutoField()
-    excerise_number = IntegerField()
-    exercise_score = IntegerField()
+    number = IntegerField()
+    score = FloatField()
+    accuracy = FloatField()
     exam_id = ForeignKeyField(Exam, backref='exercises')
 
     class Meta:
