@@ -2,9 +2,17 @@
 
 This template should help get you started developing with Vue 3 in Vite.
 
-## Recommended IDE Setup
+## Lokale SSL-Zertifikate installieren
+Diese werden gebraucht, da ansonsten auf dem Iphone der Kamera-Feed nicht funktioniert.
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) 
+1. mkcert installieren (Mac: brew install mkcert, Windows: choco install mkcert) [tutorial](https://github.com/FiloSottile/mkcert)
+
+2. mkcert -install
+
+Danach ist ein lokales Zertifikat installiert
+Um das Zertifikat auch auf dem Iphone zu haben, kann man es einfach Air-dropen und installieren.
+Das Zertifikat befindet sich bei dem Pfad, welcher "mkcert -CAROOT" zurückgibt
+
 
 ## Customize configuration
 
@@ -21,6 +29,7 @@ npm install
 ```sh
 npm run dev
 ```
+The Dev-Server is also in your locale Network accessible
 
 ### Compile and Minify for Production
 
