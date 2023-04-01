@@ -1,11 +1,9 @@
 # Import modules and sub-packages
-from . import db
+from . import *
 
 
 # Define package-level functions
-def init_db():
+def init_model():
     """
-    Initialize the database
+    Initialize the model module
     """
-    db.database.connect()
-    db.database.create_tables([db.Candidate, db.Exam, db.Exercise])

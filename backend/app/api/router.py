@@ -1,8 +1,7 @@
 from fastapi import APIRouter
-from backend.app.model.db import *
+from backend.app.model.model import *
 
 router = APIRouter()
-
 
 @router.get("/candidates")
 async def function_get_candidates():

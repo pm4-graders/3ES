@@ -3,6 +3,5 @@
 # Define package-level functions
 def init_core():
     """
-    Initialize the core functionality
+    Initialize the core module
     """
-

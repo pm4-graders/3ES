@@ -1,6 +1,9 @@
 from peewee import *
+from .database import db
 
-database = SqliteDatabase('exam.db')
+
+def getModels():
+    return [Candidate, Exam, Exercise]
 
 
 class Candidate(Model):
@@ -9,7 +12,7 @@ class Candidate(Model):
     date_of_birth = DateField()
 
     class Meta:
-        database = database
+        database = db
 
 
 class Exam(Model):
@@ -20,7 +23,7 @@ class Exam(Model):
     candidate_id = ForeignKeyField(Candidate, backref='exams')
 
     class Meta:
-        database = database
+        database = db
 
 
 class Exercise(Model):
@@ -31,4 +34,4 @@ class Exercise(Model):
     exam_id = ForeignKeyField(Exam, backref='exercises')
 
     class Meta:
-        database = database
+        database = db

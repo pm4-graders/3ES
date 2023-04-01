@@ -1,17 +1,17 @@
 # Import modules and sub-packages
-from . import api
-from . import core
-from . import model
+import api
+import core
+import model
 
 
 # Define package-level functions
 def init_app():
     """
-    Initialize the app
+    Initialize the app module
     """
 
     # Set up database
-    model.init_db()
+    model.init_model()
 
     # Set up core functionality
     core.init_core()

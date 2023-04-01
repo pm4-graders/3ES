@@ -1,9 +1,15 @@
-from fastapi import FastAPI
+from backend.app import init_app
 from api import router
+from model import database, model
+from fastapi import FastAPI
 
+# init app modules
+init_app()
+
+# run app
 app = FastAPI()
 app.include_router(router.router)
 
-# 4. Start the API application (on command line)
-# !uvicorn main:app --reload
-
+# run db
+database.db.connect()
+database.db.create_tables(model.getModels())
