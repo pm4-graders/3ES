@@ -2,12 +2,16 @@ on:
   push:
     branches:
       - main
-
+    paths: 'frontend/**'
+  workflow_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
     steps:
-    - name: Checkout master
+    - name: Checkout main
       uses: actions/checkout@main
 
     - name: Install doctl
@@ -16,16 +20,18 @@ jobs:
         token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
     - name: Build container image
-      run: docker build -t ${{ secrets.REGISTRY_NAME }}/frontend:$(echo $GITHUB_SHA | head -c7) .
+      run: docker build -t ${{ secrets.REGISTRY_NAME }}/frontend:$(echo $GITHUB_SHA | head -c7) . |
+           docker build -t ${{ secrets.REGISTRY_NAME }}/frontend:latest .
 
     - name: Log in to DigitalOcean Container Registry with short-lived credentials
       run: doctl registry login --expiry-seconds 1200
 
     - name: Push image to DigitalOcean Container Registry
-      run: docker push ${{ secrets.REGISTRY_NAME }}/frontend:$(echo $GITHUB_SHA | head -c7)
+      run: docker push ${{ secrets.REGISTRY_NAME }}/frontend:$(echo $GITHUB_SHA | head -c7) |
+           docker push ${{ secrets.REGISTRY_NAME }}/frontend:latest
 
     - name: Update deployment file
-      run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|${{ secrets.REGISTRY_NAME }}/frontend:'${TAG}'|' $GITHUB_WORKSPACE/kubernetes/deployment.yml
+      run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|${{ secrets.REGISTRY_NAME }}/frontend:'${TAG}'|' $GITHUB_WORKSPACE/frontend/kubernetes/deployment.yml
 
     - name: Save DigitalOcean kubeconfig with short-lived credentials
       run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.CLUSTER_NAME }}
@@ -39,7 +45,7 @@ jobs:
     #  run: "kubectl patch serviceaccount default -p '{\"imagePullSecrets\": [{\"name\": \"registry-<your-registry-name>`\"}]}'"
 
     - name: Deploy to DigitalOcean Kubernetes
-      run: kubectl apply -f $GITHUB_WORKSPACE/kubernetes/deployment.yml
+      run: kubectl apply -f $GITHUB_WORKSPACE/frontend/kubernetes/deployment.yml
 
     - name: Verify deployment
       run: kubectl rollout status deployment/frontend
