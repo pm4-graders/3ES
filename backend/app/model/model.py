@@ -1,8 +1,8 @@
-from peewee import *
+from peewee import Model, AutoField, CharField, IntegerField, FloatField, DateField, ForeignKeyField
 from .database import db
 
 
-def getModels():
+def get_models():
     return [Candidate, Exam, Exercise]
 
 

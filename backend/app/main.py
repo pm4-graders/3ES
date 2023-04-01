@@ -12,4 +12,4 @@ app.include_router(router.router)
 
 # run db
 database.db.connect()
-database.db.create_tables(model.getModels())
+database.db.create_tables(model.get_models())

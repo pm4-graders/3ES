@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from backend.app.model.model import *
+from backend.app.model.model import Candidate, Exam, Exercise
 
 router = APIRouter()
 
