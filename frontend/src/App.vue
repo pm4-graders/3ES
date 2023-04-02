@@ -13,13 +13,13 @@ console.log(1)
   <div class="button-container text-center">
     <div class="button-group">
       <div class="col p-3 border bg-light">
-        file
+        <a href="/List">List</a>
       </div>
       <div class="col p-3 border bg-light">
-        scan
+        <a href="/Scanner">Scan</a>
       </div>
       <div class="col p-3 border bg-light">
-        settings
+        <a href="/Options">options</a>
       </div>
     </div>
 
