@@ -1,6 +1,6 @@
 from backend.app import init_app
-from api import router
-from model import database, model
+from backend.app.api import router
+from backend.app.model import database, model
 from fastapi import FastAPI
 
 # init app modules
