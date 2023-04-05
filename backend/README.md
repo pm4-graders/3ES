@@ -15,3 +15,7 @@ c) Click on the "Environment Variables" button at the bottom of the "System Prop
 d) Under "System Variables", click on the "New" button and enter PYTHONPATH as the variable name and the path to your project as the variable value.
 
 2. To start the backend navigate to the app directory and use the command `uvicorn main:app --reload`
+
+## How to start UnitTesting
+1. Ensure to have the following python packages installed: pytest & httpx
+2. Head over to the backend/test folder and enter <code>pytest</code>
