@@ -20,7 +20,7 @@ class Exam(Model):
     year = IntegerField()
     subject = CharField(max_length=100)
     total_score = FloatField()
-    candidate_id = ForeignKeyField(Candidate, backref='exams')
+    candidate = ForeignKeyField(Candidate, backref='exams')
 
     class Meta:
         database = db
@@ -31,7 +31,7 @@ class Exercise(Model):
     number = IntegerField()
     score = FloatField()
     accuracy = FloatField()
-    exam_id = ForeignKeyField(Exam, backref='exercises')
+    exam = ForeignKeyField(Exam, backref='exercises')
 
     class Meta:
         database = db

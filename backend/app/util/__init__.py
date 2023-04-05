@@ -1,7 +1,7 @@
 # Import modules and sub-packages
 
 # Define package-level functions
-def init_model():
+def init_util():
     """
-    Initialize the model module
+    Initialize the util module
     """
