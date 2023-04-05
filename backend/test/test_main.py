@@ -6,5 +6,5 @@ client = TestClient(app)
 
 
 def test_router_scanner_save():
-    response = client.post("/scanner/save")
+    response = client.post("/scan/save")
     assert response.status_code == 200
