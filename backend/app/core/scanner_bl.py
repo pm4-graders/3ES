@@ -1,5 +1,4 @@
 from backend.app.util.serializer import deserialize, serialize
-#from cv.DigitRecognizer import DigitRecognizer
 from .scanner_db import save_scan_db
 
 cv_rs_dummy_json = '{"candidate":{"number":"CHSG-23.123","date_of_birth":"2010-01-01"},"exams":[{"year":2023,' \
@@ -11,24 +10,21 @@ cv_rs_dummy_json = '{"candidate":{"number":"CHSG-23.123","date_of_birth":"2010-0
 
 def save_scan():
     """
-    TODO
+    Save a scan by storing the file into the file storage, request extration with cv module, save the data into the db and return a json.
     """
 
     # save image to file system
-    # TODO - Issue #15
 
     # call computer vision
-    #cv_rs = DigitRecognizer().recognize_digits_in_frame(video_stream={})
-    #cv_rs = DigitRecognizer().recognize_digits_in_photo(photo={})
-
     # mock-impl. to continue implementation of response handling
-    # if cv_rs is None:
-    #   print("cv_rs is none")
-    #   cv_rs = deserialize(cv_rs_dummy_json)
-    cv_rs = deserialize(cv_rs_dummy_json)
+    # cv_rs = DigitRecognizer().recognize_digits_in_frame(video_stream={})  # recognize_digits_in_photo(photo={})
+    cv_rs = None
+    if cv_rs is None:
+        print("cv_rs is none")
+        cv_rs = deserialize(cv_rs_dummy_json)
 
     # save response to database
     db_rs = save_scan_db(cv_rs)
 
-    # return response
+    # respond with json
     return serialize(db_rs)
