@@ -10,7 +10,8 @@ cv_rs_dummy_json = '{"candidate":{"number":"CHSG-23.123","date_of_birth":"2010-0
 
 def save_scan():
     """
-    Save a scan by storing the file into the file storage, request extration with cv module, save the data into the db and return a json.
+    Save a scan by storing the file into the file storage, request extraction with cv module,
+    save the data into the db and return a json.
     """
 
     # save image to file system
