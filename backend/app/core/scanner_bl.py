@@ -16,16 +16,13 @@ def save_scan():
     # save image to file system
 
     # call computer vision
-    cv_rs = None
+    # mock-impl. to continue implementation of response handling
     # cv_rs = DigitRecognizer().recognize_digits_in_frame(video_stream={})
     # cv_rs = DigitRecognizer().recognize_digits_in_photo(photo={})
-    # mock-impl. to continue implementation of response handling
-    if cv_rs is None:
-        print("cv_rs is none")
-        cv_rs = deserialize(cv_rs_dummy_json)
+    cv_rs = deserialize(cv_rs_dummy_json)
 
     # save response to database
     db_rs = save_scan_db(cv_rs)
 
-    # return response
+    # respond with json
     return serialize(db_rs)
