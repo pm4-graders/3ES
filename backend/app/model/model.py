@@ -1,5 +1,5 @@
 from peewee import Model, AutoField, CharField, IntegerField, FloatField, DateField, ForeignKeyField
-from .database import db
+from backend.app.model.database import db
 
 
 def get_models():
