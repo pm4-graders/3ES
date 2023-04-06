@@ -9,7 +9,7 @@ defineProps({
 
 <template>
   <div>
-    <h3>Ich bin ein Header</h3>
+    <h3>3ES</h3>
   </div>
 </template>
 

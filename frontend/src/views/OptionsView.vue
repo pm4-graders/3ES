@@ -1,8 +1,10 @@
 <script setup>
+
 </script>
 
 <template>
-  <main>
+  <div>
     <h1>Willkommen bei 3ES</h1>
-  </main>
+  </div>
 </template>
+

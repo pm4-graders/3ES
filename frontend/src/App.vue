@@ -1,20 +1,20 @@
 <script setup>
 import { RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import Header from './components/Header.vue'
+import Navbar from './components/Navbar.vue'
 
 console.log(1)
 </script>
 
 <template>
     <div class="container">
-      <HelloWorld />
+      <Header />
     <RouterView></RouterView>
     </div>
-  <div class="row">
-    <div class="col">a</div>
-    <div class="col">b</div>
-  </div>
+  <Navbar></Navbar>
+
 </template>
 
 <style lang="scss" scoped>
+
 </style>
