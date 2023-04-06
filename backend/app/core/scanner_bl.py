@@ -1,4 +1,4 @@
-from backend.app.util.serializer import deserialize, serialize
+from app.util.serializer import deserialize, serialize
 from .scanner_db import save_scan_db
 
 cv_rs_dummy_json = '{"candidate":{"number":"CHSG-23.123","date_of_birth":"2010-01-01"},"exams":[{"year":2023,' \

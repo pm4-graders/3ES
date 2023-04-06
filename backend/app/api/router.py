@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
-import backend.app.core.scanner_bl as scanner
-from backend.app.model.model import Candidate, Exam, Exercise
+import app.core.scanner_bl as scanner
+from app.model.model import Candidate, Exam, Exercise
 
 router = APIRouter()
 
