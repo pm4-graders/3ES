@@ -1,8 +1,17 @@
 <script setup>
-defineProps({
-  msg: {
-    type: String,
-    required: true
+/**
+ * This component renders a list of buttons.
+ */
+
+const props = defineProps({
+  /**
+   *  array of objects, each object representing a button in the list.
+   * The object has two properties: title and path, which represent the button's text
+   * and the URL that the button should link to, respectively.
+   */
+  list: {
+    required: true,
+    type: Array
   }
 })
 </script>
@@ -10,17 +19,10 @@ defineProps({
 <template>
   <div class="button-container text-center">
     <div class="button-group">
-      <div class="col p-3 border bg-light">
-        <a href="/List">List</a>
-      </div>
-      <div class="col p-3 border bg-light">
-        <a href="/Scanner">Scan</a>
-      </div>
-      <div class="col p-3 border bg-light">
-        <a href="/Options">options</a>
+      <div v-for="entry of props.list" class="col p-3 border bg-light">
+        <a :href="entry.path">{{ entry.title }}</a>
       </div>
     </div>
-
   </div>
 </template>
 
@@ -39,5 +41,4 @@ defineProps({
   flex-direction: row;
   align-items: center;
 }
-
 </style>

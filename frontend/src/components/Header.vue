@@ -1,6 +1,13 @@
 <script setup>
-defineProps({
-  msg: {
+/**
+ * This Component displays the header
+ */
+
+const props = defineProps({
+  /**
+   * Title to show in header
+   */
+  title: {
     type: String,
     required: true
   }
@@ -9,9 +16,8 @@ defineProps({
 
 <template>
   <div>
-    <h3>3ES</h3>
+    <h3>{{ props.title }}</h3>
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>
