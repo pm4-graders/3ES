@@ -1,5 +1,5 @@
-from backend.app.util.serializer import deserialize, serialize
-from .scanner_db import save_scan_db
+from util.serializer import deserialize, serialize
+from core.scanner_db import save_scan_db
 
 cv_rs_dummy_json = '{"candidate":{"number":"CHSG-23.123","date_of_birth":"2010-01-01"},"exams":[{"year":2023,' \
                    '"subject":"ABC English","total_score":3.75,"exercises":[{"number":"1.a","score":1.75,' \
@@ -18,7 +18,6 @@ def save_scan():
 
     # call computer vision
     # mock-impl. to continue implementation of response handling
-    # cv_rs = DigitRecognizer().recognize_digits_in_frame(video_stream={})
     # cv_rs = DigitRecognizer().recognize_digits_in_photo(photo={})
     cv_rs = deserialize(cv_rs_dummy_json)
 

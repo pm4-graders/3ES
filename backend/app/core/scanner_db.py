@@ -1,5 +1,5 @@
-from backend.app.model.model import Candidate, Exam, Exercise
-from backend.app.util.enum import Entity, Key
+from model.model import Candidate, Exam, Exercise
+from util.enum import Entity, Key
 
 
 def save_scan_db(data):
