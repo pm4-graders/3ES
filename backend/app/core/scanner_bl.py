@@ -1,5 +1,5 @@
-from backend.app.util.serializer import deserialize, serialize
-from backend.app.core.scanner_db import save_scan_db
+from util.serializer import deserialize, serialize
+from core.scanner_db import save_scan_db
 
 cv_rs_dummy_json = '{"candidate":{"number":"CHSG-23.123","date_of_birth":"2010-01-01"},"exams":[{"year":2023,' \
                    '"subject":"ABC English","total_score":3.75,"exercises":[{"number":"1.a","score":1.75,' \
