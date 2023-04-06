@@ -30,7 +30,19 @@ const props = defineProps({
 </template>
 
 <style lang="scss" scoped>
-.navbar-nav {
-  display: flex;
+
+.nav-item {
+  max-width: 250px;
+  min-width: 100px;
+  width: 20%;
+  margin: 0 5px;
 }
+.nav-link {
+  width: 100%;
+  text-align: center;
+  border-radius: 5px;
+  background-color: #304FCC;
+  color: #ffffff;
+}
+
 </style>

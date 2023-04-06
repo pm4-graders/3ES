@@ -1,6 +1,7 @@
 @import './variables';
 @import 'bootstrap/scss/bootstrap';
 
+
 .video-container {
   position: relative;
   display: flex;
@@ -132,4 +133,12 @@
       }
     }
   }
+}
+
+.app-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column-reverse;
 }

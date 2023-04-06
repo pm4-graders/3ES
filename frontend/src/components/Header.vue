@@ -22,19 +22,49 @@ const props = defineProps({
 })
 </script>
 
+<script>
+
+</script>
+
 <template>
-  <nav class="navbar navbar-light bg-light">
-    <a href="/" class="navbar-brand d-flex">
-      <img v-if="logo" src="../assets/3ES_logo.jpg" class="logo" alt="3ES Logo Icon"/>
-      <h1>{{ props.title }}</h1>
+  <header class="navbar navbar-light bg-light app-header">
+    <a href="/" class="navbar-brand app-header-link ">
+      <img v-if="logo" src="../assets/3ES_logo.png" class="app-logo" alt="3ES Logo Icon"/>
+      <h1 class="app-title">{{ props.title }}</h1>
     </a>
-    <h3>{{ props.page }}</h3>
-  </nav>
+    <h3 class="app-page">{{ props.page }}</h3>
+  </header>
 </template>
 
 <style scoped>
-.logo {
-    height: 2rem;
-    width: auto;
+
+.app-header {
+    height: 60px;
+    padding: 0;
+    margin-bottom: 3px;
 }
+
+.app-header-link {
+    height: 100%;
+}
+
+.app-header a {
+    display: flex;
+    height: 100%;
+    align-items: center;
+}
+
+.app-title {
+    margin: auto;
+}
+
+.app-logo {
+    height: 70%;
+    margin-right: 5px;
+}
+
+.app-page {
+    color: #495057;
+}
+
 </style>

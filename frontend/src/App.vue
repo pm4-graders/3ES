@@ -6,8 +6,7 @@ import Header from './components/Header.vue'
 import Navbar from './components/Navbar.vue'
 
 const logo = ref(true)
-const route = useRoute()
-const currentRoute = computed(() => route.name)
+const currentRoute = computed(() => useRoute().name)
 const navList = ref([
   {
     title: 'List',
@@ -27,6 +26,7 @@ const navList = ref([
 <template>
   <div class="container">
     <Header title="3ES" :logo="logo" :page="currentRoute" />
+    <Header :is="currentRoute"></Header>
     <RouterView></RouterView>
   </div>
   <Navbar :list="navList"></Navbar>
