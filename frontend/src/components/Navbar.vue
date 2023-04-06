@@ -1,6 +1,7 @@
 <script setup>
-defineProps({
-  msg: {
+
+const props = defineProps({
+  list: {
     type: String,
     required: true
   }
@@ -10,14 +11,8 @@ defineProps({
 <template>
   <div class="button-container text-center">
     <div class="button-group">
-      <div class="col p-3 border bg-light">
-        <a href="/List">List</a>
-      </div>
-      <div class="col p-3 border bg-light">
-        <a href="/Scanner">Scan</a>
-      </div>
-      <div class="col p-3 border bg-light">
-        <a href="/Options">options</a>
+      <div v-for="entry of props.list" class="col p-3 border bg-light">
+        <a :href="entry.path">{{entry.title}}</a>
       </div>
     </div>
 

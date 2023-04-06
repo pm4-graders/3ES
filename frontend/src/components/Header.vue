@@ -1,6 +1,6 @@
 <script setup>
-defineProps({
-  msg: {
+const props = defineProps({
+  title: {
     type: String,
     required: true
   }
@@ -9,7 +9,7 @@ defineProps({
 
 <template>
   <div>
-    <h3>3ES</h3>
+    <h3>{{props.title}}</h3>
   </div>
 </template>
 
