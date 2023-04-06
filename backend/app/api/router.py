@@ -1,10 +1,10 @@
-from fastapi import APIRouter
-
+from fastapi import APIRouter, File, UploadFile
+import datetime, os, uuid
 import core.scanner_bl as scanner
 from model.model import Candidate, Exam, Exercise
 
 router = APIRouter()
-
+IMAGEDIR = "images/"
 
 @router.post("/scan/save")
 async def function_scan_save():
@@ -39,3 +39,23 @@ async def post_exercise(name: str):
 @router.get("/exercise")
 async def get_exercise():
     return Exercise.get()
+
+
+@router.post("/upload/")
+async def create_upload_file(file: UploadFile = File(...)):
+    file.filename = f"{uuid.uuid4()}.jpg"
+    contents = await file.read()
+    #for folder get year
+    today = datetime.date.today()
+    year = today.year
+    path = f"{IMAGEDIR}{year}"
+    exists = os.path.exists(path)
+    if not exists:
+        if not os.path.exists(IMAGEDIR):
+            os.mkdir(IMAGEDIR)
+        os.mkdir(path)
+    # save the file
+    with open(f"{IMAGEDIR}/{year}/{file.filename}", "wb") as f:
+        f.write(contents)
+# TODO: bild als base64 an tobis klasse übergeben
+    return {"filename": file.filename}
