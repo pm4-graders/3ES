@@ -1,18 +1,23 @@
 <script setup>
-import { defineEmits, defineProps} from 'vue'
+/**
+ * This component displays a popup dialog window.
+ * The component uses Vue3 Transition to animate the modal window when it is shown or hidden. When the modal is shown, it is displayed with an opacity transition and a transform transition to scale it up to its original size. When the modal is hidden, it is hidden with an opacity transition and a transform transition to scale it down to 10% of its original size and to translate it to the top of the screen.
+ */
+import { defineEmits, defineProps } from 'vue'
 
+/** Emits an event when the user clicks outside of the modal to close it. */
 const emit = defineEmits(['close'])
 
 const props = defineProps({
+  /** Determines whether the modal is shown or hidden. */
   show: {
-    type: Boolean,
+    type: Boolean
   },
+  /** The title of the modal window. */
   title: {
-    type: String,
+    type: String
   }
-});
-
-
+})
 </script>
 <template>
   <Transition>
@@ -24,9 +29,11 @@ const props = defineProps({
               <h5 class="modal-title">{{ props.title }}</h5>
             </div>
             <div class="modal-body">
+              <!-- @slot The content of the modal window. -->
               <slot></slot>
             </div>
             <div class="modal-footer" v-if="$slots.footer">
+              <!-- @slot The footer content of the modal window. -->
               <slot name="footer"></slot>
             </div>
           </div>
@@ -37,7 +44,6 @@ const props = defineProps({
 </template>
 
 <style lang="scss" scoped>
-
 .v-enter-active {
   transition: opacity 0.5s ease;
 
@@ -48,6 +54,7 @@ const props = defineProps({
 
 .v-leave-active {
   transition: opacity 0.5s ease;
+
   .modal-dialog {
     transition: transform 0.8s ease;
   }
@@ -57,7 +64,7 @@ const props = defineProps({
   opacity: 0;
 
   .modal-dialog {
-    transform: scale(.5);
+    transform: scale(0.5);
   }
 }
 
@@ -65,8 +72,8 @@ const props = defineProps({
   opacity: 0;
 
   .modal-dialog {
-    transform: scale(.1);
+    transform: scale(0.1);
     transform: translateY(-100%);
   }
-}</style>
-
+}
+</style>

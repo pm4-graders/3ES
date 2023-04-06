@@ -1,5 +1,5 @@
 <script setup>
-import {ref} from 'vue'
+import { ref } from 'vue'
 
 import { RouterView } from 'vue-router'
 import Header from './components/Header.vue'
@@ -17,7 +17,7 @@ const navList = ref([
   {
     title: 'Settings',
     path: '/settings'
-  },
+  }
 ])
 </script>
 

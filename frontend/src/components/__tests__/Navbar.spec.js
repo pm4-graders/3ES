@@ -8,7 +8,7 @@ describe('Navbar', () => {
     const list = [
       { title: 'Home', path: '/' },
       { title: 'About', path: '/about' },
-      { title: 'Contact', path: '/contact' },
+      { title: 'Contact', path: '/contact' }
     ]
     const wrapper = mount(Navbar, {
       props: {
@@ -22,5 +22,4 @@ describe('Navbar', () => {
       expect(entry.find('a').attributes('href')).toBe(list[index].path)
     })
   })
-
 })

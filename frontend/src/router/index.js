@@ -14,13 +14,13 @@ const router = createRouter({
     {
       path: '/scanner',
       name: 'scanner',
-      component: ScannerView 
+      component: ScannerView
     },
     {
       path: '/list',
       name: 'List',
-      component: ListView 
-    },
+      component: ListView
+    }
   ]
 })
 

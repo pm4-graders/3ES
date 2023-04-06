@@ -4,24 +4,29 @@ function T() {
   return true
 }
 const appUrl = import.meta.env.VITE_API_URL
+
+// Defining a type for HTTP request status
 const Request = Type({
-  Nil: [],
-  Prepared: { params: T },
-  Fetching: [],
-  Failed: { errorMsg: String },
-  Success: { data: T }
+  Nil: [], // Request hasn't been made yet
+  Prepared: { params: T }, // Request parameters have been prepared
+  Fetching: [], // Request is being fetched
+  Failed: { errorMsg: String }, // Request failed
+  Success: { data: T } // Request was successful
 })
+
+// Defining a type for web resources
 const Webresource = Type({
-  Nil: [],
-  Loading: [],
-  Failed: { request: Request.Failed },
-  Loaded: { entries: T }
+  Nil: [], // Web resource doesn't exist
+  Loading: [], // Web resource is being loaded
+  Failed: { request: Request.Failed }, // Failed to load web resource
+  Loaded: { entries: T } // Web resource was successfully loaded
 })
 
 Webresource.e = {
   Nil: 'Nil'
 }
 
+// Converting a Request type to a Webresource type
 const requestToWebresource = (request) =>
   Request.case(
     {
@@ -33,6 +38,7 @@ const requestToWebresource = (request) =>
     request
   )
 
+// Adding a comp method to the Webresource type prototype
 Webresource.prototype.comp = function (...comp) {
   for (let c of comp) {
     if (this._name === c) {
@@ -41,6 +47,8 @@ Webresource.prototype.comp = function (...comp) {
   }
   return false
 }
+
+// Adding a comp method to the Request type prototype
 Request.prototype.comp = function (...comp) {
   for (let c of comp) {
     if (this._name === c) {
@@ -50,6 +58,7 @@ Request.prototype.comp = function (...comp) {
   return false
 }
 
+// An asynchronous function for making a GET request to the API
 const get = async (route, request = { value: Request.Nil }, options = {}) => {
   request.value = Request.Fetching
 
@@ -64,6 +73,7 @@ const get = async (route, request = { value: Request.Nil }, options = {}) => {
   return request.value
 }
 
+// An asynchronous function for making a POST request to the API
 const post = async (route, request = { value: Request.Nil }, options = {}) => {
   options.method = 'POST'
   //options.body = JSON.stringify(data)
@@ -79,7 +89,7 @@ const post = async (route, request = { value: Request.Nil }, options = {}) => {
     request.value = Request.SuccessOf({ data })
   } catch (e) {
     console.log(e)
-    request.value = Request.FailedOf({ errorMsg: e.message})
+    request.value = Request.FailedOf({ errorMsg: e.message })
   }
   return request.value
 }

@@ -1,19 +1,26 @@
 <script setup>
-import { ref, onMounted} from 'vue';
-import Modal from '@/components/Modal.vue';
-import Loading from '@/components/Loading.vue';
-import { useCameraStore } from '../stores/camera';
-import { storeToRefs } from 'pinia';
+/**
+ * This is a Vue.js component that implements a camera interface for taking photos and uploading them.
+ * The component uses the "getUserMedia" method to get access to the camera and display the video feed.
+ * It also has a canvas element that is used to take a snapshot of the video feed when the user clicks
+ * the "takePhoto" button. The snapshot is then converted to a PNG blob and stored in the "snapshotUrl" variable in the Pinia store.
+ */
+import { ref, onMounted } from 'vue'
+import Modal from '@/components/Modal.vue'
+import Loading from '@/components/Loading.vue'
+import { useCameraStore } from '../stores/camera'
+import { storeToRefs } from 'pinia'
 
+const cameraRef = ref(null)
+const canvasRef = ref(null)
 
-const cameraRef = ref(null);
-const canvasRef = ref(null);
+const store = useCameraStore()
+const { snapshotUrl, currentRequest } = storeToRefs(store)
 
-
-const store = useCameraStore();
-const {snapshotUrl, currentRequest} = storeToRefs(store)
-
-
+/**
+ * This is a function that creates a video element
+ * and sets the stream from the user's camera as the source of the element.
+ */
 const createCameraElement = () => {
   const constraints = (window.constraints = {
     audio: false,
@@ -23,36 +30,43 @@ const createCameraElement = () => {
   })
   navigator.mediaDevices
     .getUserMedia(constraints)
-    .then(stream => {
+    .then((stream) => {
       cameraRef.value.srcObject = stream
     })
-    .catch(error => {
+    .catch((error) => {
       alert(error, "May the browser didn't support or there is some errors.")
     })
 }
-onMounted(createCameraElement);
+onMounted(createCameraElement)
 onMounted(() => {
-  cameraRef.value.addEventListener("loadedmetadata", e => {
-    canvasRef.value.width = e.target.videoWidth;
-    canvasRef.value.height = e.target.videoHeight;
+  cameraRef.value.addEventListener('loadedmetadata', (e) => {
+    canvasRef.value.width = e.target.videoWidth
+    canvasRef.value.height = e.target.videoHeight
   })
-});
+})
 
+/**
+ * takes a photo and passes the photo to the pinia store
+ */
 const takePhoto = () => {
   const context = canvasRef.value.getContext('2d')
 
-  context.drawImage(cameraRef.value, 0, 0, canvasRef.value.width, canvasRef.value.height);
-  canvasRef.value.toBlob(blob => {
-    store.setSnapshot(blob)
-  }, 'image/png', 1)
-
+  context.drawImage(cameraRef.value, 0, 0, canvasRef.value.width, canvasRef.value.height)
+  canvasRef.value.toBlob(
+    (blob) => {
+      store.setSnapshot(blob)
+    },
+    'image/png',
+    1
+  )
 }
 
-
+/**
+ * resets the current request of taking and sending a photo
+ */
 const reset = () => {
-  store.clearCurrentRequest();
+  store.clearCurrentRequest()
 }
-
 </script>
 <template>
   <div class="video-container" v-if="currentRequest">
@@ -67,17 +81,19 @@ const reset = () => {
       </button>
     </div>
     <Modal :show="!currentRequest.comp('Nil')" @close="reset">
-      <Loading :loading="currentRequest.comp('Fetching')"
-        :success-badge="currentRequest.comp('Success')">
-        <img alt="Dein Scan" :src="snapshotUrl" class="img-fluid w-100 mb-3">
+      <Loading
+        :loading="currentRequest.comp('Fetching')"
+        :success-badge="currentRequest.comp('Success')"
+      >
+        <img alt="Dein Scan" :src="snapshotUrl" class="img-fluid w-100 mb-3" />
         <div class="alert alert-danger" v-if="currentRequest.comp('Failed')">
-          {{ store.currentRequest.errorMsg}}</div>
+          {{ store.currentRequest.errorMsg }}
+        </div>
         <button @click="store.uploadResult()" class="btn btn-primary w-100">
           <i class="fa-solid fa-upload"></i>
-          Senden</button>
+          Senden
+        </button>
       </Loading>
     </Modal>
   </div>
 </template>
-
-
