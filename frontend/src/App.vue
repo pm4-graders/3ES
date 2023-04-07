@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from "vue";
+import { computed, ref } from 'vue'
 
 import { RouterView, useRoute } from 'vue-router'
 import Header from './components/Header.vue'
@@ -26,7 +26,6 @@ const navList = ref([
 <template>
   <div class="container">
     <Header title="3ES" :logo="logo" :page="currentRoute" />
-    <Header :is="currentRoute"></Header>
     <RouterView></RouterView>
   </div>
   <Navbar :list="navList"></Navbar>

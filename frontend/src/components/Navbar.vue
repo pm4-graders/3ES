@@ -20,17 +20,15 @@ const props = defineProps({
   <nav class="navbar navbar-expand navbar-dark bg-dark fixed-bottom">
     <div class="container-fluid justify-content-center nav navbar-nav">
       <div v-for="entry of props.list" class="nav-item">
-        <router-link class="nav-link m-2 p-3" :to="entry.path">
+        <router-link class="nav-link m-2 p-3" active-class="app-nav-active" :to="entry.path">
           <a>{{ entry.title }}</a>
         </router-link>
       </div>
     </div>
   </nav>
-
 </template>
 
 <style lang="scss" scoped>
-
 .nav-item {
   max-width: 250px;
   min-width: 100px;
@@ -41,8 +39,12 @@ const props = defineProps({
   width: 100%;
   text-align: center;
   border-radius: 5px;
-  background-color: #304FCC;
+  background-color: #304fcc;
   color: #ffffff;
 }
 
+.app-nav-active {
+  background-color: #001561;
+  color: #ffffff;
+}
 </style>

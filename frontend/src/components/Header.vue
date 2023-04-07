@@ -22,14 +22,10 @@ const props = defineProps({
 })
 </script>
 
-<script>
-
-</script>
-
 <template>
   <header class="navbar navbar-light bg-light app-header">
-    <a href="/" class="navbar-brand app-header-link ">
-      <img v-if="logo" src="../assets/3ES_logo.png" class="app-logo" alt="3ES Logo Icon"/>
+    <a href="/" class="navbar-brand app-header-link">
+      <img v-if="logo" src="../assets/3ES_logo.png" class="app-logo" alt="3ES Logo Icon" />
       <h1 class="app-title">{{ props.title }}</h1>
     </a>
     <h3 class="app-page">{{ props.page }}</h3>
@@ -37,34 +33,32 @@ const props = defineProps({
 </template>
 
 <style scoped>
-
 .app-header {
-    height: 60px;
-    padding: 0;
-    margin-bottom: 3px;
+  height: 60px;
+  padding: 0;
+  margin-bottom: 3px;
 }
 
 .app-header-link {
-    height: 100%;
+  height: 100%;
 }
 
 .app-header a {
-    display: flex;
-    height: 100%;
-    align-items: center;
+  display: flex;
+  height: 100%;
+  align-items: center;
 }
 
 .app-title {
-    margin: auto;
+  margin: auto;
 }
 
 .app-logo {
-    height: 70%;
-    margin-right: 5px;
+  height: 70%;
+  margin-right: 5px;
 }
 
 .app-page {
-    color: #495057;
+  color: #495057;
 }
-
 </style>
