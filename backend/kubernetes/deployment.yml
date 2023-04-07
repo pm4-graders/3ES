@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: registry.digitalocean.com/graders-3es/backend
+        image: registry.digitalocean.com/graders-3es/backend:latest
         ports:
         - containerPort: 8080
         resources:
