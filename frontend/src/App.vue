@@ -1,10 +1,12 @@
 <script setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
-import { RouterView } from 'vue-router'
+import { RouterView, useRoute } from 'vue-router'
 import Header from './components/Header.vue'
 import Navbar from './components/Navbar.vue'
 
+const logo = ref(true)
+const currentRoute = computed(() => useRoute().name)
 const navList = ref([
   {
     title: 'List',
@@ -23,7 +25,7 @@ const navList = ref([
 
 <template>
   <div class="container">
-    <Header title="3ES" />
+    <Header title="3ES" :logo="logo" :page="currentRoute" />
     <RouterView></RouterView>
   </div>
   <Navbar :list="navList"></Navbar>
