@@ -17,28 +17,34 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="button-container text-center">
-    <div class="button-group">
-      <div v-for="entry of props.list" class="col p-3 border bg-light">
-        <a :href="entry.path">{{ entry.title }}</a>
+  <nav class="navbar navbar-expand navbar-dark bg-dark fixed-bottom">
+    <div class="container-fluid justify-content-center nav navbar-nav">
+      <div v-for="entry of props.list" class="nav-item">
+        <router-link class="nav-link m-2 p-3" active-class="app-nav-active" :to="entry.path">
+          <a>{{ entry.title }}</a>
+        </router-link>
       </div>
     </div>
-  </div>
+  </nav>
 </template>
 
 <style lang="scss" scoped>
-.button-container {
-  position: absolute;
-  bottom: 0;
-  left: 0;
+.nav-item {
+  max-width: 250px;
+  min-width: 100px;
+  width: 20%;
+  margin: 0 5px;
+}
+.nav-link {
   width: 100%;
-  display: flex;
-  justify-content: center;
+  text-align: center;
+  border-radius: 5px;
+  background-color: #304fcc;
+  color: #ffffff;
 }
 
-.button-group {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
+.app-nav-active {
+  background-color: #001561;
+  color: #ffffff;
 }
 </style>
