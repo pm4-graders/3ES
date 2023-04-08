@@ -44,7 +44,7 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-    - name: http
+    - name: https
       protocol: TCP
       port: 403
       targetPort: 80
