@@ -38,15 +38,20 @@ metadata:
   name: backend-service
   annotations:
     #kubernetes.digitalocean.com/load-balancer-id: "3es-loadbalancer"
-    service.beta.kubernetes.io/do-loadbalancer-protocol: "https"
+    service.beta.kubernetes.io/do-loadbalancer-protocol: "http"
+    service.beta.kubernetes.io/do-loadbalancer-tls-ports: "443"
     service.beta.kubernetes.io/do-loadbalancer-certificate-id: "3f07de25-11c8-4cef-bc6f-5fdbf36215d1"
-    service.beta.kubernetes.io/do-loadbalancer-disable-lets-encrypt-dns-records: "false"
+    #service.beta.kubernetes.io/do-loadbalancer-disable-lets-encrypt-dns-records: "false"
 spec:
   type: LoadBalancer
-  ports:
+    ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 80
     - name: https
       protocol: TCP
-      port: 403
+      port: 443
       targetPort: 80
   selector:
     app: backend
