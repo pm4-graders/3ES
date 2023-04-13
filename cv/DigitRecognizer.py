@@ -1,6 +1,8 @@
 import cv2
 import base64
 import numpy as np
+from DocumentSegmentationCV import DocumentSegmentationCV
+from DocumentSegmentationCNN import DocumentSegmentationCNN
 
 class DigitRecognizer:
     def __init__(self):
@@ -25,6 +27,14 @@ class DigitRecognizer:
         Recognize handwritten digits in a photo.
 
         Parameters:
-        todo.
+        Photo:
         """
-        pass
+        if(True):
+            segmentator = DocumentSegmentationCNN()
+        else:
+            segmentator = DocumentSegmentationCV()
+
+        alignedPhoto = segmentator.align_document(photo)
+
+        # TODO: return dict with boolean and numbers for found digits.
+        return alignedPhoto
