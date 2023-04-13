@@ -9,7 +9,7 @@ import torchvision.transforms as torchvision_T
 from torchvision.models.segmentation import deeplabv3_mobilenet_v3_large
 
 
-class DocumentSegmentatorCNN:
+class DocumentSegmentationCNN:
     model = None
     
     def __init__(self):

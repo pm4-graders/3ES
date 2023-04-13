@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-class DocumentSegmentatorCV:
+class DocumentSegmentationCV:
     def __init__(self):
         # initialize any variables
         pass

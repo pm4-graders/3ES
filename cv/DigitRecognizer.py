@@ -1,8 +1,8 @@
 import cv2
 import base64
 import numpy as np
-from DocumentSegmentatorCV import DocumentSegmentatorCV
-from DocumentSegmentatorCNN import DocumentSegmentatorCNN
+from DocumentSegmentationCV import DocumentSegmentationCV
+from DocumentSegmentationCNN import DocumentSegmentationCNN
 
 class DigitRecognizer:
     def __init__(self):
@@ -30,9 +30,9 @@ class DigitRecognizer:
         Photo:
         """
         if(True):
-            segmentator = DocumentSegmentatorCNN()
+            segmentator = DocumentSegmentationCNN()
         else:
-            segmentator = DocumentSegmentatorCV()
+            segmentator = DocumentSegmentationCV()
 
         alignedPhoto = segmentator.align_document(photo)
 
