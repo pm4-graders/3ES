@@ -1,5 +1,5 @@
-@import "./variables";
-@import "bootstrap/scss/bootstrap";
+@import './variables';
+@import 'bootstrap/scss/bootstrap';
 
 
 .video-container {
@@ -8,7 +8,6 @@
   justify-content: center;
   flex-direction: column;
   align-items: center;
-
 
   .camera-video {
     max-width: 100%;
@@ -20,11 +19,9 @@
     position: absolute;
     left: 0;
     top: 0;
-
-
   }
 
-  >.actions {
+  > .actions {
     position: absolute;
     display: flex;
     justify-content: center;
@@ -41,7 +38,6 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-
 }
 
 .btn {
@@ -58,13 +54,11 @@
   // transition: all 0.3s ease;
 }
 
-
 .modal-header {
   background: $modal-header-bg;
 }
 
 .btn-primary {
-
   &:hover {
     background-color: $btn-hover-bg;
     border-color: $btn-hover-border-color;
@@ -141,3 +135,10 @@
   }
 }
 
+.app-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column-reverse;
+}

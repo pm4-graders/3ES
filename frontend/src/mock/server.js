@@ -31,12 +31,20 @@ export function makeServer({ environment = 'development' } = {}) {
         },
         { timing: 1000 }
       )
-      this.post('/upload', (schema) => {
-        schema.db.results.insert({ title: 'peeeter', date: moment().format(), id: _.random(1000) })
-        return {
-          success: true
-        }
-      }, { timing: 1000 })
+      this.post(
+        '/upload',
+        (schema) => {
+          schema.db.results.insert({
+            title: 'peeeter',
+            date: moment().format(),
+            id: _.random(1000)
+          })
+          return {
+            success: true
+          }
+        },
+        { timing: 1000 }
+      )
     }
   })
 
@@ -47,7 +55,7 @@ export function makeServer({ environment = 'development' } = {}) {
     server.db.loadData(JSON.parse(dbData))
   }
   // https://miragejs.com/api/classes/server/#pretender
-  server.pretender.handledRequest = function(verb) {
+  server.pretender.handledRequest = function (verb) {
     if (verb.toLowerCase() !== 'get' && verb.toLowerCase() !== 'head') {
       localStorage.setItem('db', JSON.stringify(server.db.dump()))
     }

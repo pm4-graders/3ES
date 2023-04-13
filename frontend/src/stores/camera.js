@@ -15,7 +15,7 @@ export const useCameraStore = defineStore('camera', () => {
     if (blob.value) {
       return URL.createObjectURL(blob.value)
     }
-    return null;
+    return null
   })
 
   async function uploadResult() {
@@ -36,6 +36,6 @@ export const useCameraStore = defineStore('camera', () => {
     setSnapshot,
     clearCurrentRequest,
     snapshotUrl,
-   blob 
+    blob
   }
 })

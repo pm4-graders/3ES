@@ -1,4 +1,4 @@
-import { ref} from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { get, Webresource } from '@/utilities/fetch'
 import { requestToWebresource } from '../utilities/fetch'

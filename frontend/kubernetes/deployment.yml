@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: registry.digitalocean.com/graders-3es/frontend
+        image: registry.digitalocean.com/graders-3es/frontend:latest
         ports:
         - containerPort: 8080
         resources:
@@ -36,12 +36,15 @@ apiVersion: v1
 kind: Service
 metadata:
   name: frontend-service
+  annotations:
+    service.beta.kubernetes.io/do-loadbalancer-protocol: "https"
+    service.beta.kubernetes.io/do-loadbalancer-certificate-id: "3f07de25-11c8-4cef-bc6f-5fdbf36215d1"
 spec:
   type: LoadBalancer
   ports:
-    - name: http
+    - name: https
       protocol: TCP
-      port: 80
-      targetPort: 80
+      port: 443
+      targetPort: 8080
   selector:
     app: frontend

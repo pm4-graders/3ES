@@ -1,20 +1,34 @@
 <script setup>
-import { RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import { computed, ref } from 'vue'
 
-console.log(1)
+import { RouterView, useRoute } from 'vue-router'
+import Header from './components/Header.vue'
+import Navbar from './components/Navbar.vue'
+
+const logo = ref(true)
+const currentRoute = computed(() => useRoute().name)
+const navList = ref([
+  {
+    title: 'List',
+    path: '/list'
+  },
+  {
+    title: 'Scan',
+    path: '/scanner'
+  },
+  {
+    title: 'Settings',
+    path: '/settings'
+  }
+])
 </script>
 
 <template>
-    <div class="container">
-      <HelloWorld />
+  <div class="container">
+    <Header title="3ES" :logo="logo" :page="currentRoute" />
     <RouterView></RouterView>
-    </div>
-  <div class="row">
-    <div class="col">a</div>
-    <div class="col">b</div>
   </div>
+  <Navbar :list="navList"></Navbar>
 </template>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

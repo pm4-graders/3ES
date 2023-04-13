@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: registry.digitalocean.com/graders-3es/backend
+        image: registry.digitalocean.com/graders-3es/backend:latest
         ports:
         - containerPort: 8080
         resources:
@@ -36,12 +36,15 @@ apiVersion: v1
 kind: Service
 metadata:
   name: backend-service
+  annotations:
+    service.beta.kubernetes.io/do-loadbalancer-protocol: "https"
+    service.beta.kubernetes.io/do-loadbalancer-certificate-id: "03da62ec-47d2-4a7b-90d8-fb06a73ab2c5"
 spec:
   type: LoadBalancer
   ports:
-    - name: http
+    - name: https
       protocol: TCP
-      port: 80
+      port: 443
       targetPort: 80
   selector:
     app: backend

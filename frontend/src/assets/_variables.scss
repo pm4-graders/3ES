@@ -24,7 +24,10 @@ $gray-900: #212529;
 $body-color: #212529;
 $body-bg: #f6f9fc;
 
-$focus-shadow: rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(58 151 212 / 36%) 0px 0px 0px 4px, rgb(0 0 0 / 12%) 0px 1px 1px 0px, rgb(69 56 255 / 80%) 0px 0px 0px 1px, rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(60 66 87 / 8%) 0px 3px 9px 0px, rgb(60 66 87 / 8%) 0px 2px 5px 0px;
+$focus-shadow: rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(58 151 212 / 36%) 0px 0px 0px 4px,
+  rgb(0 0 0 / 12%) 0px 1px 1px 0px, rgb(69 56 255 / 80%) 0px 0px 0px 1px,
+  rgb(0 0 0 / 0%) 0px 0px 0px 0px, rgb(60 66 87 / 8%) 0px 3px 9px 0px,
+  rgb(60 66 87 / 8%) 0px 2px 5px 0px;
 
 // Buttons
 $btn-primary-color: #fff;
@@ -176,21 +179,21 @@ $alert-danger-text-color: $state-danger-text-color;
 $alert-danger-border: $state-danger-border;
 
 // List
-$list-group-stripe-bg: #FFFFFF;
-$list-group-stripe-border-color: #F3F6F9;
-$list-group-stripe-box-shadow: 0 0 0 0.125rem #F3F6F9;
-$list-group-stripe-color: #32325D;
+$list-group-stripe-bg: #ffffff;
+$list-group-stripe-border-color: #f3f6f9;
+$list-group-stripe-box-shadow: 0 0 0 0.125rem #f3f6f9;
+$list-group-stripe-color: #32325d;
 
-$list-group-stripe-item-border-color: #F3F6F9;
-$list-group-stripe-item-active-bg: #6772E5;
-$list-group-stripe-item-active-border-color: #6772E5;
-$list-group-stripe-item-active-color: #FFFFFF;
-$list-group-stripe-item-active-hover-bg: #5469D4;
-$list-group-stripe-item-active-hover-border-color: #5469D4;
-$list-group-stripe-item-active-hover-color: #FFFFFF;
-$list-group-stripe-item-hover-bg: #F3F6F9;
-$list-group-stripe-item-hover-border-color: #F3F6F9;
-$list-group-stripe-item-hover-color: #32325D;
+$list-group-stripe-item-border-color: #f3f6f9;
+$list-group-stripe-item-active-bg: #6772e5;
+$list-group-stripe-item-active-border-color: #6772e5;
+$list-group-stripe-item-active-color: #ffffff;
+$list-group-stripe-item-active-hover-bg: #5469d4;
+$list-group-stripe-item-active-hover-border-color: #5469d4;
+$list-group-stripe-item-active-hover-color: #ffffff;
+$list-group-stripe-item-hover-bg: #f3f6f9;
+$list-group-stripe-item-hover-border-color: #f3f6f9;
+$list-group-stripe-item-hover-color: #32325d;
 $list-group-stripe-item-radius: 0.375rem;
 $list-group-stripe-item-border-radius-top-left: $list-group-stripe-item-radius;
 $list-group-stripe-item-border-radius-top-right: $list-group-stripe-item-radius;

@@ -1,15 +1,17 @@
 from fastapi import APIRouter
 
-import backend.app.core.scanner_bl as scanner
-from backend.app.model.model import Candidate, Exam, Exercise
+#import core.scanner_bl as scanner
+from model.model import Candidate, Exam, Exercise
 
-router = APIRouter()
+router = APIRouter(
+    prefix='/api'
+)
 
 
-@router.post("/scan/save")
+"""@router.post("/scan/save")
 async def function_scan_save():
     return scanner.save_scan()
-
+"""
 
 @router.get("/candidates")
 async def function_get_candidates():
