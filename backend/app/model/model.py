@@ -7,7 +7,7 @@ def get_models():
 
 
 class Candidate(Model):
-    candidate_id = AutoField()
+    id = AutoField()
     number = CharField(max_length=20)
     date_of_birth = DateField()
 
@@ -16,7 +16,7 @@ class Candidate(Model):
 
 
 class Exam(Model):
-    exam_id = AutoField()
+    id = AutoField()
     year = IntegerField()
     subject = CharField(max_length=100)
     total_score = FloatField()
@@ -27,7 +27,7 @@ class Exam(Model):
 
 
 class Exercise(Model):
-    exercise_id = AutoField()
+    id = AutoField()
     number = IntegerField()
     score = FloatField()
     accuracy = FloatField()

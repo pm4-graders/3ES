@@ -1,43 +1,42 @@
 from fastapi import APIRouter
+from pydantic import BaseModel
 
-#import core.scanner_bl as scanner
-from model.model import Candidate, Exam, Exercise
+import core.admin as admin
+import core.scanner as scanner
 
 router = APIRouter(
     prefix='/api'
 )
 
 
-"""@router.post("/scan/save")
-async def function_scan_save():
+class ExamTotalScore(BaseModel):
+    total_score: int
+
+
+class ExerciseScore(BaseModel):
+    score: int
+
+
+@router.post("/scan/save")
+async def post_scan_save():
     return scanner.save_scan()
-"""
-
-@router.get("/candidates")
-async def function_get_candidates():
-    return Candidate.get()
-
-
-@router.post("/candidate/{name}")
-async def post_candidate(name: str):
-    return Candidate.create({name})
 
 
 @router.get("/exams")
-async def get_exams():
-    return Exam.get()
+async def get_exams(year: int = None, subject: str = None):
+    return admin.get_exams(year, subject)
 
 
-@router.post("/exams/{name}")
-async def post_candidate(name: str):
-    return Exam.create({name})
+@router.get("/exams/{examId}")
+async def get_exam(examId: int):
+    return admin.get_exam(examId)
 
 
-@router.post("/exercises/{name}")
-async def post_exercise(name: str):
-    return Exercise.create({name})
+@router.post("/exams/{examId}")
+async def post_exam(examId: int, exam: ExamTotalScore):
+    return admin.update_exam(examId, exam)
 
 
-@router.get("/exercise")
-async def get_exercise():
-    return Exercise.get()
+@router.post("/exercises/{exercisesId}")
+async def post_exercise(exercisesId: int, exercise: ExerciseScore):
+    return admin.update_exercise(exercisesId, exercise)

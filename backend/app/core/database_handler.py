@@ -9,7 +9,7 @@ def save_scan_db(data):
 
     # candidate
     db_candidate = insert_candidate(data[Candidate.__name__.lower()])
-    dict_insert_id(data, Candidate.__name__.lower(), db_candidate.candidate_id)
+    dict_insert_id(data, Candidate.__name__.lower(), db_candidate.id)
 
     # exams
     insert_exams(data[Entity.EXAMS.value], db_candidate)
@@ -36,7 +36,7 @@ def insert_exams(exams, db_candidate):
     for index, exam in enumerate(exams):
         # exam
         db_exam = insert_exam(exam, db_candidate)
-        dict_insert_id(exams, index, db_exam.exam_id)
+        dict_insert_id(exams, index, db_exam.id)
         # exercises
         insert_exercises(exam[Entity.EXERCISES.value], db_exam)
 
@@ -52,10 +52,22 @@ def insert_exam(exam, db_candidate):
     return db_exam
 
 
+def update_exam(exam_id, exam):
+    db_exam = Exam.get_or_none(exam_id)
+
+    if db_exam is None:
+        return False
+
+    db_exam.total_score = exam.total_score
+    db_exam.save()
+
+    return True
+
+
 def insert_exercises(exercises, db_exam):
     for index, exercise in enumerate(exercises):
         db_exercise = insert_exercise(exercise, db_exam)
-        dict_insert_id(exercises, index, db_exercise.exercise_id)
+        dict_insert_id(exercises, index, db_exercise.id)
 
 
 def insert_exercise(exercise, db_exam):
@@ -67,3 +79,15 @@ def insert_exercise(exercise, db_exam):
     )
 
     return db_exercise
+
+
+def update_exercise(exercise_id, exercise):
+    db_exercise = Exercise.get_or_none(exercise_id)
+
+    if db_exercise is None:
+        return False
+
+    db_exercise.score = exercise.score
+    db_exercise.save()
+
+    return True
