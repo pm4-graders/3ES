@@ -3,6 +3,7 @@ import base64
 import numpy as np
 from DocumentSegmentationCV import DocumentSegmentationCV
 from DocumentSegmentationCNN import DocumentSegmentationCNN
+from imutils import contours as imutils_contours
 
 class DigitRecognizer:
     def __init__(self):
@@ -59,75 +60,63 @@ class DigitRecognizer:
 
         #Find mask
         mask = np.zeros((gray.shape),np.uint8)
+        cv2.drawContours(mask,[best_cnt],0,255,5)
         cv2.drawContours(mask,[best_cnt],0,255,-1)
-        cv2.drawContours(mask,[best_cnt],0,0,2)
 
         #Apply mask to copy of original image
         out = np.zeros_like(gray)
         out[mask == 255] = gray[mask == 255]
 
         #Apply same transformation to grid
-        blur = cv2.GaussianBlur(out, (5,5), 0)
-        thresh = cv2.adaptiveThreshold(blur, 255, 1, 1, 11, 2)
+        blur = cv2.GaussianBlur(out, (3,3), 0)
+        thresh = cv2.adaptiveThreshold(blur,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV,57,5)
         contours, _ = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        
-        # Define the aspect ratio range for small squares
-        aspect_ratio_min = 0.6
-        aspect_ratio_max = 1.2
 
-        min_height = out.shape[0] / 6
-        max_height = out.shape[0] / 2
-        min_width = out.shape[1] / 15
-        max_width = out.shape[1] / 10
+        # Filter out all numbers and noise to isolate only boxes
+        for c in contours:
+            area = cv2.contourArea(c)
+            # If area is really small, draw over it.
+            if area < 1000:
+                cv2.drawContours(thresh, [c], -1, (0,0,0), -1)
 
-        min_area = min_height * min_width
-        max_area = max_height * max_width
-
-        cv2.drawContours(out, contours, -1, (0,255,0), 3)
-        cv2.imshow("contours", out)
+        cv2.imshow('thresh', thresh)
         cv2.waitKey(0)
 
-        # Iterate over each inner grid contour and extract the small square images
-        for contour in contours:
-                        
-            # Get the bounding box of the contour
-            x, y, w, h = cv2.boundingRect(contour)
-            
-            if cv2.contourArea(contour) < min_area or cv2.contourArea(contour) > max_area:
-                continue
+        # Fix horizontal and vertical lines
+        vertical_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1,5))
+        thresh = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, vertical_kernel, iterations=6)
+        horizontal_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5,1))
+        thresh = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, horizontal_kernel, iterations=6)
 
-            # Extract the small square image
-            square_img = out[y:y+h, x:x+w]
-            # Do something with the small square image (e.g., save it to a file)
-            cv2.imshow("square_image.jpg", square_img)
-            cv2.waitKey(0)
+        cv2.imshow('thresh', thresh)
+        cv2.waitKey(0)
 
-            #Filter out contours that are less or more than defined minmax widthheights
-            if (h < min_height or h > max_height) or (w < min_width or w > max_width):
-                continue
+        # Sort by top to bottom and each row by left to right
+        invert = 255 - thresh
+        cnts = cv2.findContours(invert, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        cnts = cnts[0] if len(cnts) == 2 else cnts[1]
+        (cnts, _) = imutils_contours.sort_contours(cnts, method="top-to-bottom")
 
-            # Calculate the aspect ratio of the bounding box
-            aspect_ratio = float(w) / h
-            
-            # Filter out contours that have an aspect ratio outside the range of small squares
-            if aspect_ratio < aspect_ratio_min or aspect_ratio > aspect_ratio_max:
-                continue
-            
-            # Extract the small square image
-            square_img = out[y:y+h, x:x+w]
-            
-            # Do something with the small square image (e.g., save it to a file)
-            cv2.imshow("square_image.jpg", square_img)
-            cv2.waitKey(0)
+        sudoku_rows = []
+        row = []
+        for (i, c) in enumerate(cnts, 1):
+            area = cv2.contourArea(c)
+            if area < 50000:
+                row.append(c)
+                if i % 9 == 0:  
+                    (cnts, _) = imutils_contours.sort_contours(row, method="left-to-right")
+                    sudoku_rows.append(cnts)
+                    row = []
 
-        # foundSquares = [contour for contour in contours if cv2.contourArea(contour) > 10]
-        
-        # c = 0
-        # for i in contours:
-        #         area = cv2.contourArea(i)
-        #         if area > 1000/2:
-        #             cv2.drawContours(image, contours, c, (0, 255, 0), 3)
-        #         c+=1
+        # Iterate through each box
+        for row in sudoku_rows:
+            for c in row:
+                mask = np.zeros(image.shape, dtype=np.uint8)
+                cv2.drawContours(mask, [c], -1, (255,255,255), -1)
+                result = cv2.bitwise_and(image, mask)
+                result[mask==0] = 255
+                cv2.imshow('result', result)
+                cv2.waitKey(0)
 
 
         cv2.imshow("Final Image", image)
