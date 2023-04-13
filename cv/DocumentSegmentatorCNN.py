@@ -1,9 +1,6 @@
 import os
 import gc
-import io
 import cv2
-import base64
-import pathlib
 import numpy as np
 from PIL import Image
 
@@ -34,8 +31,7 @@ class DocumentSegmentatorCNN:
 
         return self.model
 
-
-    def image_preprocess_transforms(mean=(0.4611, 0.4359, 0.3905), std=(0.2193, 0.2150, 0.2109)):
+    def image_preprocess_transforms(self, mean=(0.4611, 0.4359, 0.3905), std=(0.2193, 0.2150, 0.2109)):
         common_transforms = torchvision_T.Compose(
             [
                 torchvision_T.ToTensor(),
@@ -44,7 +40,7 @@ class DocumentSegmentatorCNN:
         )
         return common_transforms
 
-
+    @staticmethod
     def order_points(pts):
         """Rearrange coordinates to order:
         top-left, top-right, bottom-right, bottom-left"""
@@ -63,7 +59,6 @@ class DocumentSegmentatorCNN:
         rect[3] = pts[np.argmax(diff)]
         # return the ordered coordinates
         return rect.astype("int").tolist()
-
 
     def find_dest(self, pts):
         (tl, tr, br, bl) = pts
