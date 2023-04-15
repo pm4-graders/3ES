@@ -12,7 +12,7 @@ database.db.connect()
 database.db.create_tables(model.get_models())
 
 # dummy data to run
-candidate = Candidate.create(number='1', date_of_birth='01.01.1990')
+candidate = Candidate.create(number='1', date_of_birth='1990-01-01')
 exam = Exam.create(year='2017', subject='Math', total_score=14.5, candidate=candidate)
 Exercise.create(number='1', score=10, accuracy=0.8, exam=exam)
 Exercise.create(number='2', score=4.5, accuracy=0.7, exam=exam)

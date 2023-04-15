@@ -9,7 +9,7 @@ router = APIRouter(
 
 
 @router.post("/scan/save")
-async def post_scan_save():
+async def post_scan_save() -> ExamFullResponse:
     return scanner.save_scan()
 
 

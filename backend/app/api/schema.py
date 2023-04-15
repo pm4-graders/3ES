@@ -22,7 +22,7 @@ class Exam(BaseModel):
 
 class Exercise(BaseModel):
     id: int
-    number: int
+    number: str
     score: float
     accuracy: float
 

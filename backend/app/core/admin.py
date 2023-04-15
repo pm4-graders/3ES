@@ -1,4 +1,3 @@
-from datetime import datetime
 from api.schema import BaseResponse, Candidate, Exam, ExamFull, ExamFullResponse, ExamListResponse, Exercise
 import core.database_handler as db
 from util.enum import Entity
@@ -36,7 +35,7 @@ def get_exam_full(exam_id):
             exam_rs.candidate = Candidate(
                 id=candidate["id"],
                 number=candidate["number"],
-                date_of_birth=datetime.strptime(candidate["date_of_birth"], DATE_OF_BIRTH_PATTERN).date()
+                date_of_birth=candidate["date_of_birth"]
             )
 
         # exercises

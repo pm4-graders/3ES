@@ -28,7 +28,7 @@ class Exam(Model):
 
 class Exercise(Model):
     id = AutoField()
-    number = IntegerField()
+    number = CharField(max_length=10)
     score = FloatField()
     accuracy = FloatField()
     exam = ForeignKeyField(Exam, backref='exercises')

@@ -31,25 +31,6 @@ def insert_exam(exam, db_candidate):
     return db_exam
 
 
-def insert_exams(exams, db_candidate):
-    """
-    Insert for exams with its exercises
-    """
-
-    db_exams = []
-
-    for exam in exams:
-        # exam
-        db_exam = insert_exam(exam, db_candidate)
-        if db_exam is not None:
-            db_exams.append(db_exam)
-            # exercises
-            for exercise in exam[Entity.EXERCISES.value]:
-                insert_exercise(exercise, db_exam)
-
-    return db_exams
-
-
 def insert_exercise(exercise, db_exam):
     """
     DB insert for @Exercise
@@ -145,17 +126,22 @@ def save_scan_db(data):
     Save a scan with all its entities
     """
 
-    exam_ids = []
+    exam_id = None
 
     # candidate
     db_candidate = insert_candidate(data[Entity.CANDIDATE.value])
 
     if db_candidate is not None:
-        # exams
-        for db_exam in insert_exams(data[Entity.EXAMS.value], db_candidate):
-            exam_ids.append(db_exam.id)
+        # exam
+        exam = data[Entity.EXAM.value]
+        db_exam = insert_exam(exam, db_candidate)
+        exam_id = db_exam.id
+        if db_exam is not None:
+            # exercises
+            for exercise in exam[Entity.EXERCISES.value]:
+                insert_exercise(exercise, db_exam)
 
-    return exam_ids
+    return exam_id
 
 
 def update_exam(exam_id, exam):
