@@ -11,7 +11,8 @@ app.include_router(router.router)
 database.db.connect()
 database.db.create_tables(model.get_models())
 
-#Dummy data to run 
-Candidate.create(number='1', date_of_birth='01.01.1990')
-Exam.create(year='2017', subject='Math', total_score='12', candidate_id=1)
-Exercise.create(number='1', score=20, accuracy=0.8, exam_id=1)
+# dummy data to run
+candidate = Candidate.create(number='1', date_of_birth='1990-01-01')
+exam = Exam.create(year='2017', subject='Math', total_score=14.5, candidate=candidate)
+Exercise.create(number='1', score=10, accuracy=0.8, exam=exam)
+Exercise.create(number='2', score=4.5, accuracy=0.7, exam=exam)
