@@ -1,47 +1,87 @@
+from datetime import datetime
+from api.schema import BaseResponse, Candidate, Exam, ExamFull, ExamFullResponse, ExamListResponse, Exercise
 import core.database_handler as db
-from model.model import Candidate, Exam, Exercise
-from util.serializer import deserialize, serialize
+from util.enum import Entity
+
+# CONSTANTS
+ACCURACY_MAX = 1
+DATE_OF_BIRTH_PATTERN = "%d.%m.%Y"
+
+
+def get_exam_full(exam_id):
+    """
+    Get exam and all its relationships
+    """
+
+    # exam response
+    exam_rs = None
+
+    # exam
+    exam = db.read_exam(exam_id)
+
+    if exam is not None:
+
+        exam_rs = ExamFull(
+            id=exam["id"],
+            year=exam["year"],
+            subject=exam["subject"],
+            total_score=exam["total_score"],
+            exercises=[]
+        )
+
+        # candidate
+        candidate = db.read_candidate(exam[Entity.CANDIDATE.value])
+
+        if candidate is not None:
+            exam_rs.candidate = Candidate(
+                id=candidate["id"],
+                number=candidate["number"],
+                date_of_birth=datetime.strptime(candidate["date_of_birth"], DATE_OF_BIRTH_PATTERN).date()
+            )
+
+        # exercises
+        for exercise in db.read_exercises_by_exam(exam_id):
+            exam_rs.exercises.append(exercise)
+
+    # response
+    if exam_rs:
+        return ExamFullResponse(success=True, exam=exam_rs)
+    else:
+        return ExamFullResponse(success=False)
 
 
 def get_exams(year, subject):
-    response = {"exams": []}
+    """
+    Get (search) exams for given parameters.
+    """
 
-    query_exam = Exam.select()
+    exams_rs = []
 
-    if year is not None:
-        query_exam = query_exam.where(Exam.year == year)
+    for exam in db.read_exams(year, subject):
+        exams_rs.append(Exam(
+            id=exam["id"],
+            year=exam["year"],
+            subject=exam["subject"],
+            total_score=exam["total_score"]
+        ))
 
-    if subject is not None:
-        query_exam = query_exam.where(Exam.subject == subject)
-
-    for itr_exam_id in query_exam.iterator():
-        response["exams"].append(Exam.get_by_id(itr_exam_id).__data__)
-
-    return response
-
-
-def get_exam(exam_id):
-
-    # exam
-    response = Exam.get_by_id(exam_id).__data__
-
-    # candidate
-    response.update({"candidate": Candidate.get_by_id(response["candidate"]).__data__})
-
-    # exercise
-    response.update({"exercises": []})
-    query_exercise = Exercise.select().where(Exercise.exam == exam_id)
-    for exercise_id in query_exercise.iterator():
-        exercise = Exercise.get_by_id(exercise_id).__data__
-        del exercise["exam"]
-        response["exercises"].append(exercise)
-
-    return response
+    return ExamListResponse(
+        success=True if exams_rs else False,
+        exams=exams_rs
+    )
 
 
 def update_exam(exam_id, exam):
-    return serialize({"success": db.update_exam(exam_id, exam)})
+    """
+    Update existing exam
+    """
+
+    return BaseResponse(success=db.update_exam(exam_id, exam))
 
 
 def update_exercise(exercise_id, exercise):
-    return serialize({"success": db.update_exercise(exercise_id, exercise)})
+    """
+    Update existing exercise
+    """
+
+    return BaseResponse(success=db.update_exercise(exercise_id, exercise, ACCURACY_MAX))
