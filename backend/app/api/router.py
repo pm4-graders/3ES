@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, File, UploadFile
 from .schema import BaseResponse, ExamFullResponse, ExamListResponse, ExamTotalScore, ExerciseScore
 import core.admin as admin
 import core.scanner as scanner
@@ -9,8 +9,9 @@ router = APIRouter(
 
 
 @router.post("/scan/save")
-async def post_scan_save() -> ExamFullResponse:
-    return scanner.save_scan()
+async def post_scan_save(file: UploadFile = File(...)) -> ExamFullResponse:
+    print("1")
+    return scanner.save_scan(file)
 
 
 @router.get("/exams/{examId}")
