@@ -1,43 +1,69 @@
-from fastapi import APIRouter
-
-#import core.scanner_bl as scanner
-from model.model import Candidate, Exam, Exercise
+from fastapi import APIRouter, HTTPException
+from .schema import BaseResponse, ExamFullResponse, ExamListResponse, ExamTotalScore, ExerciseScore
+import core.admin as admin
+import core.scanner as scanner
 
 router = APIRouter(
     prefix='/api'
 )
 
 
-"""@router.post("/scan/save")
-async def function_scan_save():
-    return scanner.save_scan()
-"""
-
-@router.get("/candidates")
-async def function_get_candidates():
-    return Candidate.get()
+@router.post("/scan/save", response_model=ExamFullResponse, response_model_exclude_none=True)
+async def post_scan_save():
+    return scanner.save_scan_wrapper()
 
 
-@router.post("/candidate/{name}")
-async def post_candidate(name: str):
-    return Candidate.create({name})
+@router.get("/exams/{examId}", response_model=ExamFullResponse, response_model_exclude_none=True)
+async def get_exam(examId: int):
+    """
+    Get exam and all its relationships
+    """
+
+    response = admin.get_exam_full(examId)
+
+    if not response.success:
+        raise HTTPException(status_code=404, detail="Exam " + str(examId) + " not found.")
+
+    return response
 
 
-@router.get("/exams")
-async def get_exams():
-    return Exam.get()
+@router.post("/exams/{examId}", response_model=BaseResponse, response_model_exclude_none=True)
+async def post_exam(examId: int, exam: ExamTotalScore):
+    """
+    Update existing exam
+    """
+
+    response = admin.update_exam(examId, exam)
+
+    if not response.success:
+        raise HTTPException(status_code=404, detail="Exam " + str(examId) + " not found.")
+
+    return response
 
 
-@router.post("/exams/{name}")
-async def post_candidate(name: str):
-    return Exam.create({name})
+@router.get("/exams", response_model=ExamListResponse, response_model_exclude_none=True)
+async def get_exams(year: int = None, subject: str = None):
+    """
+    Get (search) exams for given parameters.
+    """
+
+    response = admin.get_exams(year, subject)
+
+    if not response.success:
+        raise HTTPException(status_code=404, detail="Exams not found.")
+
+    return response
 
 
-@router.post("/exercises/{name}")
-async def post_exercise(name: str):
-    return Exercise.create({name})
+@router.post("/exercises/{exercisesId}", response_model=BaseResponse, response_model_exclude_none=True)
+async def post_exercise(exercisesId: int, exercise: ExerciseScore):
+    """
+    Update existing exercise
+    """
 
+    response = admin.update_exercise(exercisesId, exercise)
 
-@router.get("/exercise")
-async def get_exercise():
-    return Exercise.get()
+    if not response.success:
+        raise HTTPException(status_code=404, detail="Exercise " + str(exercisesId) + " not found.")
+
+    return response
