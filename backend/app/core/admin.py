@@ -20,23 +20,21 @@ def get_exam_full(exam_id):
 
     if exam is not None:
 
+        # candidate
+        candidate = db.read_candidate(exam[Entity.CANDIDATE.value])
+
         exam_rs = ExamFull(
             id=exam["id"],
             year=exam["year"],
             subject=exam["subject"],
             total_score=exam["total_score"],
-            exercises=[]
-        )
-
-        # candidate
-        candidate = db.read_candidate(exam[Entity.CANDIDATE.value])
-
-        if candidate is not None:
-            exam_rs.candidate = Candidate(
+            candidate=Candidate(
                 id=candidate["id"],
                 number=candidate["number"],
                 date_of_birth=candidate["date_of_birth"]
-            )
+            ),
+            exercises=[]
+        )
 
         # exercises
         for exercise in db.read_exercises_by_exam(exam_id):

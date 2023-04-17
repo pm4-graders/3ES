@@ -8,13 +8,13 @@ router = APIRouter(
 )
 
 
-@router.post("/scan/save")
-async def post_scan_save() -> ExamFullResponse:
+@router.post("/scan/save", response_model=ExamFullResponse, response_model_exclude_none=True)
+async def post_scan_save():
     return scanner.save_scan()
 
 
-@router.get("/exams/{examId}")
-async def get_exam(examId: int) -> ExamFullResponse:
+@router.get("/exams/{examId}", response_model=ExamFullResponse, response_model_exclude_none=True)
+async def get_exam(examId: int):
     """
     Get exam and all its relationships
     """
@@ -27,8 +27,8 @@ async def get_exam(examId: int) -> ExamFullResponse:
     return response
 
 
-@router.post("/exams/{examId}")
-async def post_exam(examId: int, exam: ExamTotalScore) -> BaseResponse:
+@router.post("/exams/{examId}", response_model=BaseResponse, response_model_exclude_none=True)
+async def post_exam(examId: int, exam: ExamTotalScore):
     """
     Update existing exam
     """
@@ -41,8 +41,8 @@ async def post_exam(examId: int, exam: ExamTotalScore) -> BaseResponse:
     return response
 
 
-@router.get("/exams")
-async def get_exams(year: int = None, subject: str = None) -> ExamListResponse:
+@router.get("/exams", response_model=ExamListResponse, response_model_exclude_none=True)
+async def get_exams(year: int = None, subject: str = None):
     """
     Get (search) exams for given parameters.
     """
@@ -55,8 +55,8 @@ async def get_exams(year: int = None, subject: str = None) -> ExamListResponse:
     return response
 
 
-@router.post("/exercises/{exercisesId}")
-async def post_exercise(exercisesId: int, exercise: ExerciseScore) -> BaseResponse:
+@router.post("/exercises/{exercisesId}", response_model=BaseResponse, response_model_exclude_none=True)
+async def post_exercise(exercisesId: int, exercise: ExerciseScore):
     """
     Update existing exercise
     """

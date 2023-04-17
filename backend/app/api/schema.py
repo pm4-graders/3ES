@@ -5,6 +5,7 @@ from typing import Optional
 
 class BaseResponse(BaseModel):
     success: bool
+    message: Optional[str] = None
 
 
 class Candidate(BaseModel):
@@ -32,12 +33,12 @@ class ExamFull(BaseModel):
     year: int
     subject: str
     total_score: float
-    candidate: Optional[Candidate]
+    candidate: Candidate
     exercises: list[Exercise]
 
 
 class ExamFullResponse(BaseResponse, BaseModel):
-    exam: Optional[ExamFull]
+    exam: Optional[ExamFull] = None
 
 
 class ExamListResponse(BaseResponse, BaseModel):
