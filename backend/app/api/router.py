@@ -10,7 +10,7 @@ router = APIRouter(
 
 @router.post("/scan/save", response_model=ExamFullResponse, response_model_exclude_none=True)
 async def post_scan_save():
-    return scanner.save_scan()
+    return scanner.save_scan_wrapper()
 
 
 @router.get("/exams/{examId}", response_model=ExamFullResponse, response_model_exclude_none=True)

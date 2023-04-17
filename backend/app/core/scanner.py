@@ -8,7 +8,7 @@ from util.serializer import deserialize, serialize
 def save_scan():
     """
     Save a scan by storing the file into the file storage, request extraction with cv module,
-    save the data into the db and return a json.
+    validate and save the data into the db.
     """
 
     # save image to file system
@@ -21,28 +21,39 @@ def save_scan():
         cv_data = get_dummy_cv_result()
 
     except Exception as exc:
-        # response
-        return ExamFullResponse(success=False, message=f"Computer Vision: {exc}")
+        raise Exception(f"Computer Vision: {exc}")
 
-    # build response
+    # validation
     message = validate_cv_result(cv_data)
 
-    # save response to database
+    # database save
     exam_id = db.save_scan_db(cv_data)
 
-    if exam_id:
+    if not exam_id:
+        raise Exception("Exam already exists")
 
-        # get exam data
-        exam_full_response = get_exam_full(exam_id)
+    # get exam data
+    response = get_exam_full(exam_id)
 
-        if exam_full_response.message is None:
-            exam_full_response.message = message
+    if response.message is None:
+        response.message = message
 
-        # response
-        return exam_full_response
+    return response
 
-    else:
-        return BaseResponse(success=False, message="Exam already exists")
+
+def save_scan_wrapper():
+    """
+    Wrapper of save_scan
+    """
+
+    try:
+
+        response = save_scan()
+
+    except Exception as exc:
+        response = BaseResponse(success=False, message=str(exc))
+
+    return response
 
 
 def validate_cv_result(cv_data):
@@ -52,10 +63,8 @@ def validate_cv_result(cv_data):
 
     message = None
 
-    if cv_data is None:
-        message = "CV Error"
-    else:
-        message = "Gud"
+    if cv_data.exam.total_score != cv_data.exam.calc_total_score():
+        message = "Warning: The total score of the exam is unequal to the sum of the scores of the associated exercises"
 
     return message
 
@@ -65,8 +74,8 @@ def get_dummy_cv_result():
     Create and return a cv result with dummy values.
     """
 
-    json_data = '{"candidate":{"number":"CHSG-23.1231","date_of_birth":"2010-01-01"},"exam":{"year":2023,' \
-                '"subject":"ABC English","total_score":3.75,"exercises":[{"number":"1.a","score":1.75,' \
+    json_data = '{"candidate":{"number":"CHSG-23.123","date_of_birth":"2010-01-01"},"exam":{"year":2023,' \
+                '"subject":"ABC English","total_score":4,"exercises":[{"number":"1.a","score":1.75,' \
                 '"accuracy":0.88},{"number":"1.b","score":2.00,"accuracy":0.98}]}}'
 
     data_dict = deserialize(json_data)

@@ -17,6 +17,9 @@ class Exam:
         self.total_score = total_score
         self.exercises = exercises
 
+    def calc_total_score(self):
+        return sum(exercise.score for exercise in self.exercises)
+
 
 class ExamExercise:
     def __init__(self, number, score, accuracy):
