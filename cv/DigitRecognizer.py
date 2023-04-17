@@ -30,6 +30,9 @@ class DigitRecognizer:
         Parameters:
         Photo:
         """
+        
+        self.debug_display_image('original',photo)
+        
         if(True):
             segmentation = DocumentSegmentationCNN()
         else:
@@ -37,17 +40,18 @@ class DigitRecognizer:
 
         aligned_photo = segmentation.align_document(photo)
         
-        #self.debug_display_image('before',aligned_photo)
+        self.debug_display_image('aligned',aligned_photo)
         
         grid = self.find_grid_in_image(aligned_photo)
 
-        #self.debug_display_image("grid_only", grid)
+        self.debug_display_image("grid_only", grid)
 
         grid_cells = self.get_grid_cells(grid)
 
         print(len(grid_cells))
 
-        
+        for cell in grid_cells:
+            self.debug_display_image("cell", cell)
 
         # TODO: return dict with boolean and numbers for found digits.
         return aligned_photo
@@ -156,7 +160,7 @@ class DigitRecognizer:
                 cv2.drawContours(mask, [c], -1, (255,255,255), -1)
                 result = cv2.bitwise_and(grid, mask)
                 result[mask==0] = 255
-                self.debug_display_image("cell result", result)
+                #self.debug_display_image("cell result", result)
                 result_cells.append(result)
 
         return result_cells
