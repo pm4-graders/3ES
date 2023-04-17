@@ -12,6 +12,4 @@ image = cv2.imread("cv/testImages/kanti_img1.jpeg")
 recognizer = DigitRecognizer()
 #cv2.imshow('image', image)
 finishedImage = recognizer.recognize_digits_in_photo(image)
-cv2.imshow('finishedImage',cv2.resize(finishedImage, (700, 1000)))
-
-cv2.waitKey(0)
+recognizer.debug_display_image("finishedImage", finishedImage)
