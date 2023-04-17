@@ -36,7 +36,7 @@ class DigitRecognizer:
             segmentation = DocumentSegmentationCV()
 
         aligned_photo = segmentation.align_document(photo)
-
+        cv2.imshow('before',cv2.resize(aligned_photo, (700, 1000)))
         self.find_grid_in_image(aligned_photo)
 
         # TODO: return dict with boolean and numbers for found digits.
@@ -73,12 +73,12 @@ class DigitRecognizer:
         #Apply adaptive threshold so we have independent illumination
         thresh = cv2.adaptiveThreshold(blur, 255, 1, 1, 11, 2)
         
-        horizontal = self.get_lines(thresh.copy(), (15,1), 50)
-        vertical = self.get_lines(thresh.copy(), (1, 10), 30, False)
+        horizontal = self.get_lines(thresh.copy(), (50,1), 100)
+        vertical = self.get_lines(thresh.copy(), (1, 40), 80, False)
 
         out = cv2.bitwise_or(horizontal, vertical)
 
-        cv2.imshow("out",out)
+        cv2.imshow("out",cv2.resize(out, (700, 1000)))
         cv2.waitKey(0)
 
 
@@ -89,6 +89,9 @@ class DigitRecognizer:
         structure = cv2.getStructuringElement(cv2.MORPH_RECT, kernel)
         mat = cv2.erode(mat, structure)
 
+        cv2.imshow("matuneroded",cv2.resize(mat, (700, 1000)))
+        cv2.waitKey(0)
+
         #The horizontal / vertical structures have to be wide enough to be a line.
         contours, _ = cv2.findContours(mat, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         for c in contours:
@@ -97,6 +100,9 @@ class DigitRecognizer:
                 cv2.drawContours(mat, [c], -1, (0,0,0), -1)
             if not is_horizontal and h < min_line_size:
                  cv2.drawContours(mat, [c], -1, (0,0,0), -1)
+
+        cv2.imshow("matuneroded",cv2.resize(mat, (700, 1000)))
+        cv2.waitKey(0)
 
         mat = cv2.dilate(mat, structure, iterations=4)
         return mat
