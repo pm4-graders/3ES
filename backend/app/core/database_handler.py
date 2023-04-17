@@ -1,54 +1,89 @@
 from peewee import DoesNotExist
+import core.cv_result as cv_res
 from model.model import Candidate, Exam, Exercise
 from util.enum import Entity
 
 
-def insert_candidate(candidate):
+def insert_or_get_candidate(candidate):
     """
-    DB insert for @Candidate
+    DB insert or get @Candidate
     """
 
-    db_candidate = Candidate.create(
+    # check existence using get_or_none
+    db_candidate = Candidate.get_or_none(
         number=candidate[Candidate.number.name],
         date_of_birth=candidate[Candidate.date_of_birth.name]
     )
+
+    if db_candidate is None:
+        # insert
+        db_candidate = Candidate.create(
+            number=candidate[Candidate.number.name],
+            date_of_birth=candidate[Candidate.date_of_birth.name]
+        )
 
     return db_candidate
 
 
 def insert_exam(exam, db_candidate):
     """
-    DB insert for @Exam
+    DB insert @Exam
     """
 
-    db_exam = Exam.create(
+    # check existence using get_or_none
+    db_exam = Exam.get_or_none(
         year=exam[Exam.year.name],
         subject=exam[Exam.subject.name],
-        total_score=exam[Exam.total_score.name],
+        # total_score=exam[Exam.total_score.name],
         candidate=db_candidate
     )
+
+    if db_exam is None:
+        # insert
+        db_exam = Exam.create(
+            year=exam[Exam.year.name],
+            subject=exam[Exam.subject.name],
+            total_score=exam[Exam.total_score.name],
+            candidate=db_candidate
+        )
+    else:
+        # existing
+        db_exam = None
 
     return db_exam
 
 
 def insert_exercise(exercise, db_exam):
     """
-    DB insert for @Exercise
+    DB insert @Exercise
     """
 
-    db_exercise = Exercise.create(
+    # check existence using get_or_none
+    db_exercise = Exercise.get_or_none(
         number=exercise[Exercise.number.name],
-        score=exercise[Exercise.score.name],
-        accuracy=exercise[Exercise.accuracy.name],
+        # score=exercise[Exercise.score.name],
+        # accuracy=exercise[Exercise.accuracy.name],
         exam=db_exam
     )
+
+    if db_exercise is None:
+        # insert
+        db_exercise = Exercise.create(
+            number=exercise[Exercise.number.name],
+            score=exercise[Exercise.score.name],
+            accuracy=exercise[Exercise.accuracy.name],
+            exam=db_exam
+        )
+    else:
+        # existing
+        db_exercise = None
 
     return db_exercise
 
 
 def read_candidate(candidate_id):
     """
-    Read @Candidate
+    Read @Candidate data
     """
 
     candidate = None
@@ -63,7 +98,7 @@ def read_candidate(candidate_id):
 
 def read_exam(exam_id):
     """
-    Read @Exam
+    Read @Exam data
     """
 
     exam = None
@@ -102,7 +137,7 @@ def read_exams(year, subject):
 
 def read_exercises_by_exam(exam_id):
     """
-    Read exercises by @Exam
+    Read all @Exercise data by @Exam
     """
 
     exercises = []
@@ -121,7 +156,7 @@ def read_exercises_by_exam(exam_id):
     return exercises
 
 
-def save_scan_db(data):
+def save_scan_db(cv_data: cv_res.CVResult):
     """
     Save a scan with all its entities
     """
@@ -129,17 +164,21 @@ def save_scan_db(data):
     exam_id = None
 
     # candidate
-    db_candidate = insert_candidate(data[Entity.CANDIDATE.value])
+    db_candidate = insert_or_get_candidate(vars(cv_data.candidate))
 
     if db_candidate is not None:
+
         # exam
-        exam = data[Entity.EXAM.value]
+        exam = vars(cv_data.exam)
         db_exam = insert_exam(exam, db_candidate)
-        exam_id = db_exam.id
+
         if db_exam is not None:
+
+            exam_id = db_exam.id
+
             # exercises
             for exercise in exam[Entity.EXERCISES.value]:
-                insert_exercise(exercise, db_exam)
+                insert_exercise(vars(exercise), db_exam)
 
     return exam_id
 
