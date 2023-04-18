@@ -4,6 +4,8 @@ import numpy as np
 from DocumentSegmentationCV import DocumentSegmentationCV
 from DocumentSegmentationCNN import DocumentSegmentationCNN
 from imutils import contours as imutils_contours
+from Models.mobilenet import MobileNet
+import Models.utils as utils
 
 class DigitRecognizer:
     def __init__(self):
@@ -31,7 +33,7 @@ class DigitRecognizer:
         Photo:
         """
         
-        self.debug_display_image('original',photo)
+        #self.debug_display_image('original',photo)
         
         if(True):
             segmentation = DocumentSegmentationCNN()
@@ -40,18 +42,39 @@ class DigitRecognizer:
 
         aligned_photo = segmentation.align_document(photo)
         
-        self.debug_display_image('aligned',aligned_photo)
+        #self.debug_display_image('aligned',aligned_photo)
         
-        grid = self.find_grid_in_image(aligned_photo)
+        grid_mask, grid = self.find_grid_in_image(aligned_photo)
 
-        self.debug_display_image("grid_only", grid)
+        #self.debug_display_image("grid_only", grid)
 
-        grid_cells = self.get_grid_cells(grid)
+        grid_cells = self.get_grid_cells(grid, grid_mask)
 
         print(len(grid_cells))
 
+        model = MobileNet()
+        model.compile()
+        model.load_weights('./cv/Models/MobileNet.h5')
+
         for cell in grid_cells:
+            
             self.debug_display_image("cell", cell)
+
+            cell = cv2.resize(cell, (28,28))
+            cell = np.expand_dims(cell, axis=(0, -1))
+            cell = utils.normalize_images(cell)
+            prediction = model.predict(cell)
+            print(prediction)
+
+            class_labels = ['0', '1', '2', '3','4','5','6','7','8','9']
+            # Get the index of the highest probability
+            predicted_class_index = np.argmax(prediction)
+
+            # Get the corresponding class label
+            predicted_class_label = class_labels[predicted_class_index]
+
+            # Print the predicted class label
+            print("The predicted class is:", predicted_class_label)
 
         # TODO: return dict with boolean and numbers for found digits.
         return aligned_photo
@@ -105,9 +128,9 @@ class DigitRecognizer:
 
         #self.debug_display_image("afterblur", eroded)
 
-        return eroded
+        return eroded, out
 
-    def get_grid_cells(self, grid):
+    def get_grid_cells(self, grid, grid_mask):
         
         def zoom_border(image, zoom):
             h, w = [ zoom * i for i in image.shape ]
@@ -120,7 +143,7 @@ class DigitRecognizer:
             return image
         
         #Get vertical lines only
-        vert = self.get_lines(grid.copy(), (1, 40), 80, False)
+        vert = self.get_lines(grid_mask.copy(), (1, 40), 80, False)
         
         #Zoom into the image so the outer borders are gone
         vert = zoom_border(vert, 1.1)
@@ -130,7 +153,7 @@ class DigitRecognizer:
         column_count = len(contours)+1
 
         result_cells = []
-        invert = 255 - grid
+        invert = 255 - grid_mask
         #self.debug_display_image("invert", invert)
 
         #Find contours of inverted 
@@ -160,6 +183,10 @@ class DigitRecognizer:
                 cv2.drawContours(mask, [c], -1, (255,255,255), -1)
                 result = cv2.bitwise_and(grid, mask)
                 result[mask==0] = 255
+                
+                x,y,w,h = cv2.boundingRect(c)
+                result = result[y:y+h, x:x+w]
+
                 #self.debug_display_image("cell result", result)
                 result_cells.append(result)
 

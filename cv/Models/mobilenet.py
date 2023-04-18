@@ -1,11 +1,11 @@
 from keras.callbacks import ReduceLROnPlateau
-from keras.applications.mobilenet import DepthwiseConv2D
+from keras.applications import MobileNet as mobNet
 from keras.layers import (Input, Conv2D, BatchNormalization, ZeroPadding2D,
-                          GlobalAveragePooling2D, Activation, Dense)
+                          GlobalAveragePooling2D, Activation, Dense, DepthwiseConv2D)
 from keras.models import Model
 from keras import optimizers
-from base_model import BaseModel
-from train import train
+from Models.base_model import BaseModel
+from Models.train import train
 
 ALPHA = 1
 MODEL_NAME = f'MobileNet' # This should be modified when the model name changes.
