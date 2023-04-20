@@ -86,7 +86,8 @@ class DigitRecognizer:
             if(index % column_count > 0 and index % column_count < column_count-1):
                 print("Handwritten Cell")
                 
-                self.debug_display_image("cell", result_cell)
+                if DEBUG_MODE:
+                    self.debug_display_image("cell", result_cell)
                 
                 #Apply adaptive threshold so we have independent illumination
                 _, tcell = cv2.threshold(result_cell, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
