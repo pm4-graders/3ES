@@ -1,18 +1,15 @@
-from fastapi import APIRouter, File, UploadFile
-import datetime, os, uuid, logging
-import core.database_handler as db
+import datetime, os, uuid
+from fastapi import UploadFile
 from api.schema import BaseResponse, ExamFullResponse
 from .admin import get_exam_full
 import core.cv_result as cv_res
 import core.database_handler as db
 from util.serializer import deserialize, serialize
 
-
 IMAGEDIR = "images/"
 
 
-
-def save_scan(file: UploadFile = File(...)):
+def save_scan(file: UploadFile):
     """
     Save a scan by storing the file into the file storage, request extraction with cv module,
     validate and save the data into the db.
@@ -20,10 +17,8 @@ def save_scan(file: UploadFile = File(...)):
 
     # save image to file system
     create_upload_file(file)
+
     # call computer vision
-
-
-
     try:
 
         # mock-impl. to continue implementation of response handling
@@ -51,14 +46,14 @@ def save_scan(file: UploadFile = File(...)):
     return response
 
 
-def save_scan_wrapper():
+def save_scan_wrapper(file: UploadFile):
     """
     Wrapper of save_scan
     """
 
     try:
 
-        response = save_scan()
+        response = save_scan(file)
 
     except Exception as exc:
         response = BaseResponse(success=False, message=str(exc))
@@ -103,7 +98,23 @@ def get_dummy_cv_result():
 
     return cv_res.CVResult(candidate, exam)
 
-ef create_upload_file(file: UploadFile = File(...)):
+
+def create_directories(exists, path):
+    """
+    Create directory if not existing
+    """
+
+    if not exists:
+        if not os.path.exists(IMAGEDIR):
+            os.mkdir(IMAGEDIR)
+        os.mkdir(path)
+
+
+def create_upload_file(file: UploadFile):
+    """
+    Save file into directory
+    """
+
     try:
         file.filename = f"{uuid.uuid4()}.jpg"
         contents = file.read()
@@ -121,17 +132,14 @@ ef create_upload_file(file: UploadFile = File(...)):
         save_file(contents, year, file.filename)
 
         return {"filename": file.filename}
-    except Exception as e:
-        logger.exception("An error occurred while processing the uploaded file")
+    except Exception as exc:
         return {"error": "An error occurred while processing the uploaded file"}
 
 
-def create_directories(exists, path):
-    if not exists:
-        if not os.path.exists(IMAGEDIR):
-            os.mkdir(IMAGEDIR)
-        os.mkdir(path)
-
 def save_file(contents, year, filename):
+    """
+    Write file
+    """
+
     with open(f"{IMAGEDIR}/{year}/{filename}", "wb") as f:
         f.write(contents)
