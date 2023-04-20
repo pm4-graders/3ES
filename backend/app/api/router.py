@@ -10,7 +10,6 @@ router = APIRouter(
 
 @router.post("/scan/save")
 async def post_scan_save(file: UploadFile = File(...)) -> ExamFullResponse:
-    print("1")
     return scanner.save_scan(file)
 
 

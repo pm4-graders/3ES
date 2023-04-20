@@ -36,8 +36,6 @@ def save_scan(file: UploadFile = File(...)):
 
 def create_upload_file(file: UploadFile = File(...)):
     try:
-        print("3")
-
         file.filename = f"{uuid.uuid4()}.jpg"
         contents = file.read()
 
@@ -53,7 +51,6 @@ def create_upload_file(file: UploadFile = File(...)):
         # Save the file
         save_file(contents, year, file.filename)
 
-        # TODO: bild als base64 an tobis klasse übergeben
         return {"filename": file.filename}
     except Exception as e:
         logger.exception("An error occurred while processing the uploaded file")
@@ -67,8 +64,5 @@ def create_directories(exists, path):
         os.mkdir(path)
 
 def save_file(contents, year, filename):
-    print("8")
-
     with open(f"{IMAGEDIR}/{year}/{filename}", "wb") as f:
-        print("9")
         f.write(contents)
