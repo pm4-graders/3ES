@@ -7,9 +7,21 @@ from imutils import contours as imutils_contours
 from Models.mobilenet import MobileNet
 import Models.utils as utils
 
+import os
+import sys
+
+parent_dir = os.path.abspath(os.path.join(os.getcwd(), ".."))
+sys.path.append(parent_dir)
+from backend.app.core.cv_result import *
+
 class DigitRecognizer:
-    def __init__(self):
+    
+    global DEBUG_MODE
+    
+    def __init__(self, debug_mode=False):
         # initialize any variables
+        global DEBUG_MODE
+        DEBUG_MODE = debug_mode
         pass
     
     def recognize_digits_in_frame(self, video_stream):
@@ -19,7 +31,6 @@ class DigitRecognizer:
         Parameters:
         todo.
         """
-
         # convert the base64-encoded frame to a numpy array
         frame = cv2.imdecode(np.frombuffer(base64.b64decode(frame), dtype=np.uint8), cv2.IMREAD_COLOR)
         
@@ -32,8 +43,10 @@ class DigitRecognizer:
         Parameters:
         Photo:
         """
+        global DEBUG_MODE
         
-        self.debug_display_image('original',photo)
+        if(DEBUG_MODE):
+            self.debug_display_image('original',photo)
         
         if(True):
             segmentation = DocumentSegmentationCNN()
@@ -42,11 +55,13 @@ class DigitRecognizer:
 
         aligned_photo = segmentation.align_document(photo)
         
-        self.debug_display_image('aligned',aligned_photo)
+        if(DEBUG_MODE):
+            self.debug_display_image('aligned',aligned_photo)
         
         grid_mask, grid = self.find_grid_in_image(aligned_photo)
 
-        self.debug_display_image("grid_only", grid)
+        if(DEBUG_MODE):
+            self.debug_display_image("grid_only", grid)
 
         grid_cells, column_count = self.get_grid_cells(grid, grid_mask)
 
@@ -56,43 +71,51 @@ class DigitRecognizer:
         model.compile()
         model.load_weights('./cv/Models/MobileNet.h5')
 
+        exercises = [ExamExercise(x+1) for x in range(0, column_count-2)] #there are column_count -2 exercises.
+        
         for index, cell in enumerate(grid_cells):
             
             if(index < column_count):
                 print("Header Cell")
+                    
             elif (index < column_count * 2):
                 print("Total Cell")
+                
+                if(index - column_count > 0 and index < column_count):
+                    exercises[index].max_score = "?"
             else:
                 print("Number Cell")
+                if(index % column_count == 0):
+                    print("First")
+                #self.debug_display_image("cell", cell)
+                
+                #Apply adaptive threshold so we have independent illumination
+                _, tcell = cv2.threshold(cell, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
+                
+                #tcell = cv2.cvtColor(tcell,cv2.COLOR_GRAY2BGR)
+                #self.debug_display_image("tcell", tcell)
 
-            #self.debug_display_image("cell", cell)
-            
-            #Apply adaptive threshold so we have independent illumination
-            _, tcell = cv2.threshold(cell, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
-            
-            #tcell = cv2.cvtColor(tcell,cv2.COLOR_GRAY2BGR)
-            #self.debug_display_image("tcell", tcell)
+                tcell = cv2.resize(tcell, (28,28))
 
-            tcell = cv2.resize(tcell, (28,28))
+                if(DEBUG_MODE):
+                    cv2.imshow("show", tcell)
+                    cv2.waitKey(0)
 
-            cv2.imshow("show", tcell)
-            cv2.waitKey(0)
+                tcell = np.expand_dims(tcell, axis=(0, -1))
+                tcell = utils.normalize_images(tcell)
 
-            tcell = np.expand_dims(tcell, axis=(0, -1))
-            tcell = utils.normalize_images(tcell)
+                prediction = model.predict(tcell)
+                print(prediction)
 
-            prediction = model.predict(tcell)
-            print(prediction)
+                class_labels = ['0', '1', '2', '3','4','5','6','7','8','9']
+                # Get the index of the highest probability
+                predicted_class_index = np.argmax(prediction)
 
-            class_labels = ['0', '1', '2', '3','4','5','6','7','8','9']
-            # Get the index of the highest probability
-            predicted_class_index = np.argmax(prediction)
+                # Get the corresponding class label
+                predicted_class_label = class_labels[predicted_class_index]
 
-            # Get the corresponding class label
-            predicted_class_label = class_labels[predicted_class_index]
-
-            # Print the predicted class label
-            print("The predicted class is:", predicted_class_label)
+                # Print the predicted class label
+                print("The predicted class is:", predicted_class_label)
 
         # TODO: return dict with boolean and numbers for found digits.
         return aligned_photo
@@ -138,13 +161,12 @@ class DigitRecognizer:
 
         eroded = cv2.bitwise_or(horizontal, vertical)
 
-        #self.debug_display_image("beforeblur", eroded)
+        if DEBUG_MODE:
+            self.debug_display_image("grid, before blur", eroded)
 
         #Blur the result a little bit so the lines are more prevalent
         cv2.blur(eroded, (7,7), eroded)
         _, eroded = cv2.threshold(eroded, 100, 255, cv2.THRESH_BINARY) #we can take anything that isn't really black.
-
-        #self.debug_display_image("afterblur", eroded)
 
         return eroded, out
 
@@ -172,7 +194,6 @@ class DigitRecognizer:
 
         result_cells = []
         invert = 255 - grid_mask
-        #self.debug_display_image("invert", invert)
 
         #Find contours of inverted 
         contours, _ = cv2.findContours(invert, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)

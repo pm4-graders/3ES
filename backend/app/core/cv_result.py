@@ -22,7 +22,8 @@ class Exam:
 
 
 class ExamExercise:
-    def __init__(self, number, score, accuracy):
+    def __init__(self, number, score, accuracy, max_score):
         self.number = number
         self.score = score
+        self.max_score = max_score
         self.accuracy = accuracy
