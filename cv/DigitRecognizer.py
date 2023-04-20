@@ -33,7 +33,7 @@ class DigitRecognizer:
         Photo:
         """
         
-        #self.debug_display_image('original',photo)
+        self.debug_display_image('original',photo)
         
         if(True):
             segmentation = DocumentSegmentationCNN()
@@ -42,11 +42,11 @@ class DigitRecognizer:
 
         aligned_photo = segmentation.align_document(photo)
         
-        #self.debug_display_image('aligned',aligned_photo)
+        self.debug_display_image('aligned',aligned_photo)
         
         grid_mask, grid = self.find_grid_in_image(aligned_photo)
 
-        #self.debug_display_image("grid_only", grid)
+        self.debug_display_image("grid_only", grid)
 
         grid_cells = self.get_grid_cells(grid, grid_mask)
 
