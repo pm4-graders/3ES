@@ -33,7 +33,7 @@ class DigitRecognizer:
         Photo:
         """
         
-        self.debug_display_image('original',photo)
+        #self.debug_display_image('original',photo)
         
         if(True):
             segmentation = DocumentSegmentationCNN()
@@ -42,11 +42,11 @@ class DigitRecognizer:
 
         aligned_photo = segmentation.align_document(photo)
         
-        self.debug_display_image('aligned',aligned_photo)
+        #self.debug_display_image('aligned',aligned_photo)
         
         grid_mask, grid = self.find_grid_in_image(aligned_photo)
 
-        self.debug_display_image("grid_only", grid)
+        #self.debug_display_image("grid_only", grid)
 
         grid_cells = self.get_grid_cells(grid, grid_mask)
 
@@ -58,12 +58,23 @@ class DigitRecognizer:
 
         for cell in grid_cells:
             
-            self.debug_display_image("cell", cell)
+            #self.debug_display_image("cell", cell)
+            
+            #Apply adaptive threshold so we have independent illumination
+            _, tcell = cv2.threshold(cell, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
+            
+            #tcell = cv2.cvtColor(tcell,cv2.COLOR_GRAY2BGR)
+            #self.debug_display_image("tcell", tcell)
 
-            cell = cv2.resize(cell, (28,28))
-            cell = np.expand_dims(cell, axis=(0, -1))
-            cell = utils.normalize_images(cell)
-            prediction = model.predict(cell)
+            tcell = cv2.resize(tcell, (28,28))
+
+            cv2.imshow("show", tcell)
+            cv2.waitKey(0)
+
+            tcell = np.expand_dims(tcell, axis=(0, -1))
+            tcell = utils.normalize_images(tcell)
+
+            prediction = model.predict(tcell)
             print(prediction)
 
             class_labels = ['0', '1', '2', '3','4','5','6','7','8','9']

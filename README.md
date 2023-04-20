@@ -25,7 +25,7 @@ We should be using virtual environments to not have problems with other versions
 4. pip install opencv-contrib-python
 5. pip3 install torch torchvision torchaudio
 6. pip install keras
-7. pip instasll tensorflow
+7. pip install tensorflow
 
 To deactivate the virtual environment: 'conda deactivate'
 
