@@ -56,8 +56,15 @@ class DigitRecognizer:
         model.compile()
         model.load_weights('./cv/Models/MobileNet.h5')
 
-        for cell in grid_cells:
+        for index, cell in enumerate(grid_cells):
             
+            if(index < column_count):
+                print("Header Cell")
+            elif (index < column_count * 2):
+                print("Total Cell")
+            else:
+                print("Number Cell")
+
             #self.debug_display_image("cell", cell)
             
             #Apply adaptive threshold so we have independent illumination
