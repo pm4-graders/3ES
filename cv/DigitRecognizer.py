@@ -118,8 +118,9 @@ class DigitRecognizer:
                 print("Last Handwritten Cell, 'Total'")
 
         # TODO: get total score and fill into third argument
-        
-        return Exam("?", "?", "?", exercises)
+        exam = Exam("?", "?", "?", exercises)
+        cv_res = CVResult(Candidate("?", "?"), exam=exam)
+        return cv_res
 
 
     def find_grid_in_image(self, image):
