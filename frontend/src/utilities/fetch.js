@@ -66,7 +66,12 @@ const get = async (route, request = { value: Request.Nil }, options = {}) => {
   try {
     let res = await fetch(`${appUrl}${route}`, options)
     let data = await res.json()
-    request.value = Request.SuccessOf({ data })
+    if (data.success) {
+
+      request.value = Request.SuccessOf({ data: data.exams })
+      return request.value
+    }
+    request.value = Request.FailedOf({errorMsg: "API Fehler"});
   } catch (e) {
     request.value = Request.FailedOf({ errorMsg: e.message })
   }

@@ -8,10 +8,11 @@ import '@fortawesome/fontawesome-free/css/fontawesome.css'
 import '@fortawesome/fontawesome-free/css/solid.css'
 import './assets/main.scss'
 
-import { makeServer } from './mock/server'
-if (import.meta.env.MODE === 'development') {
-  makeServer()
-}
+// import { makeServer } from './mock/server'
+// if (import.meta.env.MODE === 'development') {
+//   makeServer()
+// }
+
 
 const app = createApp(App)
 
