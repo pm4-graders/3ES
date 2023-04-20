@@ -33,7 +33,7 @@ class DigitRecognizer:
         Photo:
         """
         
-        #self.debug_display_image('original',photo)
+        self.debug_display_image('original',photo)
         
         if(True):
             segmentation = DocumentSegmentationCNN()
@@ -42,13 +42,13 @@ class DigitRecognizer:
 
         aligned_photo = segmentation.align_document(photo)
         
-        #self.debug_display_image('aligned',aligned_photo)
+        self.debug_display_image('aligned',aligned_photo)
         
         grid_mask, grid = self.find_grid_in_image(aligned_photo)
 
-        #self.debug_display_image("grid_only", grid)
+        self.debug_display_image("grid_only", grid)
 
-        grid_cells = self.get_grid_cells(grid, grid_mask)
+        grid_cells, column_count = self.get_grid_cells(grid, grid_mask)
 
         print(len(grid_cells))
 
@@ -201,7 +201,7 @@ class DigitRecognizer:
                 #self.debug_display_image("cell result", result)
                 result_cells.append(result)
 
-        return result_cells
+        return result_cells, column_count
 
     def get_lines(self, mat, kernel, min_line_size, is_horizontal = True):
         #Create structure element for extracting horizontal / vertical lines through morphology operations
