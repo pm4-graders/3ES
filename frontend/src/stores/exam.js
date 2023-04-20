@@ -6,6 +6,8 @@ import { requestToWebresource } from '../utilities/fetch'
 export const useExamStore = defineStore('exam', () => {
   const list = ref(Webresource.Nil)
 
+  const selectedExam = ref('')
+
   const loadList = async () => {
     list.value = Webresource.Loading
     let request = await get('/exams')
@@ -13,5 +15,6 @@ export const useExamStore = defineStore('exam', () => {
     list.value = requestToWebresource(request, list.value)
   }
 
-  return { list, loadList }
+
+  return { list, loadList, selectedExam }
 })

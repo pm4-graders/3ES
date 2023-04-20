@@ -142,3 +142,26 @@
   align-items: center;
   flex-direction: column-reverse;
 }
+
+.correction-input {
+  position: relative;
+
+  .accuracy-badge {
+    position: absolute;
+    font-size: .5rem;
+    top: -10px;
+    right: 0;
+    padding: 2px 4px;
+    border-radius: 4px;
+    color: white;
+    background: $primary;
+  }
+}
+
+.correction-table {
+  tr.invalid {
+    td {
+      background: transparentize($danger, .5);
+    }
+  }
+}
