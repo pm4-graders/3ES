@@ -4,8 +4,7 @@ import core.database_handler as db
 from .admin import get_exam_full
 from util.serializer import deserialize, serialize
 
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
+
 
 IMAGEDIR = "images/"
 
