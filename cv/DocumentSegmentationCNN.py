@@ -2,7 +2,6 @@ import os
 import gc
 import cv2
 import numpy as np
-from PIL import Image
 
 import torch
 import torchvision.transforms as torchvision_T
