@@ -113,13 +113,16 @@ class DigitRecognizer:
                 # Print the predicted class label
                 print("The predicted class is:", predicted_class_label)
 
-                exercises.append(ExamExercise(index, predicted_class_label, prediction[0][predicted_class_index], "?"))
+                exercises.append(ExamExercise(index, int(predicted_class_label), prediction[0][predicted_class_index], "?"))
             else:
                 print("Last Handwritten Cell, 'Total'")
 
-        # TODO: get total score and fill into third argument
         exam = Exam("?", "?", "?", exercises)
-        cv_res = CVResult(Candidate("?", "?"), exam=exam)
+        exam.total_score = exam.calc_total_score()
+
+        # TODO: Try to figure out the total score and validate result.
+
+        cv_res = CVResult(Candidate("?", "?"), exam=exam, result_validated=False)
         return cv_res
 
 
