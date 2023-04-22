@@ -1,10 +1,7 @@
-from api.schema import BaseResponse, Candidate, Exam, ExamFull, ExamFullResponse, ExamFullListResponse, Exercise
+from api.schema import BaseResponse, Candidate, Exam, ExamFull, ExamFullResponse, ExamFullListResponse, Exercise, LogicalExam, LogicalExamListResponse
 import core.database_handler as db
-from util.enum import Entity
-
-# CONSTANTS
-ACCURACY_MAX = 1
-DATE_OF_BIRTH_PATTERN = "%d.%m.%Y"
+import model.model as model
+import util.constant as const
 
 
 def build_exam_full(exam):
@@ -13,23 +10,25 @@ def build_exam_full(exam):
     """
 
     # candidate
-    candidate = db.read_candidate(exam[Entity.CANDIDATE.value])
+    candidate = db.read_candidate(exam[model.Exam.candidate.name])
 
+    # exam
     exam_rs = ExamFull(
-        id=exam["id"],
-        year=exam["year"],
-        subject=exam["subject"],
-        total_score=exam["total_score"],
+        id=exam[model.Exam.id.name],
+        year=exam[model.Exam.year.name],
+        subject=exam[model.Exam.subject.name],
+        score=exam[model.Exam.score.name],
+        confidence=exam[model.Exam.confidence.name],
         candidate=Candidate(
-            id=candidate["id"],
-            number=candidate["number"],
-            date_of_birth=candidate["date_of_birth"]
+            id=candidate[model.Candidate.id.name],
+            number=candidate[model.Candidate.number.name],
+            date_of_birth=candidate[model.Candidate.date_of_birth.name]
         ),
         exercises=[]
     )
 
     # exercises
-    for exercise in db.read_exercises_by_exam(exam["id"]):
+    for exercise in db.read_exercises_by_exam(exam[model.Exam.id.name]):
         exam_rs.exercises.append(exercise)
 
     return exam_rs
@@ -72,12 +71,31 @@ def get_exams(year, subject):
     )
 
 
+def get_logical_exams(year, subject):
+    """
+    Get (search) logical exams for given parameters.
+    """
+
+    logical_exams_rs = []
+
+    for logical_exam in db.read_logical_exams(year, subject):
+        logical_exams_rs.append(LogicalExam(
+            year=logical_exam.year,
+            subject=logical_exam.subject
+        ))
+
+    return LogicalExamListResponse(
+        success=True if logical_exams_rs else False,
+        logical_exams=logical_exams_rs
+    )
+
+
 def update_exam(exam_id, exam):
     """
     Update existing exam
     """
 
-    return BaseResponse(success=db.update_exam(exam_id, exam))
+    return BaseResponse(success=db.update_exam(exam_id, exam, const.Exam.CONFIDENCE_MAX))
 
 
 def update_exercise(exercise_id, exercise):
@@ -85,4 +103,4 @@ def update_exercise(exercise_id, exercise):
     Update existing exercise
     """
 
-    return BaseResponse(success=db.update_exercise(exercise_id, exercise, ACCURACY_MAX))
+    return BaseResponse(success=db.update_exercise(exercise_id, exercise, const.Exercise.CONFIDENCE_MAX))
