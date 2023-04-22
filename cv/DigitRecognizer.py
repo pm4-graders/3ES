@@ -51,12 +51,12 @@ class DigitRecognizer:
         else:
             segmentation = DocumentSegmentationCV()
 
-        aligned_photo = segmentation.align_document(photo)
+        #aligned_photo = segmentation.align_document(photo)
         
-        if(DEBUG_MODE):
-            self.debug_display_image('aligned',aligned_photo)
+        #if(DEBUG_MODE):
+            #self.debug_display_image('aligned',aligned_photo)
         
-        grid_mask, grid = self.find_grid_in_image(aligned_photo)
+        grid_mask, grid = self.find_grid_in_image(photo)
 
         if(DEBUG_MODE):
             self.debug_display_image("grid_only", grid)
@@ -71,6 +71,8 @@ class DigitRecognizer:
         class_labels = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 
         exercises = []
+        total_score = 0
+        total_score_confidence = 0
         
         #Go through the grid cells column by column
         for index in range(int(len(grid_cells) / 3)):
@@ -89,42 +91,81 @@ class DigitRecognizer:
                 if DEBUG_MODE:
                     self.debug_display_image("cell", result_cell)
                 
-                #Apply adaptive threshold so we have independent illumination
-                _, tcell = cv2.threshold(result_cell, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
+                pred_class_label, pred_confidence = self.predict_handwritten_cell(result_cell, class_labels, model)
 
-                tcell = cv2.resize(tcell, (28,28))
-
-                if(DEBUG_MODE):
-                    cv2.imshow("show", tcell)
-                    cv2.waitKey(0)
-
-                tcell = np.expand_dims(tcell, axis=(0, -1))
-                tcell = utils.normalize_images(tcell)
-
-                prediction = model.predict(tcell)
-                print(prediction)
-
-                # Get the index of the highest probability
-                predicted_class_index = np.argmax(prediction)
-
-                # Get the corresponding class label
-                predicted_class_label = class_labels[predicted_class_index]
-
-                # Print the predicted class label
-                print("The predicted class is:", predicted_class_label)
-
-                exercises.append(ExamExercise(index, int(predicted_class_label), prediction[0][predicted_class_index], "?"))
-            else:
+                exercises.append(ExamExercise(index, pred_class_label, pred_confidence, "?"))
+            elif(index % column_count != 0):
                 print("Last Handwritten Cell, 'Total'")
 
-        exam = Exam("?", "?", "?", exercises)
-        exam.total_score = exam.calc_total_score()
+                total_score, total_score_confidence = self.predict_double_number(result_cell, class_labels, model)
 
-        # TODO: Try to figure out the total score and validate result.
+        exam = Exam("?", "?", total_score, exercises)
 
         cv_res = CVResult(Candidate("?", "?"), exam=exam, result_validated=False)
+
+        if(exam.total_score == exam.calc_total_score()):
+            cv_res.result_validated = True
         return cv_res
 
+
+    def predict_double_number(self, original_cell, class_labels, model):
+        blur = cv2.GaussianBlur(original_cell, (3,3), 0)
+        _, thresh = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
+        #Find the largest contours
+        contours, _ = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        found_numbers = []
+        for contour in contours:
+            #Filter out very small contours (noise)
+            if(cv2.contourArea(contour) < 100):
+                continue
+
+            (x,y,w,h) = cv2.boundingRect(contour)
+            res = thresh[y:y+h, x:x+w]
+            totalHeight = h + 40
+            widthToAdd = int((totalHeight - w) / 2)
+            res = cv2.copyMakeBorder(res, 20, 20, widthToAdd, widthToAdd, cv2.BORDER_CONSTANT, value=(0,0,0))
+            class_label, class_confidence = self.predict_handwritten_cell(res, class_labels, model, False)
+            found_numbers.append((class_label, class_confidence))
+        
+        result = ""
+        confidence_sum = 0
+        for number, confidence in found_numbers:
+            result += str(number)
+            confidence_sum += confidence
+
+        confidence_average = confidence_sum/len(found_numbers)
+
+        return int(result), confidence_average
+
+    def predict_handwritten_cell(self, original_cell, class_labels, model, do_thresh=True):
+            if(do_thresh):
+                #Apply adaptive threshold so we have independent illumination
+                _, tcell = cv2.threshold(original_cell, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
+            else:
+                tcell = original_cell
+            
+            tcell = cv2.resize(tcell, (28,28))
+
+            if(DEBUG_MODE):
+                cv2.imshow("show", tcell)
+                cv2.waitKey(0)
+
+            tcell = np.expand_dims(tcell, axis=(0, -1))
+            tcell = utils.normalize_images(tcell)
+
+            prediction = model.predict(tcell)
+            print(prediction)
+
+            # Get the index of the highest probability
+            predicted_class_index = np.argmax(prediction)
+
+            # Get the corresponding class label
+            predicted_class_label = class_labels[predicted_class_index]
+
+            # Print the predicted class label
+            print("The predicted class is:", predicted_class_label)
+
+            return int(predicted_class_label), prediction[0][predicted_class_index]
 
     def find_grid_in_image(self, image):
         #Convert image to grayscale
