@@ -1,8 +1,9 @@
+class ModelField:
+    ID = "id"
+
+
 class Entity:
-    CANDIDATE = "candidate"
-    EXAM = "exam"
     EXAMS = "exams"
-    EXERCISE = "exercise"
     EXERCISES = "exercises"
 
 

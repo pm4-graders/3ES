@@ -1,9 +1,7 @@
 from api.schema import BaseResponse, Candidate, Exam, ExamFull, ExamFullResponse, ExamFullListResponse, Exercise
 import core.database_handler as db
+import model.model as model
 import util.constant as const
-
-# CONSTANTS
-ACCURACY_MAX = 1
 
 
 def build_exam_full(exam):
@@ -12,23 +10,23 @@ def build_exam_full(exam):
     """
 
     # candidate
-    candidate = db.read_candidate(exam[const.Entity.CANDIDATE])
+    candidate = db.read_candidate(exam[model.Exam.candidate.name])
 
     exam_rs = ExamFull(
-        id=exam["id"],
-        year=exam["year"],
-        subject=exam["subject"],
-        total_score=exam["total_score"],
+        id=exam[model.Exam.id.name],
+        year=exam[model.Exam.year.name],
+        subject=exam[model.Exam.subject.name],
+        total_score=exam[model.Exam.total_score.name],
         candidate=Candidate(
-            id=candidate["id"],
-            number=candidate["number"],
-            date_of_birth=candidate["date_of_birth"]
+            id=candidate[model.Candidate.id.name],
+            number=candidate[model.Candidate.number.name],
+            date_of_birth=candidate[model.Candidate.date_of_birth.name]
         ),
         exercises=[]
     )
 
     # exercises
-    for exercise in db.read_exercises_by_exam(exam["id"]):
+    for exercise in db.read_exercises_by_exam(exam[model.Exam.id.name]):
         exam_rs.exercises.append(exercise)
 
     return exam_rs
@@ -84,4 +82,4 @@ def update_exercise(exercise_id, exercise):
     Update existing exercise
     """
 
-    return BaseResponse(success=db.update_exercise(exercise_id, exercise, ACCURACY_MAX))
+    return BaseResponse(success=db.update_exercise(exercise_id, exercise, const.Exercise.ACCURACY_MAX))

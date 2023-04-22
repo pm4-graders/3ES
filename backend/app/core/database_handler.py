@@ -150,7 +150,7 @@ def read_exercises_by_exam(exam_id):
         except DoesNotExist:
             continue
 
-        del exercise[const.Entity.EXAM]
+        del exercise[Exercise.exam.name]
         exercises.append(exercise)
 
     return exercises
