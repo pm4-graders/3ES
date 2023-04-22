@@ -12,11 +12,13 @@ def build_exam_full(exam):
     # candidate
     candidate = db.read_candidate(exam[model.Exam.candidate.name])
 
+    # exam
     exam_rs = ExamFull(
         id=exam[model.Exam.id.name],
         year=exam[model.Exam.year.name],
         subject=exam[model.Exam.subject.name],
-        total_score=exam[model.Exam.total_score.name],
+        score=exam[model.Exam.score.name],
+        confidence=exam[model.Exam.confidence.name],
         candidate=Candidate(
             id=candidate[model.Candidate.id.name],
             number=candidate[model.Candidate.number.name],
@@ -74,7 +76,7 @@ def update_exam(exam_id, exam):
     Update existing exam
     """
 
-    return BaseResponse(success=db.update_exam(exam_id, exam))
+    return BaseResponse(success=db.update_exam(exam_id, exam, const.Exam.CONFIDENCE_MAX))
 
 
 def update_exercise(exercise_id, exercise):
@@ -82,4 +84,4 @@ def update_exercise(exercise_id, exercise):
     Update existing exercise
     """
 
-    return BaseResponse(success=db.update_exercise(exercise_id, exercise, const.Exercise.ACCURACY_MAX))
+    return BaseResponse(success=db.update_exercise(exercise_id, exercise, const.Exercise.CONFIDENCE_MAX))

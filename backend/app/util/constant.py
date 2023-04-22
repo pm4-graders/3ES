@@ -7,8 +7,12 @@ class Entity:
     EXERCISES = "exercises"
 
 
+class Exam:
+    CONFIDENCE_MAX = 1
+
+
 class Exercise:
-    ACCURACY_MAX = 1
+    CONFIDENCE_MAX = 1
 
 
 class Candidate:
@@ -24,4 +28,4 @@ class Message:
 
 
 class Validation:
-    W_SCORE_EQ = "Warning: The total score of the exam is unequal to the sum of the scores of the associated exercises"
+    W_SCORE_EQ = "Warning: The score of the exam is unequal to the sum of the scores of the associated exercises"

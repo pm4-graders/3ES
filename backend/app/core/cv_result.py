@@ -11,18 +11,19 @@ class Candidate:
 
 
 class Exam:
-    def __init__(self, year, subject, total_score, exercises):
+    def __init__(self, year, subject, score, confidence, exercises):
         self.year = year
         self.subject = subject
-        self.total_score = total_score
+        self.score = score
+        self.confidence = confidence
         self.exercises = exercises
 
-    def calc_total_score(self):
+    def calc_exc_score(self):
         return sum(exercise.score for exercise in self.exercises)
 
 
-class ExamExercise:
-    def __init__(self, number, score, accuracy):
+class Exercise:
+    def __init__(self, number, score, confidence):
         self.number = number
         self.score = score
-        self.accuracy = accuracy
+        self.confidence = confidence

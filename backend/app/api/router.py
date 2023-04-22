@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from .schema import BaseResponse, ExamFullResponse, ExamFullListResponse, ExamTotalScore, ExerciseScore
+from .schema import BaseResponse, ExamFullResponse, ExamFullListResponse, Score
 import core.admin as admin
 import core.scanner as scanner
 import util.constant as const
@@ -29,7 +29,7 @@ async def get_exam(examId: int):
 
 
 @router.post("/exams/{examId}", response_model=BaseResponse, response_model_exclude_none=True)
-async def post_exam(examId: int, exam: ExamTotalScore):
+async def post_exam(examId: int, exam: Score):
     """
     Update existing exam
     """
@@ -57,7 +57,7 @@ async def get_exams(year: int = None, subject: str = None):
 
 
 @router.post("/exercises/{exercisesId}", response_model=BaseResponse, response_model_exclude_none=True)
-async def post_exercise(exercisesId: int, exercise: ExerciseScore):
+async def post_exercise(exercisesId: int, exercise: Score):
     """
     Update existing exercise
     """

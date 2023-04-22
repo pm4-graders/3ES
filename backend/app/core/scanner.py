@@ -63,7 +63,7 @@ def validate_cv_result(cv_data):
 
     message = None
 
-    if cv_data.exam.total_score != cv_data.exam.calc_total_score():
+    if cv_data.exam.score != cv_data.exam.calc_excercises_score():
         message = const.Validation.W_SCORE_EQ
 
     return message
@@ -77,8 +77,8 @@ def get_dummy_cv_result():
     import json
 
     json_data = '{"candidate":{"number":"CHSG-23.123","date_of_birth":"2010-01-01"},"exam":{"year":2023,' \
-                '"subject":"ABC English","total_score":4,"exercises":[{"number":"1.a","score":1.75,' \
-                '"accuracy":0.88},{"number":"1.b","score":2.00,"accuracy":0.98}]}}'
+                '"subject":"ABC English","score":4,"exercises":[{"number":"1.a","score":1.75,' \
+                '"confidence":0.88},{"number":"1.b","score":2.00,"accuracy":0.98}]}}'
 
     data_dict = json.loads(json_data)
 
@@ -88,9 +88,9 @@ def get_dummy_cv_result():
     exam_data = data_dict['exam']
     exercises = []
     for exercise_data in exam_data['exercises']:
-        exercise = cv_res.ExamExercise(exercise_data['number'], exercise_data['score'], exercise_data['accuracy'])
+        exercise = cv_res.Exercise(exercise_data['number'], exercise_data['score'], exercise_data['confidence'])
         exercises.append(exercise)
 
-    exam = cv_res.Exam(exam_data['year'], exam_data['subject'], exam_data['total_score'], exercises)
+    exam = cv_res.Exam(exam_data['year'], exam_data['subject'], exam_data['score'], exercises)
 
     return cv_res.CVResult(candidate, exam)

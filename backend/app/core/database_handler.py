@@ -34,7 +34,8 @@ def insert_exam(exam, db_candidate):
     db_exam = Exam.get_or_none(
         year=exam[Exam.year.name],
         subject=exam[Exam.subject.name],
-        # total_score=exam[Exam.total_score.name],
+        # score=exam[Exam.score.name],
+        # confidence=exam[Exam.confidence.name],
         candidate=db_candidate
     )
 
@@ -43,7 +44,8 @@ def insert_exam(exam, db_candidate):
         db_exam = Exam.create(
             year=exam[Exam.year.name],
             subject=exam[Exam.subject.name],
-            total_score=exam[Exam.total_score.name],
+            score=exam[Exam.score.name],
+            confidence=exam[Exam.confidence.name],
             candidate=db_candidate
         )
     else:
@@ -62,7 +64,7 @@ def insert_exercise(exercise, db_exam):
     db_exercise = Exercise.get_or_none(
         number=exercise[Exercise.number.name],
         # score=exercise[Exercise.score.name],
-        # accuracy=exercise[Exercise.accuracy.name],
+        # confidence=exercise[Exercise.confidence.name],
         exam=db_exam
     )
 
@@ -71,7 +73,7 @@ def insert_exercise(exercise, db_exam):
         db_exercise = Exercise.create(
             number=exercise[Exercise.number.name],
             score=exercise[Exercise.score.name],
-            accuracy=exercise[Exercise.accuracy.name],
+            confidence=exercise[Exercise.confidence.name],
             exam=db_exam
         )
     else:
@@ -183,7 +185,7 @@ def save_scan_db(cv_data: cv_res.CVResult):
     return exam_id
 
 
-def update_exam(exam_id, exam):
+def update_exam(exam_id, exam, confidence):
     """
     DB update @Exam
     """
@@ -193,13 +195,14 @@ def update_exam(exam_id, exam):
     except DoesNotExist:
         return False
 
-    db_exam.total_score = exam.total_score
+    db_exam.score = exam.score
+    db_exam.confidence = confidence
     db_exam.save()
 
     return True
 
 
-def update_exercise(exercise_id, exercise, accuracy):
+def update_exercise(exercise_id, exercise, confidence):
     """
     DB update @Exercise
     """
@@ -210,7 +213,7 @@ def update_exercise(exercise_id, exercise, accuracy):
         return False
 
     db_exercise.score = exercise.score
-    db_exercise.accuracy = accuracy
+    db_exercise.confidence = confidence
     db_exercise.save()
 
     return True
