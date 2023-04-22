@@ -1,10 +1,9 @@
 from api.schema import BaseResponse, Candidate, Exam, ExamFull, ExamFullResponse, ExamFullListResponse, Exercise
 import core.database_handler as db
-from util.enum import Entity
+import util.constant as const
 
 # CONSTANTS
 ACCURACY_MAX = 1
-DATE_OF_BIRTH_PATTERN = "%d.%m.%Y"
 
 
 def build_exam_full(exam):
@@ -13,7 +12,7 @@ def build_exam_full(exam):
     """
 
     # candidate
-    candidate = db.read_candidate(exam[Entity.CANDIDATE.value])
+    candidate = db.read_candidate(exam[const.Entity.CANDIDATE])
 
     exam_rs = ExamFull(
         id=exam["id"],

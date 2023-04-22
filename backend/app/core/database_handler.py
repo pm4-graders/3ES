@@ -1,7 +1,7 @@
 from peewee import DoesNotExist
 import core.cv_result as cv_res
 from model.model import Candidate, Exam, Exercise
-from util.enum import Entity
+import util.constant as const
 
 
 def insert_or_get_candidate(candidate):
@@ -150,7 +150,7 @@ def read_exercises_by_exam(exam_id):
         except DoesNotExist:
             continue
 
-        del exercise[Entity.EXAM.value]
+        del exercise[const.Entity.EXAM]
         exercises.append(exercise)
 
     return exercises
@@ -177,7 +177,7 @@ def save_scan_db(cv_data: cv_res.CVResult):
             exam_id = db_exam.id
 
             # exercises
-            for exercise in exam[Entity.EXERCISES.value]:
+            for exercise in exam[const.Entity.EXERCISES]:
                 insert_exercise(vars(exercise), db_exam)
 
     return exam_id

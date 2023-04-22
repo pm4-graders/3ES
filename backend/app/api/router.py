@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 from .schema import BaseResponse, ExamFullResponse, ExamFullListResponse, ExamTotalScore, ExerciseScore
 import core.admin as admin
 import core.scanner as scanner
+import util.constant as const
 
 router = APIRouter(
     prefix='/api'
@@ -22,7 +23,7 @@ async def get_exam(examId: int):
     response = admin.get_exam_full(examId)
 
     if not response.success:
-        raise HTTPException(status_code=404, detail="Exam " + str(examId) + " not found.")
+        raise HTTPException(status_code=404, detail=const.Message.EXAM_NOT_FOUND.format(examId))
 
     return response
 
@@ -36,7 +37,7 @@ async def post_exam(examId: int, exam: ExamTotalScore):
     response = admin.update_exam(examId, exam)
 
     if not response.success:
-        raise HTTPException(status_code=404, detail="Exam " + str(examId) + " not found.")
+        raise HTTPException(status_code=404, detail=const.Message.EXAM_NOT_FOUND.format(examId))
 
     return response
 
@@ -50,7 +51,7 @@ async def get_exams(year: int = None, subject: str = None):
     response = admin.get_exams(year, subject)
 
     if not response.success:
-        raise HTTPException(status_code=404, detail="Exams not found.")
+        raise HTTPException(status_code=404, detail=const.Message.EXAMS_NOT_FOUND)
 
     return response
 
@@ -64,6 +65,6 @@ async def post_exercise(exercisesId: int, exercise: ExerciseScore):
     response = admin.update_exercise(exercisesId, exercise)
 
     if not response.success:
-        raise HTTPException(status_code=404, detail="Exercise " + str(exercisesId) + " not found.")
+        raise HTTPException(status_code=404, detail=const.Message.EXERCISE_NOT_FOUND.format(exercisesId))
 
     return response
