@@ -18,36 +18,44 @@ class Exam(BaseModel):
     id: int
     year: int
     subject: str
-    total_score: float
+    score: float
+    confidence: float
 
 
 class Exercise(BaseModel):
     id: int
     number: str
     score: float
-    accuracy: float
+    confidence: float
 
 
 class ExamFull(BaseModel):
     id: int
     year: int
     subject: str
-    total_score: float
+    score: float
+    confidence: float
     candidate: Candidate
     exercises: list[Exercise]
+
+
+class ExamFullListResponse(BaseResponse, BaseModel):
+    exams: list[ExamFull]
 
 
 class ExamFullResponse(BaseResponse, BaseModel):
     exam: Optional[ExamFull] = None
 
 
-class ExamListResponse(BaseResponse, BaseModel):
-    exams: list[Exam]
+class LogicalExam(BaseModel):
+    year: int
+    subject: str
 
 
-class ExamTotalScore(BaseModel):
-    total_score: float
+class LogicalExamListResponse(BaseResponse, BaseModel):
+    logical_exams: list[LogicalExam]
 
 
-class ExerciseScore(BaseModel):
+class Score(BaseModel):
     score: float
+

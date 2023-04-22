@@ -19,7 +19,8 @@ class Exam(Model):
     id = AutoField()
     year = IntegerField()
     subject = CharField(max_length=100)
-    total_score = FloatField()
+    score = FloatField()
+    confidence = FloatField()
     candidate = ForeignKeyField(Candidate, backref='exams')
 
     class Meta:
@@ -30,7 +31,7 @@ class Exercise(Model):
     id = AutoField()
     number = CharField(max_length=10)
     score = FloatField()
-    accuracy = FloatField()
+    confidence = FloatField()
     exam = ForeignKeyField(Exam, backref='exercises')
 
     class Meta:
