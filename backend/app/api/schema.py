@@ -41,8 +41,8 @@ class ExamFullResponse(BaseResponse, BaseModel):
     exam: Optional[ExamFull] = None
 
 
-class ExamListResponse(BaseResponse, BaseModel):
-    exams: list[Exam]
+class ExamFullListResponse(BaseResponse, BaseModel):
+    exams: list[ExamFull]
 
 
 class ExamTotalScore(BaseModel):

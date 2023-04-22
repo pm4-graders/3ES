@@ -1,10 +1,38 @@
-from api.schema import BaseResponse, Candidate, Exam, ExamFull, ExamFullResponse, ExamListResponse, Exercise
+from api.schema import BaseResponse, Candidate, Exam, ExamFull, ExamFullResponse, ExamFullListResponse, Exercise
 import core.database_handler as db
 from util.enum import Entity
 
 # CONSTANTS
 ACCURACY_MAX = 1
 DATE_OF_BIRTH_PATTERN = "%d.%m.%Y"
+
+
+def build_exam_full(exam):
+    """
+    Build exam with all its relationships
+    """
+
+    # candidate
+    candidate = db.read_candidate(exam[Entity.CANDIDATE.value])
+
+    exam_rs = ExamFull(
+        id=exam["id"],
+        year=exam["year"],
+        subject=exam["subject"],
+        total_score=exam["total_score"],
+        candidate=Candidate(
+            id=candidate["id"],
+            number=candidate["number"],
+            date_of_birth=candidate["date_of_birth"]
+        ),
+        exercises=[]
+    )
+
+    # exercises
+    for exercise in db.read_exercises_by_exam(exam["id"]):
+        exam_rs.exercises.append(exercise)
+
+    return exam_rs
 
 
 def get_exam_full(exam_id):
@@ -19,26 +47,7 @@ def get_exam_full(exam_id):
     exam = db.read_exam(exam_id)
 
     if exam is not None:
-
-        # candidate
-        candidate = db.read_candidate(exam[Entity.CANDIDATE.value])
-
-        exam_rs = ExamFull(
-            id=exam["id"],
-            year=exam["year"],
-            subject=exam["subject"],
-            total_score=exam["total_score"],
-            candidate=Candidate(
-                id=candidate["id"],
-                number=candidate["number"],
-                date_of_birth=candidate["date_of_birth"]
-            ),
-            exercises=[]
-        )
-
-        # exercises
-        for exercise in db.read_exercises_by_exam(exam_id):
-            exam_rs.exercises.append(exercise)
+        exam_rs = build_exam_full(exam)
 
     # response
     if exam_rs:
@@ -55,14 +64,9 @@ def get_exams(year, subject):
     exams_rs = []
 
     for exam in db.read_exams(year, subject):
-        exams_rs.append(Exam(
-            id=exam["id"],
-            year=exam["year"],
-            subject=exam["subject"],
-            total_score=exam["total_score"]
-        ))
+        exams_rs.append(build_exam_full(exam))
 
-    return ExamListResponse(
+    return ExamFullListResponse(
         success=True if exams_rs else False,
         exams=exams_rs
     )

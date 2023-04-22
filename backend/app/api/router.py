@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from .schema import BaseResponse, ExamFullResponse, ExamListResponse, ExamTotalScore, ExerciseScore
+from .schema import BaseResponse, ExamFullResponse, ExamFullListResponse, ExamTotalScore, ExerciseScore
 import core.admin as admin
 import core.scanner as scanner
 
@@ -41,7 +41,7 @@ async def post_exam(examId: int, exam: ExamTotalScore):
     return response
 
 
-@router.get("/exams", response_model=ExamListResponse, response_model_exclude_none=True)
+@router.get("/exams", response_model=ExamFullListResponse, response_model_exclude_none=True)
 async def get_exams(year: int = None, subject: str = None):
     """
     Get (search) exams for given parameters.
