@@ -23,8 +23,9 @@ class Message:
     CV_EXCEPTION = "Computer Vision: {0}"
     EXAM_EXISTS = "Exam already exists."
     EXAM_NOT_FOUND = "Exam {0} not found."
-    EXAMS_NOT_FOUND = "Exams not found."
+    EXAMS_NOT_FOUND = "No exams found."
     EXERCISE_NOT_FOUND = "Exercise {0} not found."
+    LOG_EXAMS_NOT_FOUND = "No logical exams found."
 
 
 class Validation:

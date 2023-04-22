@@ -4,27 +4,6 @@ from model.model import Candidate, Exam, Exercise
 import util.constant as const
 
 
-def insert_or_get_candidate(candidate):
-    """
-    DB insert or get @Candidate
-    """
-
-    # check existence using get_or_none
-    db_candidate = Candidate.get_or_none(
-        number=candidate[Candidate.number.name],
-        date_of_birth=candidate[Candidate.date_of_birth.name]
-    )
-
-    if db_candidate is None:
-        # insert
-        db_candidate = Candidate.create(
-            number=candidate[Candidate.number.name],
-            date_of_birth=candidate[Candidate.date_of_birth.name]
-        )
-
-    return db_candidate
-
-
 def insert_exam(exam, db_candidate):
     """
     DB insert @Exam
@@ -81,6 +60,27 @@ def insert_exercise(exercise, db_exam):
         db_exercise = None
 
     return db_exercise
+
+
+def insert_or_get_candidate(candidate):
+    """
+    DB insert or get @Candidate
+    """
+
+    # check existence using get_or_none
+    db_candidate = Candidate.get_or_none(
+        number=candidate[Candidate.number.name],
+        date_of_birth=candidate[Candidate.date_of_birth.name]
+    )
+
+    if db_candidate is None:
+        # insert
+        db_candidate = Candidate.create(
+            number=candidate[Candidate.number.name],
+            date_of_birth=candidate[Candidate.date_of_birth.name]
+        )
+
+    return db_candidate
 
 
 def read_candidate(candidate_id):
@@ -156,6 +156,27 @@ def read_exercises_by_exam(exam_id):
         exercises.append(exercise)
 
     return exercises
+
+
+def read_logical_exams(year, subject):
+    """
+    Get (search) logical exams for given parameters.
+    """
+
+    logical_exams = []
+
+    query_exam = Exam.select(Exam.year, Exam.subject).distinct()
+
+    if year is not None:
+        query_exam = query_exam.where(Exam.year == year)
+
+    if subject is not None:
+        query_exam = query_exam.where(Exam.subject == subject)
+
+    for logical_exam in query_exam.iterator():
+        logical_exams.append(logical_exam)
+
+    return logical_exams
 
 
 def save_scan_db(cv_data: cv_res.CVResult):

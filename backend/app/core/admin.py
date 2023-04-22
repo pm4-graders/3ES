@@ -1,4 +1,4 @@
-from api.schema import BaseResponse, Candidate, Exam, ExamFull, ExamFullResponse, ExamFullListResponse, Exercise
+from api.schema import BaseResponse, Candidate, Exam, ExamFull, ExamFullResponse, ExamFullListResponse, Exercise, LogicalExam, LogicalExamListResponse
 import core.database_handler as db
 import model.model as model
 import util.constant as const
@@ -68,6 +68,25 @@ def get_exams(year, subject):
     return ExamFullListResponse(
         success=True if exams_rs else False,
         exams=exams_rs
+    )
+
+
+def get_logical_exams(year, subject):
+    """
+    Get (search) logical exams for given parameters.
+    """
+
+    logical_exams_rs = []
+
+    for logical_exam in db.read_logical_exams(year, subject):
+        logical_exams_rs.append(LogicalExam(
+            year=logical_exam.year,
+            subject=logical_exam.subject
+        ))
+
+    return LogicalExamListResponse(
+        success=True if logical_exams_rs else False,
+        logical_exams=logical_exams_rs
     )
 
 

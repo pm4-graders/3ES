@@ -47,5 +47,15 @@ class ExamFullResponse(BaseResponse, BaseModel):
     exam: Optional[ExamFull] = None
 
 
+class LogicalExam(BaseModel):
+    year: int
+    subject: str
+
+
+class LogicalExamListResponse(BaseResponse, BaseModel):
+    logical_exams: list[LogicalExam]
+
+
 class Score(BaseModel):
     score: float
+
