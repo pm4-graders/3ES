@@ -19,10 +19,14 @@ def build_exam_full(exam):
         subject=exam[model.Exam.subject.name],
         score=exam[model.Exam.score.name],
         confidence=exam[model.Exam.confidence.name],
+        created_at=exam[model.Exam.created_at.name],
+        updated_at=exam[model.Exam.updated_at.name],
         candidate=Candidate(
             id=candidate[model.Candidate.id.name],
             number=candidate[model.Candidate.number.name],
-            date_of_birth=candidate[model.Candidate.date_of_birth.name]
+            date_of_birth=candidate[model.Candidate.date_of_birth.name],
+            created_at=candidate[model.Candidate.created_at.name],
+            updated_at=candidate[model.Candidate.updated_at.name]
         ),
         exercises=[]
     )

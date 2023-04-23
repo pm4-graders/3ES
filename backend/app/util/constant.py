@@ -2,6 +2,10 @@ class ModelField:
     ID = "id"
 
 
+class Data:
+    TIMESTAMP_PATTERN = "%Y-%m-%d %H:%M:%S"
+
+
 class Entity:
     EXAMS = "exams"
     EXERCISES = "exercises"
