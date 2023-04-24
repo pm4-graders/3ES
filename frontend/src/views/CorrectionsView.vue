@@ -9,55 +9,48 @@ const examStore = useExamStore()
 
 const showScan = ref(null)
 
-onMounted(examStore.loadList)
+onMounted(examStore.loadLogicalExamList)
 </script>
 <template>
   <div>
-    <div class="mb-3">
-      <label class="form-label">Prüfung auswählen</label>
-      <select class="form-select" v-model="examStore.selectedExam">
-        <option>Mathe 2023</option>
-        <option>Französisch 2023</option>
-      </select>
-    </div>
+    <Loading :loading="examStore.logicalExamList.comp('Loading')">
+      <div v-if="examStore.logicalExamList.comp('Loaded')" class="mb-3">
+        <label class="form-label">Prüfung auswählen</label>
+        <select class="form-select" v-model="examStore.selectedLogicalExam">
+          <option :value="null">-- Bitte auswählen --</option>
+          <option v-for="logicalExam of examStore.logicalExamList.entries" :value="logicalExam">
+            {{ logicalExam.subject }} {{ logicalExam.year }}
+          </option>
+        </select>
+      </div>
+    </Loading>
 
     <Loading :loading="examStore.list.comp('Loading')">
-      <div if="examStore.list.comp('Loaded')">
+      <div v-if="examStore.list.comp('Loaded')">
         <table class="table table-row correction-table">
           <thead>
             <tr>
               <th>Kand. Nr.</th>
               <th>Geb. Dat.</th>
-              <th>A1</th>
-              <th>A2</th>
-              <th>A3</th>
-              <th>A4</th>
+              <th v-for="exercise of examStore.list.entries[0].exercises">{{exercise.number}}</th>
               <th>Total</th>
               <th>...</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(exam, examIndex) of examStore.list.entries" :class="{ 'invalid': examIndex === 1 }">
+            <tr v-for="exam of examStore.list.entries" :class="{ 'invalid': exam.score !== examStore.calculateExamScore(exam) }">
               <td>
-                1
+                {{examStore.calculateExamScore(exam)}}
+                {{ exam.candidate.number }}
               </td>
               <td>
-                29.01.1997
+                {{ $filters.formatDate(exam.candidate.date_of_birth) }}
+              </td>
+              <td v-for="exercise of exam.exercises">
+                <CorrectionInput :value="exercise.score" :confidence="exercise.confidence" @change="examStore.updateExerciseScore(exercise.id, $event)" />
               </td>
               <td>
-                <CorrectionInput :value="5" :accuracy="0.8" />
-              </td>
-              <td>
-                <CorrectionInput :value="5" :accuracy="0.4" />
-              </td>
-              <td>
-                <CorrectionInput :value="8" :accuracy="0.2" />
-              </td>
-              <td>
-                <CorrectionInput :value="5" :accuracy="0.2" />
-              </td>
-              <td>
-                20
+                <CorrectionInput :value="exam.score" :confidence="exam.confidence" @change="examStore.updateExamScore(exam.id, $event)" />
               </td>
               <td>
                 <button class="btn btn-secondary" @click="showScan = true">scan</button>
@@ -69,7 +62,7 @@ onMounted(examStore.loadList)
       <div v-if="examStore.list.comp('Failed')">
         <div class="alert alert-danger">{{ examStore.list.request }}</div>
       </div>
-      <div class="p-3 text-center">
+      <div v-if="examStore.selectedLogicalExam" class="p-3 text-center">
         <button class="btn btn-primary btn-lg">
           <i class="fa-solid fa-file-excel"></i>
           Excel herunterladen

@@ -1,32 +1,36 @@
 <script setup>
-import { defineProps, computed } from "vue"
+import { defineProps, computed, defineEmits } from "vue"
 
 const props = defineProps({
   value: {
     type: Number,
     required: false
   },
-  accuracy: {
+  confidence: {
     type: Number,
     required: false
   },
 })
 
+const emit = defineEmits(['change'])
+
 const badgeStyle = computed(() => {
-  let r = 255 * (1 - props.accuracy);
-  let g = 255 * props.accuracy;
+  let r = 255 * (1 - props.confidence);
+  let g = 255 * props.confidence;
   let b = 0;
   return {
     backgroundColor: `rgb(${r}, ${g}, ${b})`
   }
 })
 
-
+const change = (e) => {
+  emit('change', e.target.value)
+}
 </script>
 
 <template>
   <div class="correction-input">
-    <input class="form-control" :value="props.value">
-    <div class="accuracy-badge" :style="badgeStyle" v-if="props.accuracy">Accuracy: {{ props.accuracy }}</div>
+    <input class="form-control" type="number" :value="props.value" @change="change">
+    <div class="confidence-badge" :style="badgeStyle" v-if="props.confidence">confidence: {{ props.confidence }}</div>
   </div>
 </template>

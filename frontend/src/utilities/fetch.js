@@ -59,7 +59,10 @@ Request.prototype.comp = function (...comp) {
 }
 
 // An asynchronous function for making a GET request to the API
-const get = async (route, request = { value: Request.Nil }, options = {}) => {
+const get = async (route, request = null, options = {}, entriesKey = 'entries') => {
+  if(!request) {
+    request = { value: Request.Nil }
+  }
   request.value = Request.Fetching
 
   options.method = 'GET'
@@ -68,7 +71,7 @@ const get = async (route, request = { value: Request.Nil }, options = {}) => {
     let data = await res.json()
     if (data.success) {
 
-      request.value = Request.SuccessOf({ data: data.exams })
+      request.value = Request.SuccessOf({ data: data[entriesKey] })
       return request.value
     }
     request.value = Request.FailedOf({errorMsg: "API Fehler"});
@@ -81,12 +84,15 @@ const get = async (route, request = { value: Request.Nil }, options = {}) => {
 // An asynchronous function for making a POST request to the API
 const post = async (route, request = { value: Request.Nil }, options = {}) => {
   options.method = 'POST'
-  //options.body = JSON.stringify(data)
-  let formdata = new FormData()
-  for (let key in request.value.params) {
-    formdata.append(key, request.value.params[key])
+  options.body = JSON.stringify(request.value.params)
+  options.headers = {
+    "Content-Type": "application/json",
   }
-  options.body = formdata
+  // let formdata = new FormData()
+  // for (let key in request.value.params) {
+  //   formdata.append(key, request.value.params[key])
+  // }
+  // options.body = formdata
   request.value = Request.Fetching
   try {
     let res = await fetch(`${appUrl}${route}`, options)
