@@ -14,7 +14,6 @@ import './assets/main.scss'
 //   makeServer()
 // }
 
-
 const app = createApp(App)
 
 app.config.globalProperties.$filters = filters

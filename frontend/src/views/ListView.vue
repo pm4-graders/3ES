@@ -10,7 +10,7 @@ onMounted(examStore.loadList)
   <div>
     <Loading :loading="examStore.list.comp('Loading')">
       <div if="examStore.list.comp('Loaded')">
-        {{examStore.list.entries}}
+        {{ examStore.list.entries }}
         <ul class="list-group list-group-stripe">
           <li
             v-for="(entry, index) in examStore.list.entries"

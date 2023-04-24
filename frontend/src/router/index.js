@@ -31,7 +31,7 @@ const router = createRouter({
       path: '/corrections',
       name: 'Korrigieren',
       component: CorrectionsView
-    },
+    }
   ]
 })
 

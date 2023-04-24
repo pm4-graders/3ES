@@ -1,7 +1,6 @@
 @import './variables';
 @import 'bootstrap/scss/bootstrap';
 
-
 .video-container {
   position: relative;
   display: flex;
@@ -148,7 +147,7 @@
 
   .confidence-badge {
     position: absolute;
-    font-size: .5rem;
+    font-size: 0.5rem;
     top: -10px;
     right: 0;
     padding: 2px 4px;
@@ -161,7 +160,7 @@
 .correction-table {
   tr.invalid {
     td {
-      background: transparentize($danger, .5);
+      background: transparentize($danger, 0.5);
     }
   }
 }

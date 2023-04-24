@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, computed, defineEmits } from "vue"
+import { defineProps, computed, defineEmits } from 'vue'
 
 const props = defineProps({
   value: {
@@ -9,15 +9,15 @@ const props = defineProps({
   confidence: {
     type: Number,
     required: false
-  },
+  }
 })
 
 const emit = defineEmits(['change'])
 
 const badgeStyle = computed(() => {
-  let r = 255 * (1 - props.confidence);
-  let g = 255 * props.confidence;
-  let b = 0;
+  let r = 255 * (1 - props.confidence)
+  let g = 255 * props.confidence
+  let b = 0
   return {
     backgroundColor: `rgb(${r}, ${g}, ${b})`
   }
@@ -30,7 +30,9 @@ const change = (e) => {
 
 <template>
   <div class="correction-input">
-    <input class="form-control" type="number" :value="props.value" @change="change">
-    <div class="confidence-badge" :style="badgeStyle" v-if="props.confidence">confidence: {{ props.confidence }}</div>
+    <input class="form-control" type="number" :value="props.value" @change="change" />
+    <div class="confidence-badge" :style="badgeStyle" v-if="props.confidence">
+      confidence: {{ props.confidence }}
+    </div>
   </div>
 </template>

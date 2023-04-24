@@ -27,16 +27,16 @@ export const useExamStore = defineStore('exam', () => {
 
   const updateExerciseScore = async (exerciseId, score) => {
     let request = {
-      value: Request.PreparedOf({ params: {score} })
-    } 
-    let res = await post(`/exercises/${exerciseId}`, request)
+      value: Request.PreparedOf({ params: { score } })
+    }
+    await post(`/exercises/${exerciseId}`, request)
     loadList()
   }
   const updateExamScore = async (examId, score) => {
     let request = {
-      value: Request.PreparedOf({ params: {score} })
-    } 
-    let res = await post(`/exams/${examId}`, request)
+      value: Request.PreparedOf({ params: { score } })
+    }
+    await post(`/exams/${examId}`, request)
     loadList()
   }
 
@@ -56,6 +56,6 @@ export const useExamStore = defineStore('exam', () => {
     selectedLogicalExam,
     updateExerciseScore,
     updateExamScore,
-    calculateExamScore,
+    calculateExamScore
   }
 })
