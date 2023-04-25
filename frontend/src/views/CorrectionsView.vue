@@ -51,6 +51,8 @@ onMounted(examStore.loadLogicalExamList)
               <td>
                 {{ examStore.calculateExamScore(exam) }}
                 {{ exam.candidate.number }}
+                <br>
+                <small>Scan-Datum: {{$filters.formatDatetime(exam.created_at)}}</small>
               </td>
               <td>
                 {{ $filters.formatDate(exam.candidate.date_of_birth) }}
