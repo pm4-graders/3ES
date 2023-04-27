@@ -49,7 +49,6 @@ onMounted(examStore.loadLogicalExamList)
               :key="exam.id"
             >
               <td>
-                {{ examStore.calculateExamScore(exam) }}
                 {{ exam.candidate.number }}
                 <br>
                 <small>Scan-Datum: {{$filters.formatDatetime(exam.created_at)}}</small>

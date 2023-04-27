@@ -17,8 +17,8 @@ const navList = ref([
     path: '/scanner'
   },
   {
-    title: 'Settings',
-    path: '/settings'
+    title: 'Korrekturen',
+    path: '/corrections'
   }
 ])
 </script>

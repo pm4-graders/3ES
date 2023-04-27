@@ -13,8 +13,13 @@ export const useExamStore = defineStore('exam', () => {
   const loadList = async () => {
     list.value = Webresource.Loading
 
+    let reqUrl = '/exams'
+    if(selectedLogicalExam.value) {
+
     let { year, subject } = selectedLogicalExam.value
-    let request = await get(`/exams?year=${year}&subject=${subject}`, null, {}, 'exams')
+      reqUrl += `?year=${year}&subject=${subject}`
+    }
+    let request = await get(reqUrl, null, {}, 'exams')
 
     list.value = requestToWebresource(request, list.value)
   }
