@@ -17,14 +17,14 @@ const navList = ref([
     path: '/scanner'
   },
   {
-    title: 'Settings',
-    path: '/settings'
+    title: 'Korrekturen',
+    path: '/corrections'
   }
 ])
 </script>
 
 <template>
-  <div class="container">
+  <div class="container-fluid" style="padding-bottom: 5rem">
     <Header title="3ES" :logo="logo" :page="currentRoute" />
     <RouterView></RouterView>
   </div>

@@ -19,7 +19,7 @@ export const useCameraStore = defineStore('camera', () => {
   })
 
   async function uploadResult() {
-    currentRequest.value = await post('/upload', currentRequest)
+    currentRequest.value = await post('/scan/save', currentRequest)
 
     if (currentRequest.value.comp('Success')) {
       setTimeout(clearCurrentRequest, 2000)
