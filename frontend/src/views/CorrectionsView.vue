@@ -72,6 +72,8 @@ onMounted(examStore.loadLogicalExamList)
               </td>
               <td>
                 <button class="btn btn-secondary" @click="showScan = true">scan</button>
+
+                <button class="btn btn-secondary" @click="deleteEntry= true">delete</button>
               </td>
             </tr>
           </tbody>
@@ -89,6 +91,9 @@ onMounted(examStore.loadLogicalExamList)
     </Loading>
     <Modal :show="!!showScan" @close="showScan = false">
       <img src="https://placehold.co/400x800" />
+    </Modal>
+    <Modal :show="!!deleteEntry">
+      <!-- deleteEntry-->
     </Modal>
   </div>
 </template>
