@@ -1,3 +1,4 @@
+import asyncio
 import datetime, os, uuid
 from fastapi import UploadFile
 from api.schema import BaseResponse, ExamFullResponse
@@ -5,6 +6,10 @@ from .admin import get_exam_full
 import core.cv_result as cv_res
 import core.database_handler as db
 import util.constant as const
+import nest_asyncio
+
+nest_asyncio.apply()
+
 
 IMAGEDIR = "images/"
 
@@ -16,7 +21,9 @@ def save_scan(file: UploadFile):
     """
 
     # save image to file system
-    create_upload_file(file)
+    loop = asyncio.get_event_loop()
+    coroutine = create_upload_file_async(file)
+    loop.run_until_complete(coroutine)
 
     # call computer vision
     try:
@@ -101,25 +108,24 @@ def get_dummy_cv_result():
     return cv_res.CVResult(candidate, exam)
 
 
-def create_directories(exists, path):
+async def save_file_async(file: UploadFile, year: int, filename: str):
     """
-    Create directory if not existing
+    Asynchronously save file into directory
     """
 
-    if not exists:
-        if not os.path.exists(IMAGEDIR):
-            os.mkdir(IMAGEDIR)
-        os.mkdir(path)
+    path = f"{IMAGEDIR}{year}/{filename}"
+    with open(path, "wb") as buffer:
+        buffer.write(await file.read())
 
 
-def create_upload_file(file: UploadFile):
+
+async def create_upload_file_async(file: UploadFile):
     """
-    Save file into directory
+    Creates folder and calls function to save the picture asynchronously
     """
 
     try:
         file.filename = f"{uuid.uuid4()}.jpg"
-        contents = file.read()
 
         # Get the current year
         today = datetime.date.today()
@@ -128,20 +134,14 @@ def create_upload_file(file: UploadFile):
         exists = os.path.exists(path)
 
         # Create the directories if they do not exist
-        create_directories(exists, path)
+        if not exists:
+            if not os.path.exists(IMAGEDIR):
+                os.mkdir(IMAGEDIR)
+            os.mkdir(path)
 
-        # Save the file
-        save_file(contents, year, file.filename)
+        # Save the file asynchronously
+        await save_file_async(file, year, file.filename)
 
         return {"filename": file.filename}
     except Exception as exc:
         return {"error": "An error occurred while processing the uploaded file"}
-
-
-def save_file(contents, year, filename):
-    """
-    Write file
-    """
-
-    with open(f"{IMAGEDIR}/{year}/{filename}", "wb") as f:
-        f.write(contents)
