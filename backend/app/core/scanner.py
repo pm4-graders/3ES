@@ -1,17 +1,29 @@
+import asyncio
+import datetime, os, uuid
+from fastapi import UploadFile
 from api.schema import BaseResponse, ExamFullResponse
 from .admin import get_exam_full
 import core.cv_result as cv_res
 import core.database_handler as db
 import util.constant as const
+import nest_asyncio
+
+nest_asyncio.apply()
 
 
-def save_scan():
+IMAGEDIR = "images/"
+
+
+def save_scan(file: UploadFile):
     """
     Save a scan by storing the file into the file storage, request extraction with cv module,
     validate and save the data into the db.
     """
 
     # save image to file system
+    loop = asyncio.get_event_loop()
+    coroutine = create_upload_file_async(file)
+    loop.run_until_complete(coroutine)
 
     # call computer vision
     try:
@@ -41,14 +53,14 @@ def save_scan():
     return response
 
 
-def save_scan_wrapper():
+def save_scan_wrapper(file: UploadFile):
     """
     Wrapper of save_scan
     """
 
     try:
 
-        response = save_scan()
+        response = save_scan(file)
 
     except Exception as exc:
         response = BaseResponse(success=False, message=str(exc))
@@ -94,3 +106,42 @@ def get_dummy_cv_result():
     exam = cv_res.Exam(exam_data['year'], exam_data['subject'], exam_data['score'],  exam_data['confidence'], exercises)
 
     return cv_res.CVResult(candidate, exam)
+
+
+async def save_file_async(file: UploadFile, year: int, filename: str):
+    """
+    Asynchronously save file into directory
+    """
+
+    path = f"{IMAGEDIR}{year}/{filename}"
+    with open(path, "wb") as buffer:
+        buffer.write(await file.read())
+
+
+
+async def create_upload_file_async(file: UploadFile):
+    """
+    Creates folder and calls function to save the picture asynchronously
+    """
+
+    try:
+        file.filename = f"{uuid.uuid4()}.jpg"
+
+        # Get the current year
+        today = datetime.date.today()
+        year = today.year
+        path = f"{IMAGEDIR}{year}"
+        exists = os.path.exists(path)
+
+        # Create the directories if they do not exist
+        if not exists:
+            if not os.path.exists(IMAGEDIR):
+                os.mkdir(IMAGEDIR)
+            os.mkdir(path)
+
+        # Save the file asynchronously
+        await save_file_async(file, year, file.filename)
+
+        return {"filename": file.filename}
+    except Exception as exc:
+        return {"error": "An error occurred while processing the uploaded file"}
