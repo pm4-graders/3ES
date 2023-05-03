@@ -2,6 +2,8 @@ import asyncio
 import datetime, os, uuid
 from fastapi import UploadFile
 from api.schema import BaseResponse, ExamFullResponse
+
+from cv.app import recognizer
 from .admin import get_exam_full
 import core.cv_result as cv_res
 import core.database_handler as db
@@ -23,15 +25,16 @@ def save_scan(file: UploadFile):
     # save image to file system
     loop = asyncio.get_event_loop()
     coroutine = create_upload_file_async(file)
-    loop.run_until_complete(coroutine)
+    picture_path = loop.run_until_complete(coroutine)
 
     # call computer vision
     try:
 
         # mock-impl. to continue implementation of response handling
         # cv_rs = DigitRecognizer().recognize_digits_in_photo(photo={})
-        cv_data = get_dummy_cv_result()
-
+        #cv_data = get_dummy_cv_result()
+        image = cv2.imread(picture_path)
+        exam_object = recognizer.recognize_digits_in_photo(image)
     except Exception as exc:
         raise Exception(const.Message.CV_EXCEPTION.format(exc))
 
@@ -142,6 +145,6 @@ async def create_upload_file_async(file: UploadFile):
         # Save the file asynchronously
         await save_file_async(file, year, file.filename)
 
-        return {"filename": file.filename}
+        return path
     except Exception as exc:
         return {"error": "An error occurred while processing the uploaded file"}
