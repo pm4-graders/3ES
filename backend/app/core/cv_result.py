@@ -1,13 +1,14 @@
+class CVResult:
+    def __init__(self, candidate, exam, result_validated):
+        self.candidate = candidate
+        self.exam = exam
+        self.result_validated = result_validated
+
+
 class Candidate:
     def __init__(self, number, date_of_birth):
         self.number = number
         self.date_of_birth = date_of_birth
-
-
-class CVResult:
-    def __init__(self, candidate, exam):
-        self.candidate = candidate
-        self.exam = exam
 
 
 class Exam:
@@ -23,7 +24,8 @@ class Exam:
 
 
 class Exercise:
-    def __init__(self, number, score, confidence):
+    def __init__(self, number, score, confidence, max_score):
         self.number = number
         self.score = score
         self.confidence = confidence
+        self.max_score = max_score
