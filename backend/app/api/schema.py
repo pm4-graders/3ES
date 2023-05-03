@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from pydantic import BaseModel
 from typing import Optional
 
@@ -12,42 +12,50 @@ class Candidate(BaseModel):
     id: int
     number: str
     date_of_birth: date
+    created_at: datetime
+    updated_at: Optional[datetime] = None
 
 
 class Exam(BaseModel):
     id: int
     year: int
     subject: str
-    total_score: float
+    score: float
+    confidence: float
+    created_at: datetime
+    updated_at: Optional[datetime] = None
 
 
 class Exercise(BaseModel):
     id: int
     number: str
     score: float
-    accuracy: float
+    confidence: float
+    created_at: datetime
+    updated_at: Optional[datetime] = None
 
 
-class ExamFull(BaseModel):
-    id: int
-    year: int
-    subject: str
-    total_score: float
+class ExamFull(Exam):
     candidate: Candidate
     exercises: list[Exercise]
 
 
-class ExamFullResponse(BaseResponse, BaseModel):
+class ExamFullListResponse(BaseResponse):
+    exams: list[ExamFull]
+
+
+class ExamFullResponse(BaseResponse):
     exam: Optional[ExamFull] = None
 
 
-class ExamListResponse(BaseResponse, BaseModel):
-    exams: list[Exam]
+class LogicalExam(BaseModel):
+    year: int
+    subject: str
 
 
-class ExamTotalScore(BaseModel):
-    total_score: float
+class LogicalExamListResponse(BaseResponse):
+    logical_exams: list[LogicalExam]
 
 
-class ExerciseScore(BaseModel):
+class Score(BaseModel):
     score: float

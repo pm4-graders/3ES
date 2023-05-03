@@ -1,17 +1,29 @@
+import asyncio
+import datetime, os, uuid
+from fastapi import UploadFile
 from api.schema import BaseResponse, ExamFullResponse
 from .admin import get_exam_full
 import core.cv_result as cv_res
 import core.database_handler as db
-from util.serializer import deserialize, serialize
+import util.constant as const
+import nest_asyncio
+
+nest_asyncio.apply()
 
 
-def save_scan():
+IMAGEDIR = "images/"
+
+
+def save_scan(file: UploadFile):
     """
     Save a scan by storing the file into the file storage, request extraction with cv module,
     validate and save the data into the db.
     """
 
     # save image to file system
+    loop = asyncio.get_event_loop()
+    coroutine = create_upload_file_async(file)
+    loop.run_until_complete(coroutine)
 
     # call computer vision
     try:
@@ -21,7 +33,7 @@ def save_scan():
         cv_data = get_dummy_cv_result()
 
     except Exception as exc:
-        raise Exception(f"Computer Vision: {exc}")
+        raise Exception(const.Message.CV_EXCEPTION.format(exc))
 
     # validation
     message = validate_cv_result(cv_data)
@@ -30,7 +42,7 @@ def save_scan():
     exam_id = db.save_scan_db(cv_data)
 
     if not exam_id:
-        raise Exception("Exam already exists")
+        raise Exception(const.Message.EXAM_EXISTS)
 
     # get exam data
     response = get_exam_full(exam_id)
@@ -41,14 +53,14 @@ def save_scan():
     return response
 
 
-def save_scan_wrapper():
+def save_scan_wrapper(file: UploadFile):
     """
     Wrapper of save_scan
     """
 
     try:
 
-        response = save_scan()
+        response = save_scan(file)
 
     except Exception as exc:
         response = BaseResponse(success=False, message=str(exc))
@@ -63,8 +75,8 @@ def validate_cv_result(cv_data):
 
     message = None
 
-    if cv_data.exam.total_score != cv_data.exam.calc_total_score():
-        message = "Warning: The total score of the exam is unequal to the sum of the scores of the associated exercises"
+    if cv_data.exam.score != cv_data.exam.calc_exercises_score():
+        message = const.Validation.W_SCORE_EQ
 
     return message
 
@@ -74,11 +86,13 @@ def get_dummy_cv_result():
     Create and return a cv result with dummy values.
     """
 
-    json_data = '{"candidate":{"number":"CHSG-23.123","date_of_birth":"2010-01-01"},"exam":{"year":2023,' \
-                '"subject":"ABC English","total_score":4,"exercises":[{"number":"1.a","score":1.75,' \
-                '"accuracy":0.88},{"number":"1.b","score":2.00,"accuracy":0.98}]}}'
+    import json
 
-    data_dict = deserialize(json_data)
+    json_data = '{"candidate":{"number":"CHSG-23.123","date_of_birth":"2010-01-01"},"exam":{"year":2023,' \
+                '"subject":"ABC English","score":4,"confidence":0.91, "exercises":[{"number":"1.a","score":1.75,' \
+                '"confidence":0.88},{"number":"1.b","score":2.00,"confidence":0.98}]}}'
+
+    data_dict = json.loads(json_data)
 
     candidate_data = data_dict['candidate']
     candidate = cv_res.Candidate(candidate_data['number'], candidate_data['date_of_birth'])
@@ -86,9 +100,48 @@ def get_dummy_cv_result():
     exam_data = data_dict['exam']
     exercises = []
     for exercise_data in exam_data['exercises']:
-        exercise = cv_res.ExamExercise(exercise_data['number'], exercise_data['score'], exercise_data['accuracy'])
+        exercise = cv_res.Exercise(exercise_data['number'], exercise_data['score'], exercise_data['confidence'])
         exercises.append(exercise)
 
-    exam = cv_res.Exam(exam_data['year'], exam_data['subject'], exam_data['total_score'], exercises)
+    exam = cv_res.Exam(exam_data['year'], exam_data['subject'], exam_data['score'],  exam_data['confidence'], exercises)
 
     return cv_res.CVResult(candidate, exam)
+
+
+async def save_file_async(file: UploadFile, year: int, filename: str):
+    """
+    Asynchronously save file into directory
+    """
+
+    path = f"{IMAGEDIR}{year}/{filename}"
+    with open(path, "wb") as buffer:
+        buffer.write(await file.read())
+
+
+
+async def create_upload_file_async(file: UploadFile):
+    """
+    Creates folder and calls function to save the picture asynchronously
+    """
+
+    try:
+        file.filename = f"{uuid.uuid4()}.jpg"
+
+        # Get the current year
+        today = datetime.date.today()
+        year = today.year
+        path = f"{IMAGEDIR}{year}"
+        exists = os.path.exists(path)
+
+        # Create the directories if they do not exist
+        if not exists:
+            if not os.path.exists(IMAGEDIR):
+                os.mkdir(IMAGEDIR)
+            os.mkdir(path)
+
+        # Save the file asynchronously
+        await save_file_async(file, year, file.filename)
+
+        return {"filename": file.filename}
+    except Exception as exc:
+        return {"error": "An error occurred while processing the uploaded file"}

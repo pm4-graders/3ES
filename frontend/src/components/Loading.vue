@@ -37,7 +37,7 @@ const props = defineProps({
 
 <style lang="scss" scoped>
 .loading-block {
-  position: relativ;
+  position: relative;
 }
 
 .spinner-wrapper,
