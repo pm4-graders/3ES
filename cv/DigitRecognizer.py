@@ -93,7 +93,7 @@ class DigitRecognizer:
                 
                 pred_class_label, pred_confidence = self.predict_handwritten_cell(result_cell, class_labels, model)
 
-                exercises.append(ExamExercise(index, pred_class_label, pred_confidence, "?"))
+                exercises.append(Exercise(index, pred_class_label, pred_confidence, "?"))
             elif(index % column_count != 0):
                 print("Last Handwritten Cell, 'Total'")
 
