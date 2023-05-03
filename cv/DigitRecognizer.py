@@ -7,9 +7,19 @@ from imutils import contours as imutils_contours
 from Models.mobilenet import MobileNet
 import Models.utils as utils
 
+import sys
+sys.path.append(sys.path[0] + '/..')
+from backend.app.core.cv_result import *
+
+
 class DigitRecognizer:
-    def __init__(self):
+    
+    global DEBUG_MODE
+    
+    def __init__(self, debug_mode=False):
         # initialize any variables
+        global DEBUG_MODE
+        DEBUG_MODE = debug_mode
         pass
     
     def recognize_digits_in_frame(self, video_stream):
@@ -19,7 +29,6 @@ class DigitRecognizer:
         Parameters:
         todo.
         """
-
         # convert the base64-encoded frame to a numpy array
         frame = cv2.imdecode(np.frombuffer(base64.b64decode(frame), dtype=np.uint8), cv2.IMREAD_COLOR)
         
@@ -32,51 +41,114 @@ class DigitRecognizer:
         Parameters:
         Photo:
         """
+        global DEBUG_MODE
         
-        self.debug_display_image('original',photo)
+        if(DEBUG_MODE):
+            self.debug_display_image('original',photo)
         
         if(True):
             segmentation = DocumentSegmentationCNN()
         else:
             segmentation = DocumentSegmentationCV()
 
-        aligned_photo = segmentation.align_document(photo)
+        #aligned_photo = segmentation.align_document(photo)
         
-        self.debug_display_image('aligned',aligned_photo)
+        #if(DEBUG_MODE):
+            #self.debug_display_image('aligned',aligned_photo)
         
-        grid_mask, grid = self.find_grid_in_image(aligned_photo)
+        grid_mask, grid = self.find_grid_in_image(photo)
 
-        self.debug_display_image("grid_only", grid)
+        if(DEBUG_MODE):
+            self.debug_display_image("grid_only", grid)
 
         grid_cells, column_count = self.get_grid_cells(grid, grid_mask)
-
-        print(len(grid_cells))
+        
+        print(f"We have {str(len(grid_cells))} grid cells total")
 
         model = MobileNet()
         model.compile()
         model.load_weights('./cv/Models/MobileNet.h5')
+        class_labels = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 
-        for index, cell in enumerate(grid_cells):
+        exercises = []
+        total_score = 0
+        total_score_confidence = 0
+        
+        #Go through the grid cells column by column
+        for index in range(int(len(grid_cells) / 3)):
             
-            if(index < column_count):
-                print("Header Cell")
-            elif (index < column_count * 2):
-                print("Total Cell")
+            header_cell = grid_cells[index]
+            points_cell = grid_cells[index + column_count]
+            result_cell = grid_cells[index + 2*column_count]
+
+            if(index % column_count == 0):
+                print("First, 'Erreichte Punkte text'")
+                #TODO: OCR over header_cell, points_cell and result_cell and check that they say the right thing.
+
+            if(index % column_count > 0 and index % column_count < column_count-1):
+                print("Handwritten Cell")
+                
+                if DEBUG_MODE:
+                    self.debug_display_image("cell", result_cell)
+                
+                pred_class_label, pred_confidence = self.predict_handwritten_cell(result_cell, class_labels, model)
+
+                exercises.append(Exercise(index, pred_class_label, pred_confidence, "?"))
+            elif(index % column_count != 0):
+                print("Last Handwritten Cell, 'Total'")
+
+                total_score, total_score_confidence = self.predict_double_number(result_cell, class_labels, model)
+
+        exam = Exam("?", "?", total_score, exercises)
+
+        cv_res = CVResult(Candidate("?", "?"), exam=exam, result_validated=False)
+
+        if(exam.total_score == exam.calc_total_score()):
+            cv_res.result_validated = True
+        return cv_res
+
+
+    def predict_double_number(self, original_cell, class_labels, model):
+        blur = cv2.GaussianBlur(original_cell, (3,3), 0)
+        _, thresh = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
+        #Find the largest contours
+        contours, _ = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        found_numbers = []
+        for contour in contours:
+            #Filter out very small contours (noise)
+            if(cv2.contourArea(contour) < 100):
+                continue
+
+            (x,y,w,h) = cv2.boundingRect(contour)
+            res = thresh[y:y+h, x:x+w]
+            totalHeight = h + 40
+            widthToAdd = int((totalHeight - w) / 2)
+            res = cv2.copyMakeBorder(res, 20, 20, widthToAdd, widthToAdd, cv2.BORDER_CONSTANT, value=(0,0,0))
+            class_label, class_confidence = self.predict_handwritten_cell(res, class_labels, model, False)
+            found_numbers.append((class_label, class_confidence))
+        
+        result = ""
+        confidence_sum = 0
+        for number, confidence in found_numbers:
+            result += str(number)
+            confidence_sum += confidence
+
+        confidence_average = confidence_sum/len(found_numbers)
+
+        return int(result), confidence_average
+
+    def predict_handwritten_cell(self, original_cell, class_labels, model, do_thresh=True):
+            if(do_thresh):
+                #Apply adaptive threshold so we have independent illumination
+                _, tcell = cv2.threshold(original_cell, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
             else:
-                print("Number Cell")
-
-            #self.debug_display_image("cell", cell)
+                tcell = original_cell
             
-            #Apply adaptive threshold so we have independent illumination
-            _, tcell = cv2.threshold(cell, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
-            
-            #tcell = cv2.cvtColor(tcell,cv2.COLOR_GRAY2BGR)
-            #self.debug_display_image("tcell", tcell)
-
             tcell = cv2.resize(tcell, (28,28))
 
-            cv2.imshow("show", tcell)
-            cv2.waitKey(0)
+            if(DEBUG_MODE):
+                cv2.imshow("show", tcell)
+                cv2.waitKey(0)
 
             tcell = np.expand_dims(tcell, axis=(0, -1))
             tcell = utils.normalize_images(tcell)
@@ -84,7 +156,6 @@ class DigitRecognizer:
             prediction = model.predict(tcell)
             print(prediction)
 
-            class_labels = ['0', '1', '2', '3','4','5','6','7','8','9']
             # Get the index of the highest probability
             predicted_class_index = np.argmax(prediction)
 
@@ -94,9 +165,7 @@ class DigitRecognizer:
             # Print the predicted class label
             print("The predicted class is:", predicted_class_label)
 
-        # TODO: return dict with boolean and numbers for found digits.
-        return aligned_photo
-
+            return int(predicted_class_label), prediction[0][predicted_class_index]
 
     def find_grid_in_image(self, image):
         #Convert image to grayscale
@@ -125,7 +194,8 @@ class DigitRecognizer:
         #The grid might be a bit warped so we want to fix this.
         out = self.fix_perspective(out, best_cnt)
 
-        self.debug_display_image("out", out)
+        if(DEBUG_MODE):
+            self.debug_display_image("Grid, perspective fixed", out)
 
         #Out is already crayscale so we don't need to convert to grey but we need to blur it
         blur = cv2.GaussianBlur(out, (5,5), 0)
@@ -138,13 +208,12 @@ class DigitRecognizer:
 
         eroded = cv2.bitwise_or(horizontal, vertical)
 
-        #self.debug_display_image("beforeblur", eroded)
+        if DEBUG_MODE:
+            self.debug_display_image("grid, before blur", eroded)
 
         #Blur the result a little bit so the lines are more prevalent
         cv2.blur(eroded, (7,7), eroded)
         _, eroded = cv2.threshold(eroded, 100, 255, cv2.THRESH_BINARY) #we can take anything that isn't really black.
-
-        #self.debug_display_image("afterblur", eroded)
 
         return eroded, out
 
@@ -172,7 +241,6 @@ class DigitRecognizer:
 
         result_cells = []
         invert = 255 - grid_mask
-        #self.debug_display_image("invert", invert)
 
         #Find contours of inverted 
         contours, _ = cv2.findContours(invert, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
