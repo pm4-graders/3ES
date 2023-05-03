@@ -99,11 +99,11 @@ class DigitRecognizer:
 
                 total_score, total_score_confidence = self.predict_double_number(result_cell, class_labels, model)
 
-        exam = Exam("?", "?", total_score, exercises)
+        exam = Exam("?", "?", total_score, total_score_confidence, exercises)
 
         cv_res = CVResult(Candidate("?", "?"), exam=exam, result_validated=False)
 
-        if(exam.total_score == exam.calc_total_score()):
+        if(exam.score == exam.calc_total_score()):
             cv_res.result_validated = True
         return cv_res
 
