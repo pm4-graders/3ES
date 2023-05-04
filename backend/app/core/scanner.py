@@ -6,7 +6,6 @@ from api.schema import BaseResponse, ExamFullResponse
 import sys
 sys.path.append(sys.path[0] + '/../../')
 sys.path.append(sys.path[0] + '/../../cv/')
-print(sys.path)
 from cv.DigitRecognizer import DigitRecognizer
 
 from .admin import get_exam_full
@@ -36,14 +35,11 @@ def save_scan(file: UploadFile):
 
     # call computer vision
     try:
-
-        # mock-impl. to continue implementation of response handling
-        # cv_rs = DigitRecognizer().recognize_digits_in_photo(photo={})
-        #cv_data = get_dummy_cv_result()
         image = cv2.imread(picture_path)
+        print("image", image)
         exam_object = recognizer.recognize_digits_in_photo(image)
-        print(exam_object)
     except Exception as exc:
+        print(exc)
         raise Exception(const.Message.CV_EXCEPTION.format(exc))
 
     # validation
