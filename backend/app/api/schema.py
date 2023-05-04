@@ -5,7 +5,7 @@ from typing import Optional
 
 class BaseResponse(BaseModel):
     success: bool
-    message: Optional[str] = None
+    message: Optional[list[str]] = None
 
 
 class Candidate(BaseModel):
