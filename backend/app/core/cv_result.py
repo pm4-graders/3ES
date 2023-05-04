@@ -12,11 +12,12 @@ class Candidate:
 
 
 class Exam:
-    def __init__(self, year, subject, score, confidence, exercises):
+    def __init__(self, year, subject, total_score, total_score_confidence, exercises):
         self.year = year
         self.subject = subject
-        self.score = score
-        self.confidence = confidence
+        self.total_score = total_score
+        #This is the confidence of the total score reached (how many points there are in the total cell)
+        self.total_score_confidence = total_score_confidence
         self.exercises = exercises
 
     def calc_exercises_score(self):

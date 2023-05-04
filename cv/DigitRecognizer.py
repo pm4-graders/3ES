@@ -103,7 +103,7 @@ class DigitRecognizer:
 
         cv_res = CVResult(Candidate("?", "?"), exam=exam, result_validated=False)
 
-        if(exam.score == exam.calc_exercises_score()):
+        if(exam.total_score == exam.calc_exercises_score()):
             cv_res.result_validated = True
         return cv_res
 

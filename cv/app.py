@@ -21,7 +21,7 @@ for index, image in enumerate(images):
         cv_result = recognizer.recognize_digits_in_photo(image)
         print("Result validated: " + str(cv_result.result_validated))
 
-        print(', '.join([str(exercise.score) for exercise in cv_result.exam.exercises]) + " | Total: " + str(cv_result.exam.score))
+        print(', '.join([str(exercise.score) for exercise in cv_result.exam.exercises]) + " | Total: " + str(cv_result.exam.total_score))
 
         print("IMAGE " + str(index+1) + " PASSED")
     except:
