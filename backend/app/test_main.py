@@ -374,6 +374,32 @@ class TestCoreDatabaseHandler(unittest.TestCase):
         self.assertFalse(db.update_exercise(ID_NOT_EXISTING, score, 1.0))
 
 
+class TestCoreScanner(unittest.TestCase):
+
+    def setUp(self):
+        pass
+
+    def test_create_upload_file_async(self):
+        # TODO
+        pass
+
+    def test_save_file_async(self):
+        # TODO
+        pass
+
+    def test_save_scan(self):
+        # TODO
+        pass
+
+    def test_save_scan_wrapper(self):
+        # TODO
+        pass
+
+    def test_validate_cv_result(self):
+        # TODO
+        pass
+
+
 class TestModelModel(unittest.TestCase):
 
     def test_get_models(self):
