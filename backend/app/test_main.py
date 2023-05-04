@@ -1,13 +1,16 @@
 import datetime
+import json
 import unittest
 from fastapi.testclient import TestClient
 from peewee import SqliteDatabase
 from main import app
 from api.schema import Score
-import core.database_handler as db
 import core.admin as admin
+import core.cv_result as cv_res
+import core.database_handler as db
+import core.scanner as scanner
 from model.model import Candidate, Exam, Exercise, get_models
-import util.dummy as dummy
+import util.constant as const
 
 ID_NOT_EXISTING = 9999
 YEAR_EXISTING = 2023
@@ -27,7 +30,8 @@ class TestApiRouter(unittest.TestCase):
         self.db.create_tables([Exam, Exercise, Candidate])
 
         self.db_candidate = Candidate.create(number='1', date_of_birth=datetime.date(2000, 1, 1))
-        self.db_exam = Exam.create(year=YEAR_EXISTING, subject=SUBJECT_EXISTING, score=90, confidence=0.8, candidate=self.db_candidate)
+        self.db_exam = Exam.create(year=YEAR_EXISTING, subject=SUBJECT_EXISTING, score=90, confidence=0.8,
+                                   candidate=self.db_candidate)
         self.db_exercise1 = Exercise.create(number='1', score=9.0, confidence=0.8, exam=self.db_exam)
         self.db_exercise2 = Exercise.create(number='2', score=8.5, confidence=0.9, exam=self.db_exam)
 
@@ -57,11 +61,13 @@ class TestApiRouter(unittest.TestCase):
         logical_exams_rs = self.client.get("/api/logical-exams")
         assert logical_exams_rs.status_code == 200
 
-        logical_exams_rs = self.client.get("/api/logical-exams?year" + str(YEAR_EXISTING) + "&subject=" + SUBJECT_EXISTING)
+        logical_exams_rs = self.client.get(
+            "/api/logical-exams?year" + str(YEAR_EXISTING) + "&subject=" + SUBJECT_EXISTING)
         assert logical_exams_rs.status_code == 200
 
         # Test retrieving a not existing exam
-        logical_exams_rs = self.client.get("/api/logical-exams?year" + str(YEAR_NOT_EXISTING) + "&subject=" + SUBJECT_NOT_EXISTING)
+        logical_exams_rs = self.client.get(
+            "/api/logical-exams?year" + str(YEAR_NOT_EXISTING) + "&subject=" + SUBJECT_NOT_EXISTING)
         assert logical_exams_rs.status_code == 404
 
     def test_post_exam(self):
@@ -89,6 +95,7 @@ class TestApiRouter(unittest.TestCase):
     def test_router_scanner_save(self):
         file = {"file": ("dummy file content", "dummy_file.jpg")}
 
+        # Test sending a scan that will always return a 200, even if failed
         response = self.client.post("/api/scan/save", files=file)
         assert response.status_code == 200
 
@@ -102,7 +109,8 @@ class TestCoreAdmin(unittest.TestCase):
         self.db.create_tables([Exam, Exercise, Candidate])
 
         self.db_candidate = Candidate.create(number='1', date_of_birth=datetime.date(2000, 1, 1))
-        self.db_exam = Exam.create(year=YEAR_EXISTING, subject=SUBJECT_EXISTING, score=90, confidence=0.8, candidate=self.db_candidate)
+        self.db_exam = Exam.create(year=YEAR_EXISTING, subject=SUBJECT_EXISTING, score=90, confidence=0.8,
+                                   candidate=self.db_candidate)
         self.db_exercise1 = Exercise.create(number='1', score=9.0, confidence=0.8, exam=self.db_exam)
         self.db_exercise2 = Exercise.create(number='2', score=8.5, confidence=0.9, exam=self.db_exam)
 
@@ -194,7 +202,8 @@ class TestCoreDatabaseHandler(unittest.TestCase):
         self.db.create_tables([Exam, Exercise, Candidate])
 
         self.db_candidate = Candidate.create(number='1', date_of_birth=datetime.date(2000, 1, 1))
-        self.db_exam = Exam.create(year=YEAR_EXISTING, subject=SUBJECT_EXISTING, score=90, confidence=0.8, candidate=self.db_candidate)
+        self.db_exam = Exam.create(year=YEAR_EXISTING, subject=SUBJECT_EXISTING, score=90, confidence=0.8,
+                                   candidate=self.db_candidate)
         self.db_exercise1 = Exercise.create(number='1', score=9.0, confidence=0.8, exam=self.db_exam)
         self.db_exercise2 = Exercise.create(number='2', score=8.5, confidence=0.9, exam=self.db_exam)
         self.db_exam_empty = Exam.create(year=YEAR_EXISTING, subject=SUBJECT_EXISTING, score=90,
@@ -337,7 +346,7 @@ class TestCoreDatabaseHandler(unittest.TestCase):
         self.assertFalse(logical_exams)
 
     def test_save_scan_db(self):
-        cv_data = dummy.get_dummy_cv_result()
+        cv_data = get_dummy_cv_result()
         exam_count = len(db.read_exams(year=None, subject=None))
 
         # Test inserting a new scan by comparing exam
@@ -381,26 +390,104 @@ class TestCoreScanner(unittest.TestCase):
 
     def test_create_upload_file_async(self):
         # TODO
+        # Test save file with success including the creation of a new path
+
+        # Test save scan with exception
+
+        self.assertFalse(True)  # REMOVE AFTER IMPLEMENTATION
         pass
 
     def test_save_file_async(self):
         # TODO
+        # Test save file with success
+
+        # Test save scan with failure
+
+        self.assertFalse(True)  # REMOVE AFTER IMPLEMENTATION
         pass
 
     def test_save_scan(self):
         # TODO
+        # Test save scan with success
+        ## REMOVE AFTER IMPLEMENTATION: send file and check for assertTrue(success)
+
+        # Test save scan with exception (already exists)
+        ## REMOVE AFTER IMPLEMENTATION: resend same and check for assertFalse(success) and assertTrue(message) means not empty
+
+        self.assertFalse(True)  # REMOVE AFTER IMPLEMENTATION
         pass
 
     def test_save_scan_wrapper(self):
         # TODO
+        # Test save scan with success
+        ## REMOVE AFTER IMPLEMENTATION: send file and check for assertTrue(success)
+
+        # Test save scan with exception (already exists)
+        ## REMOVE AFTER IMPLEMENTATION: resend same and check for assertFalse(success) and assertTrue(message) means not empty
+
+        self.assertFalse(True)  # REMOVE AFTER IMPLEMENTATION
         pass
 
     def test_validate_cv_result(self):
-        # TODO
-        pass
+        cv_data = get_dummy_cv_result()
+
+        # Test validation with success
+        message = scanner.validate_cv_result(cv_data)
+        self.assertFalse(message)
+
+        # Test validation with only case 1
+        cv_data.exam.score = 5.00
+        message = scanner.validate_cv_result(cv_data)
+        self.assertTrue(message)
+        self.assertEqual(len(message), 1)
+        self.assertEqual(message[0], const.Validation.W_EXA_SCORE_EQ)
+
+        # Test validation with only case 2
+        cv_data.exam.exercises[0].score = 3.75
+        message = scanner.validate_cv_result(cv_data)
+        self.assertTrue(message)
+        self.assertEqual(len(message), 1)
+        self.assertEqual(message[0], const.Validation.W_EXE_SCORE_EQ.format("1.a"))
+
+        # Test validation with all cases
+        cv_data.exam.score = 5.00
+        cv_data.exam.exercises[1].score = 5
+        message = scanner.validate_cv_result(cv_data)
+        self.assertTrue(message)
+        self.assertEqual(len(message), 3)
+        self.assertEqual(message[0], const.Validation.W_EXA_SCORE_EQ)
+        self.assertEqual(message[1], const.Validation.W_EXE_SCORE_EQ.format("1.a"))
+        self.assertEqual(message[2], const.Validation.W_EXE_SCORE_EQ.format("1.b"))
 
 
 class TestModelModel(unittest.TestCase):
 
     def test_get_models(self):
         self.assertEqual(get_models(), [Candidate, Exam, Exercise])
+
+
+def get_dummy_cv_result():
+    """
+    Create and return a cv result with dummy values.
+    """
+
+    json_data = '{"candidate":{"number":"CHSG-23.123","date_of_birth":"2010-01-01"},"exam":{"year":2023,' \
+                '"subject":"ABC English","score":4.00,"confidence":0.91, "exercises":[{' \
+                '"number":"1.a","score":2.75,"confidence":0.88,"max_score":3},{"number":"1.b","score":1.25,' \
+                '"confidence":0.98,"max_score":2}]},"result_validated":true} '
+
+    data_dict = json.loads(json_data)
+
+    candidate_data = data_dict['candidate']
+    candidate = cv_res.Candidate(candidate_data['number'], candidate_data['date_of_birth'])
+
+    exam_data = data_dict['exam']
+    exercises = []
+    for exercise_data in exam_data['exercises']:
+        exercise = cv_res.Exercise(exercise_data['number'], exercise_data['score'], exercise_data['confidence'],
+                                   exercise_data['max_score'])
+        exercises.append(exercise)
+
+    exam = cv_res.Exam(exam_data['year'], exam_data['subject'], exam_data['score'], exam_data['confidence'], exercises)
+
+    return cv_res.CVResult(candidate, exam, data_dict['result_validated'])

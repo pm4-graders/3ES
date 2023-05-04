@@ -53,13 +53,7 @@ def save_scan(file: UploadFile):
 
     # get exam data
     response = get_exam_full(exam_id)
-
-    # response message handling
-    if message:
-        if response.message:
-            response.message.extend(message)
-        else:
-            response.message = message
+    response.message = message
 
     return response
 
