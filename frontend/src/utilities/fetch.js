@@ -81,11 +81,22 @@ const get = async (route, request = null, options = {}, entriesKey = 'entries') 
 }
 
 // An asynchronous function for making a POST request to the API
-const post = async (route, request = { value: Request.Nil }, options = {}) => {
+const post = async (route, request = { value: Request.Nil }, options = {}, type = 'json') => {
   options.method = 'POST'
-  options.body = JSON.stringify(request.value.params)
-  options.headers = {
-    'Content-Type': 'application/json'
+
+  if (type === 'json') {
+    options.body = JSON.stringify(request.value.params)
+    options.headers = {
+      'Content-Type': 'application/json'
+    }
+  } else if (type === 'multipart') {
+    const formData = new FormData()
+    for (const name in request.value.params) {
+      console.log(name)
+      console.log(request.value.params[name])
+      formData.append(name, request.value.params[name])
+    }
+    options.body = formData
   }
   // let formdata = new FormData()
   // for (let key in request.value.params) {
