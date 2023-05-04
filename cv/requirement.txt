@@ -1,5 +1,5 @@
 opencv-contrib-python==4.7.0.72
-torch=2.0.0
+torch==2.0.0
 torchvision==0.15.1
 torchaudio=2.0.1
 keras==2.12.0
