@@ -1,0 +1,5 @@
+opencv-contrib-python==4.7.0.72
+torch torchvision torchaudio==0.15.1
+keras==2.12.0
+tensorflow==2.12.0
+imutils==0.5.4
