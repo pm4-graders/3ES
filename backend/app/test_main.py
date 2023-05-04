@@ -1,31 +1,85 @@
 import datetime
+import json
 import unittest
+from fastapi.testclient import TestClient
 from peewee import SqliteDatabase
+from main import app
 from api.schema import Score
 import core.database_handler as db
 import core.admin as admin
 from model.model import Candidate, Exam, Exercise, get_models
 import util.dummy as dummy
-from fastapi.testclient import TestClient
-
-# from main import app
-
-
-# class TestRouter(unittest.TestCase):
-
-#    def setUp(self):
-#        self.client = TestClient(app)
-
-#    def test_router_scanner_save(self):
-#        return
-#        response = self.client.post("/scan/save")
-#        assert response.status_code == 200
 
 ID_NOT_EXISTING = 9999
 YEAR_EXISTING = 2023
 YEAR_NOT_EXISTING = 9999
 SUBJECT_EXISTING = 'English'
 SUBJECT_NOT_EXISTING = '9999'
+
+
+class TestApiRouter(unittest.TestCase):
+
+    def setUp(self):
+        self.client = TestClient(app)
+
+    def test_get_exam(self):
+        # Test retrieving an exam that exists
+        exam_full_rs = self.client.get("/exams/1")
+        assert exam_full_rs.status_code == 200
+
+        # Test retrieving a not existing exam
+        exam_full_rs = self.client.get("/exams/" + str(ID_NOT_EXISTING))
+        assert exam_full_rs.status_code == 404
+
+    def test_get_exams(self):
+        # Test retrieving an exam that exists
+        exams_full_rs = self.client.get("/exams")
+        assert exams_full_rs.status_code == 200
+
+        exams_full_rs = self.client.get("/exams?year" + str(YEAR_EXISTING) + "&subject=" + SUBJECT_EXISTING)
+        assert exams_full_rs.status_code == 200
+
+        # Test retrieving a not existing exam
+        exams_full_rs = self.client.get("/exams?year" + str(YEAR_NOT_EXISTING) + "&subject=" + SUBJECT_NOT_EXISTING)
+        assert exams_full_rs.status_code == 404
+
+    def test_get_logical_exams(self):
+        # Test retrieving an exam that exists
+        logical_exams_rs = self.client.get("/logical-exams")
+        assert logical_exams_rs.status_code == 200
+
+        logical_exams_rs = self.client.get("/logical-exams?year" + str(YEAR_EXISTING) + "&subject=" + SUBJECT_EXISTING)
+        assert logical_exams_rs.status_code == 200
+
+        # Test retrieving a not existing exam
+        logical_exams_rs = self.client.get("/logical-exams?year" + str(YEAR_NOT_EXISTING) + "&subject=" + SUBJECT_NOT_EXISTING)
+        assert logical_exams_rs.status_code == 404
+
+    def test_post_exam(self):
+        json_score = json.dumps(Score(score=5.1))
+
+        # Test retrieving an exam that exists
+        base_rs = self.client.post("/exams/1", json=json_score)
+        assert base_rs.status_code == 200
+
+        # Test retrieving a not existing exam
+        base_rs = self.client.post("/exams/" + str(ID_NOT_EXISTING), json=json_score)
+        assert base_rs.status_code == 404
+
+    def test_post_exercise(self):
+        json_score = json.dumps(Score(score=5.1))
+
+        # Test retrieving an exam that exists
+        base_rs = self.client.post("/exercises/1", json=json_score)
+        assert base_rs.status_code == 200
+
+        # Test retrieving a not existing exam
+        base_rs = self.client.post("/exercises/" + str(ID_NOT_EXISTING), json=json_score)
+        assert base_rs.status_code == 404
+
+    def test_router_scanner_save(self):
+        response = self.client.post("/scan/save")
+        assert response.status_code == 200
 
 
 class TestCoreAdmin(unittest.TestCase):
@@ -41,11 +95,6 @@ class TestCoreAdmin(unittest.TestCase):
                                    candidate=self.db_candidate)
         self.db_exercise1 = Exercise.create(number='1', score=9.0, confidence=0.8, exam=self.db_exam)
         self.db_exercise2 = Exercise.create(number='2', score=8.5, confidence=0.9, exam=self.db_exam)
-        self.db_exam_empty = Exam.create(year=YEAR_EXISTING, subject=SUBJECT_EXISTING, score=90,
-                                         confidence=0.8, candidate=self.db_candidate)
-        self.exam = {Exam.year.name: 2022, Exam.subject.name: SUBJECT_EXISTING, Exam.score.name: 8,
-                     Exam.confidence.name: 0.9}
-        self.exercise3 = {Exercise.number.name: '3', Exercise.score.name: 3, Exercise.confidence.name: 0.8}
 
     def tearDown(self):
         self.db.drop_tables([Exam, Exercise, Candidate])
