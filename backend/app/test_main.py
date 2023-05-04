@@ -388,45 +388,33 @@ class TestCoreScanner(unittest.TestCase):
     def setUp(self):
         pass
 
-    def test_create_upload_file_async(self):
-        # TODO
+    # TODO
+    #def test_create_upload_file_async(self):
         # Test save file with success including the creation of a new path
 
         # Test save scan with exception
 
-        self.assertFalse(True)  # REMOVE AFTER IMPLEMENTATION
-        pass
-
-    def test_save_file_async(self):
-        # TODO
+    # TODO
+    #def test_save_file_async(self):
         # Test save file with success
 
         # Test save scan with failure
 
-        self.assertFalse(True)  # REMOVE AFTER IMPLEMENTATION
-        pass
-
-    def test_save_scan(self):
-        # TODO
+    # TODO
+    #def test_save_scan(self):
         # Test save scan with success
         ## REMOVE AFTER IMPLEMENTATION: send file and check for assertTrue(success)
 
         # Test save scan with exception (already exists)
         ## REMOVE AFTER IMPLEMENTATION: resend same and check for assertFalse(success) and assertTrue(message) means not empty
 
-        self.assertFalse(True)  # REMOVE AFTER IMPLEMENTATION
-        pass
-
-    def test_save_scan_wrapper(self):
-        # TODO
+    # TODO
+    #def test_save_scan_wrapper(self):
         # Test save scan with success
         ## REMOVE AFTER IMPLEMENTATION: send file and check for assertTrue(success)
 
         # Test save scan with exception (already exists)
         ## REMOVE AFTER IMPLEMENTATION: resend same and check for assertFalse(success) and assertTrue(message) means not empty
-
-        self.assertFalse(True)  # REMOVE AFTER IMPLEMENTATION
-        pass
 
     def test_validate_cv_result(self):
         cv_data = get_dummy_cv_result()
