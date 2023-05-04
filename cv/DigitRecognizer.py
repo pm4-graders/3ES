@@ -126,8 +126,8 @@ class DigitRecognizer:
             res = cv2.copyMakeBorder(res, 20, 20, widthToAdd, widthToAdd, cv2.BORDER_CONSTANT, value=(0,0,0))
             class_label, class_confidence = self.predict_handwritten_cell(res, class_labels, model, False)
 
-            cv2.imshow("Handwritten Digit", res)
-            cv2.waitKey(0)
+            #cv2.imshow("Handwritten Digit", res)
+            #cv2.waitKey(0)
             found_numbers.append((class_label, class_confidence))
         
         if(found_numbers == 0):

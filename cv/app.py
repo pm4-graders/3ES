@@ -11,6 +11,13 @@ images.append(cv2.imread("cv/testImages/kanti_telegram_compressed_2.jpg"))
 images.append(cv2.imread("cv/testImages/straight.jpg"))
 images.append(cv2.imread("cv/testImages/perspective.jpg"))
 images.append(cv2.imread("cv/testImages/crooked.jpg"))
+images.append(cv2.imread("cv/testImages/lighting.jpg"))
+images.append(cv2.imread("cv/testImages/mirror.jpg"))
+images.append(cv2.imread("cv/testImages/multiple.jpg"))
+images.append(cv2.imread("cv/testImages/rug.jpg"))
+images.append(cv2.imread("cv/testImages/wavy.jpg"))
+images.append(cv2.imread("cv/testImages/weird_bg.jpg"))
+images.append(cv2.imread("cv/testImages/crunched.jpg"))
 
 
 recognizer = DigitRecognizer(False)
