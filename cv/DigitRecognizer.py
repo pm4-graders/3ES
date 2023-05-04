@@ -11,11 +11,10 @@ import sys
 sys.path.append(sys.path[0] + '/..')
 from backend.app.core.cv_result import *
 
-
 class DigitRecognizer:
     
     global DEBUG_MODE
-    
+
     def __init__(self, debug_mode=False):
         # initialize any variables
         global DEBUG_MODE
@@ -51,15 +50,15 @@ class DigitRecognizer:
         else:
             segmentation = DocumentSegmentationCV()
 
-        #aligned_photo = segmentation.align_document(photo)
+        aligned_photo = segmentation.align_document(photo)
         
-        #if(DEBUG_MODE):
-            #self.debug_display_image('aligned',aligned_photo)
+        if(DEBUG_MODE):
+            self.debug_display_image('aligned',aligned_photo)
         
-        grid_mask, grid = self.find_grid_in_image(photo)
+        grid_mask, grid = self.find_grid_in_image(aligned_photo)
 
         if(DEBUG_MODE):
-            self.debug_display_image("grid_only", grid)
+            self.debug_display_image("grid_mask", grid_mask)
 
         grid_cells, column_count = self.get_grid_cells(grid, grid_mask)
         
@@ -82,20 +81,21 @@ class DigitRecognizer:
             result_cell = grid_cells[index + 2*column_count]
 
             if(index % column_count == 0):
-                print("First, 'Erreichte Punkte text'")
+                #print("First, 'Erreichte Punkte text'")
                 #TODO: OCR over header_cell, points_cell and result_cell and check that they say the right thing.
+                pass
 
             if(index % column_count > 0 and index % column_count < column_count-1):
-                print("Handwritten Cell")
+                #print("Handwritten Cell")
                 
-                if DEBUG_MODE:
+                if DEBUG_MODE and index == 1:
                     self.debug_display_image("cell", result_cell)
                 
                 pred_class_label, pred_confidence = self.predict_handwritten_cell(result_cell, class_labels, model)
 
                 exercises.append(Exercise(index, pred_class_label, pred_confidence, "?"))
             elif(index % column_count != 0):
-                print("Last Handwritten Cell, 'Total'")
+                #print("Last Handwritten Cell, 'Total'")
 
                 total_score, total_score_confidence = self.predict_double_number(result_cell, class_labels, model)
 
@@ -153,8 +153,8 @@ class DigitRecognizer:
             tcell = np.expand_dims(tcell, axis=(0, -1))
             tcell = utils.normalize_images(tcell)
 
-            prediction = model.predict(tcell)
-            print(prediction)
+            prediction = model.predict(tcell, verbose=0)
+            #print(prediction)
 
             # Get the index of the highest probability
             predicted_class_index = np.argmax(prediction)
@@ -163,7 +163,7 @@ class DigitRecognizer:
             predicted_class_label = class_labels[predicted_class_index]
 
             # Print the predicted class label
-            print("The predicted class is:", predicted_class_label)
+            #print("The predicted class is:", predicted_class_label)
 
             return int(predicted_class_label), prediction[0][predicted_class_index]
 
@@ -194,26 +194,36 @@ class DigitRecognizer:
         #The grid might be a bit warped so we want to fix this.
         out = self.fix_perspective(out, best_cnt)
 
+        #Resize the grid to scale to our wanted reference
+        width = out.shape[1]
+        wanted_width = 2000
+        scale_percent = wanted_width / width
+
+        out = cv2.resize(out, (int(out.shape[1] * scale_percent), int(out.shape[0] * scale_percent)))
+
         if(DEBUG_MODE):
-            self.debug_display_image("Grid, perspective fixed", out)
+            self.debug_display_image("Grid, perspective fixed and resized", out)
 
         #Out is already crayscale so we don't need to convert to grey but we need to blur it
-        blur = cv2.GaussianBlur(out, (5,5), 0)
+        blur = cv2.GaussianBlur(out, (7,7), 0)
 
         #Apply adaptive threshold so we have independent illumination
         thresh = cv2.adaptiveThreshold(blur, 255, 1, 1, 11, 2)
         
-        horizontal = self.get_lines(thresh.copy(), (50,1), 100)
-        vertical = self.get_lines(thresh.copy(), (1, 40), 80, False)
+        horizontal = self.get_lines(thresh.copy(), (70,1), 80)
+        vertical = self.get_lines(thresh.copy(), (1, 50), 70, False)
 
         eroded = cv2.bitwise_or(horizontal, vertical)
 
         if DEBUG_MODE:
-            self.debug_display_image("grid, before blur", eroded)
+            self.debug_display_image("grid mask, before blur", eroded)
 
         #Blur the result a little bit so the lines are more prevalent
         cv2.blur(eroded, (7,7), eroded)
         _, eroded = cv2.threshold(eroded, 100, 255, cv2.THRESH_BINARY) #we can take anything that isn't really black.
+
+        if DEBUG_MODE:
+            self.debug_display_image("grid mask, after blur", eroded)
 
         return eroded, out
 
@@ -230,17 +240,20 @@ class DigitRecognizer:
             return image
         
         #Get vertical lines only
-        vert = self.get_lines(grid_mask.copy(), (1, 40), 80, False)
+        vert = self.get_lines(grid_mask.copy(), (1, 50), 70, False)
         
         #Zoom into the image so the outer borders are gone
         vert = zoom_border(vert, 1.1)
-        
+
         contours, _ = cv2.findContours(vert, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         
         column_count = len(contours)+1
 
         result_cells = []
         invert = 255 - grid_mask
+
+        if(DEBUG_MODE):
+            self.debug_display_image("inverted", invert)
 
         #Find contours of inverted 
         contours, _ = cv2.findContours(invert, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -252,11 +265,11 @@ class DigitRecognizer:
         row = []
         for (i, c) in enumerate(contours, 1):
             area = cv2.contourArea(c)
-            if area > 4000:
+            if area > 3000:
                 row.append(c)
                 if i % column_count == 0:  
-                    (contours, _) = imutils_contours.sort_contours(row, method="left-to-right")
-                    grid_rows.append(contours)
+                    (conts, _) = imutils_contours.sort_contours(row, method="left-to-right")
+                    grid_rows.append(conts)
                     row = []
 
         if len(grid_rows) != 3 or len(row) != 0:
@@ -283,8 +296,6 @@ class DigitRecognizer:
         structure = cv2.getStructuringElement(cv2.MORPH_RECT, kernel)
         mat = cv2.erode(mat, structure)
 
-        #self.debug_display_image("matuneroded",mat)
-
         #The horizontal / vertical structures have to be wide enough to be a line.
         contours, _ = cv2.findContours(mat, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         for c in contours:
@@ -293,10 +304,19 @@ class DigitRecognizer:
                 cv2.drawContours(mat, [c], -1, (0,0,0), -1)
             if not is_horizontal and h < min_line_size:
                  cv2.drawContours(mat, [c], -1, (0,0,0), -1)
+        
+        if(DEBUG_MODE):
+            self.debug_display_image("eroded structures",mat)
 
-        #self.debug_display_image("matuneroded",mat)
+        mat = cv2.dilate(mat, structure, iterations=50)
 
-        mat = cv2.dilate(mat, structure, iterations=4)
+        if(DEBUG_MODE):
+            self.debug_display_image("dilated structures",mat)
+
+        mat = cv2.dilate(mat, cv2.getStructuringElement(cv2.MORPH_RECT, (2,2)))
+
+        if(DEBUG_MODE):
+            self.debug_display_image("'blurred', dilated structures",mat)
         return mat
 
     def find_largest_contours(self, contours):
