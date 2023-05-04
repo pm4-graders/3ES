@@ -3,13 +3,15 @@ import unittest
 from peewee import SqliteDatabase
 from api.schema import Score
 import core.database_handler as db
+import core.admin as admin
 from model.model import Candidate, Exam, Exercise, get_models
 import util.dummy as dummy
 from fastapi.testclient import TestClient
-#from main import app
+
+# from main import app
 
 
-#class TestRouter(unittest.TestCase):
+# class TestRouter(unittest.TestCase):
 
 #    def setUp(self):
 #        self.client = TestClient(app)
@@ -19,13 +21,14 @@ from fastapi.testclient import TestClient
 #        response = self.client.post("/scan/save")
 #        assert response.status_code == 200
 
+ID_NOT_EXISTING = 9999
+YEAR_EXISTING = 2023
+YEAR_NOT_EXISTING = 9999
+SUBJECT_EXISTING = 'English'
+SUBJECT_NOT_EXISTING = '9999'
 
-class TestCoreDatabaseHandler(unittest.TestCase):
-    ID_NOT_EXISTING = 9999
-    YEAR_EXISTING = 2023
-    YEAR_NOT_EXISTING = 9999
-    SUBJECT_EXISTING = 'English'
-    SUBJECT_NOT_EXISTING = '9999'
+
+class TestCoreAdmin(unittest.TestCase):
 
     def setUp(self):
         self.db = SqliteDatabase(':memory:')
@@ -34,13 +37,111 @@ class TestCoreDatabaseHandler(unittest.TestCase):
         self.db.create_tables([Exam, Exercise, Candidate])
 
         self.db_candidate = Candidate.create(number='1', date_of_birth=datetime.date(2000, 1, 1))
-        self.db_exam = Exam.create(year=self.YEAR_EXISTING, subject=self.SUBJECT_EXISTING, score=90, confidence=0.8,
+        self.db_exam = Exam.create(year=YEAR_EXISTING, subject=SUBJECT_EXISTING, score=90, confidence=0.8,
                                    candidate=self.db_candidate)
         self.db_exercise1 = Exercise.create(number='1', score=9.0, confidence=0.8, exam=self.db_exam)
         self.db_exercise2 = Exercise.create(number='2', score=8.5, confidence=0.9, exam=self.db_exam)
-        self.db_exam_empty = Exam.create(year=self.YEAR_EXISTING, subject=self.SUBJECT_EXISTING, score=90,
+        self.db_exam_empty = Exam.create(year=YEAR_EXISTING, subject=SUBJECT_EXISTING, score=90,
                                          confidence=0.8, candidate=self.db_candidate)
-        self.exam = {Exam.year.name: 2022, Exam.subject.name: self.SUBJECT_EXISTING, Exam.score.name: 8,
+        self.exam = {Exam.year.name: 2022, Exam.subject.name: SUBJECT_EXISTING, Exam.score.name: 8,
+                     Exam.confidence.name: 0.9}
+        self.exercise3 = {Exercise.number.name: '3', Exercise.score.name: 3, Exercise.confidence.name: 0.8}
+
+    def tearDown(self):
+        self.db.drop_tables([Exam, Exercise, Candidate])
+
+    def test_build_exam_full(self):
+        candidate = db.read_candidate(self.db_candidate.id)
+        exam = db.read_exam(self.db_exam.id)
+        exercises = db.read_exercises_by_exam(self.db_exam.id)
+
+        exam_full = admin.build_exam_full(exam)
+        self.assertEqual(exam_full.id, exam[Exam.id.name])
+        self.assertEqual(exam_full.year, exam[Exam.year.name])
+        self.assertEqual(exam_full.subject, exam[Exam.subject.name])
+        self.assertEqual(exam_full.score, exam[Exam.score.name])
+        self.assertEqual(exam_full.confidence, exam[Exam.confidence.name])
+        self.assertEqual(exam_full.created_at, exam[Exam.created_at.name])
+        self.assertEqual(exam_full.created_at, exam[Exam.created_at.name])
+        self.assertEqual(exam_full.candidate.id, candidate[Candidate.id.name])
+        self.assertEqual(exam_full.candidate.number, candidate[Candidate.number.name])
+        self.assertEqual(exam_full.candidate.date_of_birth, candidate[Candidate.date_of_birth.name])
+        self.assertEqual(exam_full.candidate.created_at, candidate[Candidate.created_at.name])
+        self.assertEqual(exam_full.candidate.updated_at, candidate[Candidate.updated_at.name])
+        self.assertEqual(len(exam_full.exercises), len(exercises))
+
+    def test_get_exam_full(self):
+        # Test retrieving an exam that exists
+        exam_full_rs = admin.get_exam_full(self.db_exam.id)
+        self.assertTrue(exam_full_rs.success)
+        self.assertEqual(exam_full_rs.exam.id, self.db_exam.id)
+
+        # Test retrieving a not existing exam
+        exam_full_rs = admin.get_exam_full(ID_NOT_EXISTING)
+        self.assertFalse(exam_full_rs.success)
+        self.assertIsNone(exam_full_rs.exam)
+
+    def test_get_exams(self):
+        # Test retrieving exams that exist
+        exams_full_rs = admin.get_exams(year=None, subject=None)
+        self.assertTrue(exams_full_rs.success)
+        self.assertTrue(exams_full_rs.exams)
+
+        # Test retrieving not existing exams
+        exams_full_rs = admin.get_exams(year=YEAR_NOT_EXISTING, subject=SUBJECT_NOT_EXISTING)
+        self.assertFalse(exams_full_rs.success)
+        self.assertFalse(exams_full_rs.exams)
+
+    def test_get_logical_exams(self):
+        # Test retrieving logical exams that exist
+        logical_exams_rs = admin.get_logical_exams(year=None, subject=None)
+        self.assertTrue(logical_exams_rs.success)
+        self.assertTrue(logical_exams_rs.logical_exams)
+
+        # Test retrieving not existing logical exams
+        logical_exams_rs = admin.get_logical_exams(year=YEAR_NOT_EXISTING, subject=SUBJECT_NOT_EXISTING)
+        self.assertFalse(logical_exams_rs.success)
+        self.assertFalse(logical_exams_rs.logical_exams)
+
+    def test_update_exam(self):
+        score = Score(score=5.1)
+
+        # Test updating an existing exam
+        base_rs = admin.update_exam(self.db_exam.id, score)
+        self.assertTrue(base_rs.success)
+
+        # Test updating a not existing exam
+        base_rs = admin.update_exam(ID_NOT_EXISTING, score)
+        self.assertFalse(base_rs.success)
+
+    def test_update_exercise(self):
+        score = Score(score=5.1)
+
+        # Test updating an existing exercise
+        base_rs = admin.update_exercise(self.db_exam.id, score)
+        self.assertTrue(base_rs.success)
+
+        # Test updating a not existing exercise
+        base_rs = admin.update_exercise(ID_NOT_EXISTING, score)
+        self.assertFalse(base_rs.success)
+
+
+class TestCoreDatabaseHandler(unittest.TestCase):
+
+    def setUp(self):
+        self.db = SqliteDatabase(':memory:')
+        self.db.connect()
+        self.db.drop_tables([Exam, Exercise, Candidate])
+        self.db.create_tables([Exam, Exercise, Candidate])
+
+        self.db_candidate = Candidate.create(number='1', date_of_birth=datetime.date(2000, 1, 1))
+        self.db_exam = Exam.create(year=YEAR_EXISTING, subject=SUBJECT_EXISTING, score=90, confidence=0.8,
+                                   candidate=self.db_candidate)
+        self.db_exercise1 = Exercise.create(number='1', score=9.0, confidence=0.8, exam=self.db_exam)
+        self.db_exercise2 = Exercise.create(number='2', score=8.5, confidence=0.9, exam=self.db_exam)
+        self.db_exam_empty = Exam.create(year=YEAR_EXISTING, subject=SUBJECT_EXISTING, score=90,
+                                         confidence=0.8, candidate=self.db_candidate)
+        self.exam = {Exam.year.name: 2022, Exam.subject.name: SUBJECT_EXISTING, Exam.score.name: 8,
                      Exam.confidence.name: 0.9}
         self.exercise3 = {Exercise.number.name: '3', Exercise.score.name: 3, Exercise.confidence.name: 0.8}
 
@@ -96,7 +197,7 @@ class TestCoreDatabaseHandler(unittest.TestCase):
         self.assertEqual(candidate[Candidate.date_of_birth.name], self.db_candidate.date_of_birth)
 
         # Test retrieving a not existing candidate
-        candidate = db.read_candidate(self.ID_NOT_EXISTING)
+        candidate = db.read_candidate(ID_NOT_EXISTING)
         self.assertIsNone(candidate)
 
     def test_read_exam(self):
@@ -110,31 +211,31 @@ class TestCoreDatabaseHandler(unittest.TestCase):
         self.assertEqual(exam[Exam.candidate.name], self.db_exam.candidate.id)
 
         # Test retrieving a not existing exam
-        exam = db.read_exam(self.ID_NOT_EXISTING)
+        exam = db.read_exam(ID_NOT_EXISTING)
         self.assertIsNone(exam)
 
     def test_read_exams(self):
         # Test reading exams that exist
-        exams = db.read_exams(year=self.YEAR_EXISTING, subject=self.SUBJECT_EXISTING)
+        exams = db.read_exams(year=YEAR_EXISTING, subject=SUBJECT_EXISTING)
         self.assertTrue(exams)
 
-        exams = db.read_exams(year=self.YEAR_EXISTING, subject=None)
+        exams = db.read_exams(year=YEAR_EXISTING, subject=None)
         self.assertTrue(exams)
 
-        exams = db.read_exams(year=None, subject=self.SUBJECT_EXISTING)
+        exams = db.read_exams(year=None, subject=SUBJECT_EXISTING)
         self.assertTrue(exams)
 
         exams = db.read_exams(year=None, subject=None)
         self.assertTrue(exams)
 
         # Test retrieving not existing exams
-        exams = db.read_exams(year=self.YEAR_NOT_EXISTING, subject=self.SUBJECT_NOT_EXISTING)
+        exams = db.read_exams(year=YEAR_NOT_EXISTING, subject=SUBJECT_NOT_EXISTING)
         self.assertFalse(exams)
 
-        exams = db.read_exams(year=self.YEAR_NOT_EXISTING, subject=None)
+        exams = db.read_exams(year=YEAR_NOT_EXISTING, subject=None)
         self.assertFalse(exams)
 
-        exams = db.read_exams(year=None, subject=self.SUBJECT_NOT_EXISTING)
+        exams = db.read_exams(year=None, subject=SUBJECT_NOT_EXISTING)
         self.assertFalse(exams)
 
     def test_read_exercises_by_exam(self):
@@ -150,35 +251,34 @@ class TestCoreDatabaseHandler(unittest.TestCase):
         self.assertFalse(exercises)
 
         # Test retrieving exercises by not existing exams
-        exercises = db.read_exercises_by_exam(self.ID_NOT_EXISTING)
+        exercises = db.read_exercises_by_exam(ID_NOT_EXISTING)
         self.assertFalse(exercises)
 
     def test_read_logical_exams(self):
         # Test reading logical exams that exist
-        exams = db.read_logical_exams(year=self.YEAR_EXISTING, subject=self.SUBJECT_EXISTING)
-        self.assertTrue(exams)
+        logical_exams = db.read_logical_exams(year=YEAR_EXISTING, subject=SUBJECT_EXISTING)
+        self.assertTrue(logical_exams)
 
-        exams = db.read_logical_exams(year=self.YEAR_EXISTING, subject=None)
-        self.assertTrue(exams)
+        logical_exams = db.read_logical_exams(year=YEAR_EXISTING, subject=None)
+        self.assertTrue(logical_exams)
 
-        exams = db.read_logical_exams(year=None, subject=self.SUBJECT_EXISTING)
-        self.assertTrue(exams)
+        logical_exams = db.read_logical_exams(year=None, subject=SUBJECT_EXISTING)
+        self.assertTrue(logical_exams)
 
-        exams = db.read_logical_exams(year=None, subject=None)
-        self.assertTrue(exams)
+        logical_exams = db.read_logical_exams(year=None, subject=None)
+        self.assertTrue(logical_exams)
 
         # Test retrieving not existing logical exams
-        exams = db.read_logical_exams(year=self.YEAR_NOT_EXISTING, subject=self.SUBJECT_NOT_EXISTING)
-        self.assertFalse(exams)
+        logical_exams = db.read_logical_exams(year=YEAR_NOT_EXISTING, subject=SUBJECT_NOT_EXISTING)
+        self.assertFalse(logical_exams)
 
-        exams = db.read_logical_exams(year=self.YEAR_NOT_EXISTING, subject=None)
-        self.assertFalse(exams)
+        logical_exams = db.read_logical_exams(year=YEAR_NOT_EXISTING, subject=None)
+        self.assertFalse(logical_exams)
 
-        exams = db.read_logical_exams(year=None, subject=self.SUBJECT_NOT_EXISTING)
-        self.assertFalse(exams)
+        logical_exams = db.read_logical_exams(year=None, subject=SUBJECT_NOT_EXISTING)
+        self.assertFalse(logical_exams)
 
     def test_save_scan_db(self):
-
         cv_data = dummy.get_dummy_cv_result()
         exam_count = len(db.read_exams(year=None, subject=None))
 
@@ -201,7 +301,7 @@ class TestCoreDatabaseHandler(unittest.TestCase):
         self.assertEqual(exam[Exam.confidence.name], 1.0)
 
         # Test updating a not existing exam
-        self.assertFalse(db.update_exam(self.ID_NOT_EXISTING, score, 1.0))
+        self.assertFalse(db.update_exam(ID_NOT_EXISTING, score, 1.0))
 
     def test_update_exercise(self):
         score = Score(score=5.1)
@@ -213,7 +313,7 @@ class TestCoreDatabaseHandler(unittest.TestCase):
         self.assertEqual(exercises[0][Exercise.confidence.name], 1.0)
 
         # Test updating a not existing exercise
-        self.assertFalse(db.update_exercise(self.ID_NOT_EXISTING, score, 1.0))
+        self.assertFalse(db.update_exercise(ID_NOT_EXISTING, score, 1.0))
 
 
 class TestModelModel(unittest.TestCase):
