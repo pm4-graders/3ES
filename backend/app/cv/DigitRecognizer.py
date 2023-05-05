@@ -64,7 +64,7 @@ class DigitRecognizer:
 
         model = MobileNet()
         model.compile()
-        model.load_weights('./backend/app/cv/Models/MobileNet.h5')
+        model.load_weights('cv/Models/MobileNet.h5')
         class_labels = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 
         exercises = []

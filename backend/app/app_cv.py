@@ -2,22 +2,24 @@ import cv2
 import time
 from cv.DigitRecognizer import DigitRecognizer
 
+IMAGEDIR = "cv/testImages/"
+
 images = []
 
-images.append(cv2.imread("./backend/app/cv/testImages/kanti_img1.jpeg"))
-images.append(cv2.imread("./backend/app/cv/testImages/kanti_img2.jpeg"))
-images.append(cv2.imread("./backend/app/cv/testImages/kanti_telegram_compressed_1.jpg"))
-images.append(cv2.imread("./backend/app/cv/testImages/kanti_telegram_compressed_2.jpg"))
-images.append(cv2.imread("./backend/app/cv/testImages/straight.jpg"))
-images.append(cv2.imread("./backend/app/cv/testImages/perspective.jpg"))
-images.append(cv2.imread("./backend/app/cv/testImages/crooked.jpg"))
-images.append(cv2.imread("./backend/app/cv/testImages/lighting.jpg"))
-images.append(cv2.imread("./backend/app/cv/testImages/mirror.jpg"))
-images.append(cv2.imread("./backend/app/cv/testImages/multiple.jpg"))
-images.append(cv2.imread("./backend/app/cv/testImages/rug.jpg"))
-images.append(cv2.imread("./backend/app/cv/testImages/wavy.jpg"))
-images.append(cv2.imread("./backend/app/cv/testImages/weird_bg.jpg"))
-images.append(cv2.imread("./backend/app/cv/testImages/crunched.jpg"))
+images.append(cv2.imread(IMAGEDIR + "kanti_img1.jpeg"))
+images.append(cv2.imread(IMAGEDIR + "kanti_img2.jpeg"))
+images.append(cv2.imread(IMAGEDIR + "kanti_telegram_compressed_1.jpg"))
+images.append(cv2.imread(IMAGEDIR + "kanti_telegram_compressed_2.jpg"))
+images.append(cv2.imread(IMAGEDIR + "straight.jpg"))
+images.append(cv2.imread(IMAGEDIR + "perspective.jpg"))
+images.append(cv2.imread(IMAGEDIR + "crooked.jpg"))
+images.append(cv2.imread(IMAGEDIR + "lighting.jpg"))
+images.append(cv2.imread(IMAGEDIR + "mirror.jpg"))
+images.append(cv2.imread(IMAGEDIR + "multiple.jpg"))
+images.append(cv2.imread(IMAGEDIR + "rug.jpg"))
+images.append(cv2.imread(IMAGEDIR + "wavy.jpg"))
+images.append(cv2.imread(IMAGEDIR + "weird_bg.jpg"))
+images.append(cv2.imread(IMAGEDIR + "crunched.jpg"))
 
 
 recognizer = DigitRecognizer(False)

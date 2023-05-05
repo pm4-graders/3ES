@@ -19,7 +19,7 @@ class DocumentSegmentationCNN:
         
         #Load pretrained model from file
         self.model = deeplabv3_mobilenet_v3_large(num_classes=num_classes, aux_loss=True)
-        checkpoint_path = os.path.join(os.getcwd(), "backend/app/cv/Models/model_mbv3_iou_mix_2C049.pth")
+        checkpoint_path = os.path.join(os.getcwd(), "cv/Models/model_mbv3_iou_mix_2C049.pth")
 
         self.model.to(device)
         checkpoints = torch.load(checkpoint_path, map_location=device)
