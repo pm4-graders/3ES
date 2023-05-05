@@ -1,6 +1,6 @@
 import cv2
-from DigitRecognizer import DigitRecognizer
 import time
+from cv.DigitRecognizer import DigitRecognizer
 
 images = []
 

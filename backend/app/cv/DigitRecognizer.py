@@ -3,13 +3,11 @@ import base64
 import numpy as np
 from imutils import contours as imutils_contours
 
-import sys
-sys.path.append(sys.path[0] + '/..')
 from cv.Models.mobilenet import MobileNet
 import cv.Models.utils as utils
 from cv.DocumentSegmentationCV import DocumentSegmentationCV
 from cv.DocumentSegmentationCNN import DocumentSegmentationCNN
-from core.cv_result import *
+import core.cv_result as cv_res
 
 class DigitRecognizer:
     
@@ -93,19 +91,15 @@ class DigitRecognizer:
                 
                 pred_class_label, pred_confidence = self.predict_handwritten_cell(result_cell, class_labels, model)
 
-                exercises.append(Exercise(index, pred_class_label, pred_confidence, "?"))
+                exercises.append(cv_res.Exercise(index, pred_class_label, pred_confidence, "?"))
             elif(index % column_count != 0):
                 #print("Last Handwritten Cell, 'Total'")
 
                 total_score, total_score_confidence = self.predict_double_number(result_cell, class_labels, model)
 
-        exam = Exam("?", "?", total_score, total_score_confidence, exercises)
+        exam = cv_res.Exam("?", "?", total_score, total_score_confidence, exercises)
 
-        cv_res = CVResult(Candidate("?", "?"), exam=exam, result_validated=False)
-
-        if(exam.total_score == exam.calc_exercises_score()):
-            cv_res.result_validated = True
-        return cv_res
+        return cv_res.CVResult(cv_res.Candidate("?", "?"), exam=exam)
 
 
     def predict_double_number(self, original_cell, class_labels, model):
