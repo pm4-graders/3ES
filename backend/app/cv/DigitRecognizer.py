@@ -91,15 +91,15 @@ class DigitRecognizer:
                 
                 pred_class_label, pred_confidence = self.predict_handwritten_cell(result_cell, class_labels, model)
 
-                exercises.append(cv_res.Exercise(index, pred_class_label, pred_confidence, "?"))
+                exercises.append(cv_res.Exercise(index, pred_class_label, pred_confidence, 0))  # TODO replace 0 with max_score
             elif(index % column_count != 0):
                 #print("Last Handwritten Cell, 'Total'")
 
                 total_score, total_score_confidence = self.predict_double_number(result_cell, class_labels, model)
 
-        exam = cv_res.Exam("?", "?", total_score, total_score_confidence, exercises)
+        exam = cv_res.Exam(2023, "Mathematik", total_score, total_score_confidence, exercises)  # TODO replace year & subject
 
-        return cv_res.CVResult(cv_res.Candidate("?", "?"), exam=exam)
+        return cv_res.CVResult(cv_res.Candidate("NR-123", "2000-12-31"), exam=exam)  # TODO replace number & date_of_birth
 
 
     def predict_double_number(self, original_cell, class_labels, model):
