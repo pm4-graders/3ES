@@ -1,15 +1,13 @@
 import cv2
 import base64
 import numpy as np
-from DocumentSegmentationCV import DocumentSegmentationCV
-from DocumentSegmentationCNN import DocumentSegmentationCNN
 from imutils import contours as imutils_contours
-from Models.mobilenet import MobileNet
-import Models.utils as utils
 
-import sys
-sys.path.append(sys.path[0] + '/..')
-from backend.app.core.cv_result import *
+from cv.Models.mobilenet import MobileNet
+import cv.Models.utils as utils
+from cv.DocumentSegmentationCV import DocumentSegmentationCV
+from cv.DocumentSegmentationCNN import DocumentSegmentationCNN
+import core.cv_result as cv_res
 
 class DigitRecognizer:
     
@@ -66,7 +64,7 @@ class DigitRecognizer:
 
         model = MobileNet()
         model.compile()
-        model.load_weights('./cv/Models/MobileNet.h5')
+        model.load_weights('cv/Models/MobileNet.h5')
         class_labels = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 
         exercises = []
@@ -93,19 +91,15 @@ class DigitRecognizer:
                 
                 pred_class_label, pred_confidence = self.predict_handwritten_cell(result_cell, class_labels, model)
 
-                exercises.append(Exercise(index, pred_class_label, pred_confidence, "?"))
+                exercises.append(cv_res.Exercise(index, pred_class_label, pred_confidence, 0))  # TODO replace 0 with max_score
             elif(index % column_count != 0):
                 #print("Last Handwritten Cell, 'Total'")
 
                 total_score, total_score_confidence = self.predict_double_number(result_cell, class_labels, model)
 
-        exam = Exam("?", "?", total_score, total_score_confidence, exercises)
+        exam = cv_res.Exam(2023, "Mathematik", total_score, total_score_confidence, exercises)  # TODO replace year & subject
 
-        cv_res = CVResult(Candidate("?", "?"), exam=exam, result_validated=False)
-
-        if(exam.total_score == exam.calc_exercises_score()):
-            cv_res.result_validated = True
-        return cv_res
+        return cv_res.CVResult(cv_res.Candidate("NR-123", "2000-12-31"), exam=exam)  # TODO replace number & date_of_birth
 
 
     def predict_double_number(self, original_cell, class_labels, model):

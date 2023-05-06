@@ -1,5 +1,5 @@
 from keras.utils import plot_model
-import Models.utils as utils
+from .utils import get_val_generator, get_train_generator
 
 class BaseModel(object):
     def __init__(self, model, optimizer, callbacks = None):
@@ -30,9 +30,9 @@ class BaseModel(object):
         x_train, y_train = training_data
         x_val, y_val = validation_data
 
-        train_datagen = utils.get_train_generator(x_train, y_train,
+        train_datagen = get_train_generator(x_train, y_train,
                                                   batch_size = batch_size)
-        val_datagen = utils.get_val_generator(x_val, y_val,
+        val_datagen = get_val_generator(x_val, y_val,
                                               batch_size = batch_size)
         hist = self.model.fit_generator(train_datagen,
                                         callbacks = self.callbacks,

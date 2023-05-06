@@ -1,5 +1,5 @@
 import argparse
-import Models.utils as utils
+from .utils import load_mnist
 
 def get_argument_parser(model_name):
     '''
@@ -57,7 +57,7 @@ def train(model, model_name):
     # load all arguments
     args = get_argument_parser(model_name)
 
-    training_data, validation_data, test_data = utils.load_mnist()
+    training_data, validation_data, test_data = load_mnist()
     print(f'[data loaded]')
 
     # build and compile the model

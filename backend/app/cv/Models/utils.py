@@ -1,5 +1,4 @@
 import numpy as np
-from collections import defaultdict
 from keras.utils import np_utils
 from keras.datasets import mnist
 from keras.preprocessing.image import ImageDataGenerator
