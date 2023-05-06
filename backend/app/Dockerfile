@@ -1,7 +1,7 @@
 FROM tiangolo/uvicorn-gunicorn-fastapi:python3.9
 
 # install stuff for cv2
-RUN RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
+RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
 
 COPY ./requirements.txt /app/requirements.txt
 
