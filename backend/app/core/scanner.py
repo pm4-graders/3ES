@@ -2,11 +2,6 @@ import asyncio
 import datetime, os, uuid
 from fastapi import UploadFile
 from api.schema import BaseResponse, ExamFullResponse
-
-import sys
-
-sys.path.append(sys.path[0] + '/../../')
-sys.path.append(sys.path[0] + '/../../cv/')
 from cv.DigitRecognizer import DigitRecognizer
 
 from .admin import get_exam_full

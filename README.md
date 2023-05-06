@@ -21,12 +21,7 @@ We should be using virtual environments to not have problems with other versions
 
 1. Download Anaconda for Windows: https://www.anaconda.com/products/distribution#Downloads, add to PATH
 2. Run 'conda create --name virtualenv python=3.8'
-3. conda activate virtualenv
-4. pip install opencv-contrib-python
-5. pip3 install torch torchvision torchaudio
-6. pip install keras
-7. pip install tensorflow
-8. pip install imutils
+3. pip install -r requirements.txt
 
 To deactivate the virtual environment: 'conda deactivate'
 
