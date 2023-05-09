@@ -11,3 +11,21 @@
 ![GitHub repo file count](https://img.shields.io/github/directory-file-count/pm4-graders/3ES)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/pm4-graders/3ES)
 [![Stargazers](https://img.shields.io/github/stars/pm4-graders/3ES.svg)](https://github.com/pm4-graders/3ES/stargazers)
+
+
+
+
+
+## Installation (openCV / venv)
+We should be using virtual environments to not have problems with other versions of python etc.
+
+1. Download Anaconda for Windows: https://www.anaconda.com/products/distribution#Downloads, add to PATH
+2. Run 'conda create --name virtualenv python=3.8'
+3. pip install -r requirements.txt
+
+To deactivate the virtual environment: 'conda deactivate'
+
+## Use anaconda with vscode
+
+1. Ctrl+Shift+P -> Enter "Python: Select Interpreter"
+2. Select the virtualenv you just created.

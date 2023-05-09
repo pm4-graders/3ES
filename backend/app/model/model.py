@@ -1,13 +1,31 @@
-from peewee import Model, AutoField, CharField, IntegerField, FloatField, DateField, ForeignKeyField
+from peewee import Model, AutoField, CharField, DateField, DateTimeField, FloatField, ForeignKeyField, IntegerField
+import datetime
 from .database import db
+import util.constant as const
 
 
 def get_models():
     return [Candidate, Exam, Exercise]
 
 
-class Candidate(Model):
-    candidate_id = AutoField()
+class BaseModel(Model):
+    created_at = DateTimeField()
+    updated_at = DateTimeField(null=True)
+
+    def save(self, *args, **kwargs):
+
+        now = datetime.datetime.utcnow().strftime(const.Data.TIMESTAMP_PATTERN)
+
+        if self.created_at is None:
+            self.created_at = now
+        else:
+            self.updated_at = now
+
+        return super(BaseModel, self).save(*args, **kwargs)
+
+
+class Candidate(BaseModel):
+    id = AutoField()
     number = CharField(max_length=20)
     date_of_birth = DateField()
 
@@ -15,23 +33,24 @@ class Candidate(Model):
         database = db
 
 
-class Exam(Model):
-    exam_id = AutoField()
+class Exam(BaseModel):
+    id = AutoField()
     year = IntegerField()
     subject = CharField(max_length=100)
-    total_score = FloatField()
-    candidate = ForeignKeyField(Candidate, backref='exams')
+    score = FloatField()
+    confidence = FloatField()
+    candidate = ForeignKeyField(Candidate, backref=const.Entity.EXAMS)
 
     class Meta:
         database = db
 
 
-class Exercise(Model):
-    exercise_id = AutoField()
-    number = IntegerField()
+class Exercise(BaseModel):
+    id = AutoField()
+    number = CharField(max_length=10)
     score = FloatField()
-    accuracy = FloatField()
-    exam = ForeignKeyField(Exam, backref='exercises')
+    confidence = FloatField()
+    exam = ForeignKeyField(Exam, backref=const.Entity.EXERCISES)
 
     class Meta:
         database = db

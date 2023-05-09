@@ -1,43 +1,87 @@
-from fastapi import APIRouter
-
-#import core.scanner_bl as scanner
-from model.model import Candidate, Exam, Exercise
+from fastapi import APIRouter, HTTPException, UploadFile, File, FastAPI
+from .schema import BaseResponse, ExamFullResponse, ExamFullListResponse, LogicalExamListResponse, Score
+import core.admin as admin
+import core.scanner as scanner
+import util.constant as const
 
 router = APIRouter(
     prefix='/api'
 )
 
 
-"""@router.post("/scan/save")
-async def function_scan_save():
-    return scanner.save_scan()
-"""
+@router.get("/exams/{examId}", response_model=ExamFullResponse, response_model_exclude_none=True)
+async def get_exam(examId: int):
+    """
+    Get exam and all its relationships
+    """
 
-@router.get("/candidates")
-async def function_get_candidates():
-    return Candidate.get()
+    response = admin.get_exam_full(examId)
 
+    if not response.success:
+        raise HTTPException(status_code=404, detail=const.Message.EXAM_NOT_FOUND.format(examId))
 
-@router.post("/candidate/{name}")
-async def post_candidate(name: str):
-    return Candidate.create({name})
-
-
-@router.get("/exams")
-async def get_exams():
-    return Exam.get()
+    return response
 
 
-@router.post("/exams/{name}")
-async def post_candidate(name: str):
-    return Exam.create({name})
+@router.get("/exams", response_model=ExamFullListResponse, response_model_exclude_none=True)
+async def get_exams(year: int = None, subject: str = None):
+    """
+    Get (search) exams for given parameters.
+    """
+
+    response = admin.get_exams(year, subject)
+
+    if not response.success:
+        raise HTTPException(status_code=404, detail=const.Message.EXAMS_NOT_FOUND)
+
+    return response
 
 
-@router.post("/exercises/{name}")
-async def post_exercise(name: str):
-    return Exercise.create({name})
+@router.get("/logical-exams", response_model=LogicalExamListResponse, response_model_exclude_none=True)
+async def get_logical_exams(year: int = None, subject: str = None):
+    """
+    Get (search) logical exams for given parameters.
+    """
+
+    response = admin.get_logical_exams(year, subject)
+
+    if not response.success:
+        raise HTTPException(status_code=404, detail=const.Message.LOG_EXAMS_NOT_FOUND)
+
+    return response
 
 
-@router.get("/exercise")
-async def get_exercise():
-    return Exercise.get()
+@router.post("/exams/{examId}", response_model=BaseResponse, response_model_exclude_none=True)
+async def post_exam(examId: int, exam: Score):
+    """
+    Update existing exam
+    """
+
+    response = admin.update_exam(examId, exam)
+
+    if not response.success:
+        raise HTTPException(status_code=404, detail=const.Message.EXAM_NOT_FOUND.format(examId))
+
+    return response
+
+
+@router.post("/exercises/{exercisesId}", response_model=BaseResponse, response_model_exclude_none=True)
+async def post_exercise(exercisesId: int, exercise: Score):
+    """
+    Update existing exercise
+    """
+
+    response = admin.update_exercise(exercisesId, exercise)
+
+    if not response.success:
+        raise HTTPException(status_code=404, detail=const.Message.EXERCISE_NOT_FOUND.format(exercisesId))
+
+    return response
+
+
+@router.post("/scan/save", response_model=ExamFullResponse, response_model_exclude_none=True)
+async def post_scan_save(file: UploadFile = File(...)):
+    """
+    Save a scan (file)
+    """
+    return scanner.save_scan_wrapper(file)

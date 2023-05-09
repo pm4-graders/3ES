@@ -7,7 +7,7 @@ export const useCameraStore = defineStore('camera', () => {
   const blob = ref(null)
 
   function setSnapshot(snapshotBlob) {
-    currentRequest.value = Request.PreparedOf({ params: { blob: snapshotBlob } })
+    currentRequest.value = Request.PreparedOf({ params: { file: new File([snapshotBlob], "file")} })
     blob.value = snapshotBlob
   }
 
@@ -19,7 +19,7 @@ export const useCameraStore = defineStore('camera', () => {
   })
 
   async function uploadResult() {
-    currentRequest.value = await post('/upload', currentRequest)
+    currentRequest.value = await post('/scan/save', currentRequest, {}, 'multipart')
 
     if (currentRequest.value.comp('Success')) {
       setTimeout(clearCurrentRequest, 2000)
