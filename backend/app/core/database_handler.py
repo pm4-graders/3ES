@@ -4,6 +4,32 @@ from model.model import Candidate, Exam, Exercise
 import util.constant as const
 
 
+def delete_exam(exam_id):
+    """
+    Delete @Exam
+    """
+
+    try:
+        db_exam = Exam.get_by_id(exam_id)
+    except DoesNotExist:
+        return False
+
+    delete_exercise_by_exam(exam_id)
+
+    db_exam.delete_instance()
+
+    return True
+
+
+def delete_exercise_by_exam(exam_id):
+    """
+    Delete all @Exercise data by @Exam
+    """
+
+    query_exercise = Exercise.delete().where(Exercise.exam == exam_id)
+    query_exercise.execute()
+
+
 def insert_exam(exam, db_candidate):
     """
     DB insert @Exam

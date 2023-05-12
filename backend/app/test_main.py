@@ -35,6 +35,15 @@ class TestApiRouter(unittest.TestCase):
         self.db_exercise1 = Exercise.create(number='1', score=9.0, confidence=0.8, exam=self.db_exam)
         self.db_exercise2 = Exercise.create(number='2', score=8.5, confidence=0.9, exam=self.db_exam)
 
+    def test_delete_exam(self):
+        # Test deleting an exam that exists
+        base_rs = self.client.get("/api/exams/1")
+        assert base_rs.status_code == 200
+
+        # Test deleting a not existing exam
+        base_rs = self.client.get("/api/exams/" + str(ID_NOT_EXISTING))
+        assert base_rs.status_code == 404
+
     def test_get_exam(self):
         # Test retrieving an exam that exists
         exam_full_rs = self.client.get("/api/exams/1")
@@ -116,6 +125,15 @@ class TestCoreAdmin(unittest.TestCase):
 
     def tearDown(self):
         self.db.drop_tables([Exam, Exercise, Candidate])
+
+    def test_delete_exam(self):
+        # Test deleting an existing exam
+        base_rs = admin.delete_exam(self.db_exam.id)
+        self.assertTrue(base_rs.success)
+
+        # Test deleting a not existing exam
+        base_rs = admin.delete_exam(ID_NOT_EXISTING)
+        self.assertFalse(base_rs.success)
 
     def test_build_exam_full(self):
         candidate = db.read_candidate(self.db_candidate.id)
@@ -214,6 +232,38 @@ class TestCoreDatabaseHandler(unittest.TestCase):
 
     def tearDown(self):
         self.db.drop_tables([Exam, Exercise, Candidate])
+
+    def test_delete_exam(self):
+        # Test deleting an existing exam
+        exam = db.read_exercises_by_exam(self.db_exam.id)
+        self.assertTrue(exam)
+
+        self.assertTrue(db.delete_exam(self.db_exam.id))
+
+        exam = db.read_exam(self.db_exam.id)
+        self.assertIsNone(exam)
+
+        # Test deleting a not existing exam
+        self.assertFalse(db.delete_exam(ID_NOT_EXISTING))
+
+    def test_delete_exercises_by_exam(self):
+        # Test deleting an existing exam
+        exercises = db.read_exercises_by_exam(self.db_exam.id)
+        self.assertTrue(exercises)
+
+        db.delete_exercise_by_exam(self.db_exam.id)
+
+        exercises = db.read_exercises_by_exam(self.db_exam.id)
+        self.assertFalse(exercises)
+
+        # Test deleting a not existing exam
+        exercises = db.read_exercises_by_exam(ID_NOT_EXISTING)
+        self.assertFalse(exercises)
+
+        db.delete_exercise_by_exam(ID_NOT_EXISTING)
+
+        exercises = db.read_exercises_by_exam(ID_NOT_EXISTING)
+        self.assertFalse(exercises)
 
     def test_insert_exam(self):
         # Test inserting a new exam for a candidate
@@ -462,7 +512,7 @@ def get_dummy_cv_result():
     json_data = '{"candidate":{"number":"CHSG-23.123","date_of_birth":"2010-01-01"},"exam":{"year":2023,' \
                 '"subject":"ABC English","score":4.00,"confidence":0.91, "exercises":[{' \
                 '"number":"1.a","score":2.75,"confidence":0.88,"max_score":3},{"number":"1.b","score":1.25,' \
-                '"confidence":0.98,"max_score":2}]},"result_validated":true} '
+                '"confidence":0.98,"max_score":2}]}}'
 
     data_dict = json.loads(json_data)
 
@@ -478,4 +528,4 @@ def get_dummy_cv_result():
 
     exam = cv_res.Exam(exam_data['year'], exam_data['subject'], exam_data['score'], exam_data['confidence'], exercises)
 
-    return cv_res.CVResult(candidate, exam, data_dict['result_validated'])
+    return cv_res.CVResult(candidate, exam)
