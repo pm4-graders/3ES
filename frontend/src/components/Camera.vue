@@ -17,6 +17,8 @@ const canvasRef = ref(null)
 const store = useCameraStore()
 const { snapshotUrl, currentRequest } = storeToRefs(store)
 
+const availableDevices = ref([])
+
 /**
  * This is a function that creates a video element
  * and sets the stream from the user's camera as the source of the element.
@@ -25,7 +27,9 @@ const createCameraElement = () => {
   const constraints = (window.constraints = {
     audio: false,
     video: {
-      facingMode: 'environment'
+      facingMode: 'environment',
+      width: { ideal: 20160 },
+      height: { ideal: 4096 }
     }
   })
   navigator.mediaDevices
@@ -37,6 +41,12 @@ const createCameraElement = () => {
       alert(error, "May the browser didn't support or there is some errors.")
     })
 }
+onMounted(async () => {
+  let devices = await navigator.mediaDevices.enumerateDevices()
+  devices = devices.filter(device => device.kind === 'videoinput')
+  availableDevices.value = devices
+
+})
 onMounted(createCameraElement)
 onMounted(() => {
   cameraRef.value.addEventListener('loadedmetadata', (e) => {
@@ -70,6 +80,13 @@ const reset = () => {
 </script>
 <template>
   <div class="video-container" v-if="currentRequest">
+    <div class="device-selector-wrapper">
+      <label>Kamera auswählen</label>
+      <select class="form-control">
+        <option v-for="device of availableDevices">{{device.label}}</option>
+      </select>
+
+    </div>
     <div class="camera-video-wrapper">
       <video class="camera-video" ref="cameraRef" autoplay playsinline muted></video>
     </div>
@@ -81,10 +98,7 @@ const reset = () => {
       </button>
     </div>
     <Modal :show="!currentRequest.comp('Nil')" @close="reset">
-      <Loading
-        :loading="currentRequest.comp('Fetching')"
-        :success-badge="currentRequest.comp('Success')"
-      >
+      <Loading :loading="currentRequest.comp('Fetching')" :success-badge="currentRequest.comp('Success')">
         <img alt="Dein Scan" :src="snapshotUrl" class="img-fluid w-100 mb-3" />
         <div class="alert alert-danger" v-if="currentRequest.comp('Failed')">
           {{ store.currentRequest.errorMsg }}
