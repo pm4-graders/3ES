@@ -38,6 +38,14 @@ def build_exam_full(exam):
     return exam_rs
 
 
+def delete_exam(exam_id):
+    """
+    Delete existing exam
+    """
+
+    return BaseResponse(success=db.delete_exam(exam_id))
+
+
 def get_exam_full(exam_id):
     """
     Get exam and all its relationships

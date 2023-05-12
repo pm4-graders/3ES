@@ -9,6 +9,20 @@ router = APIRouter(
 )
 
 
+@router.delete("/exams/{examId}", response_model=BaseResponse, response_model_exclude_none=True)
+async def delete_exam(examId: int):
+    """
+    Delete existing exam
+    """
+
+    response = admin.delete_exam(examId)
+
+    if not response.success:
+        raise HTTPException(status_code=404, detail=const.Message.EXAM_NOT_FOUND.format(examId))
+
+    return response
+
+
 @router.get("/exams/{examId}", response_model=ExamFullResponse, response_model_exclude_none=True)
 async def get_exam(examId: int):
     """
