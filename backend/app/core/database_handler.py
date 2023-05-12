@@ -129,10 +129,11 @@ def read_exams(year, subject):
         query_exam = query_exam.where(Exam.subject == subject)
 
     for exam_id in query_exam.iterator():
-        try:
-            exams.append(Exam.get_by_id(exam_id).__data__)
-        except DoesNotExist:
-            continue
+
+        exam = read_exam(exam_id)
+
+        if exam is not None:
+            exams.append(exam)
 
     return exams
 
@@ -147,11 +148,7 @@ def read_exercises_by_exam(exam_id):
     query_exercise = Exercise.select().where(Exercise.exam == exam_id)
 
     for exercise_id in query_exercise.iterator():
-        try:
-            exercise = Exercise.get_by_id(exercise_id).__data__
-        except DoesNotExist:
-            continue
-
+        exercise = Exercise.get_by_id(exercise_id).__data__
         del exercise[Exercise.exam.name]
         exercises.append(exercise)
 

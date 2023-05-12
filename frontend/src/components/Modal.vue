@@ -25,6 +25,11 @@ const props = defineProps({
       <div class="modal" tabindex="-1" @click="emit('close')">
         <div class="modal-dialog" @click.stop>
           <div class="modal-content">
+            <div class="close-btn">
+              <button class="btn btn-danger" @click="emit('close')">
+                <i class="fa-solid fa-x"></i>
+              </button>
+            </div>
             <div v-if="props.title" class="modal-header">
               <h5 class="modal-title">{{ props.title }}</h5>
             </div>

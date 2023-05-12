@@ -1,8 +1,7 @@
 class CVResult:
-    def __init__(self, candidate, exam, result_validated):
+    def __init__(self, candidate, exam):
         self.candidate = candidate
         self.exam = exam
-        self.result_validated = result_validated
 
 
 class Candidate:

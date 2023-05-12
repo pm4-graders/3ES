@@ -10,7 +10,7 @@ const Request = Type({
   Nil: [], // Request hasn't been made yet
   Prepared: { params: T }, // Request parameters have been prepared
   Fetching: [], // Request is being fetched
-  Failed: { errorMsg: String }, // Request failed
+  Failed: { errorMsgList: Array }, // Request failed
   Success: { data: T } // Request was successful
 })
 
@@ -73,19 +73,30 @@ const get = async (route, request = null, options = {}, entriesKey = 'entries') 
       request.value = Request.SuccessOf({ data: data[entriesKey] })
       return request.value
     }
-    request.value = Request.FailedOf({ errorMsg: 'API Fehler' })
+    request.value = Request.FailedOf({ errorMsgList: ['API Fehler'] })
   } catch (e) {
-    request.value = Request.FailedOf({ errorMsg: e.message })
+    request.value = Request.FailedOf({ errorMsgList: [e.message] })
   }
   return request.value
 }
 
 // An asynchronous function for making a POST request to the API
-const post = async (route, request = { value: Request.Nil }, options = {}) => {
+const post = async (route, request = { value: Request.Nil }, options = {}, type = 'json') => {
   options.method = 'POST'
-  options.body = JSON.stringify(request.value.params)
-  options.headers = {
-    'Content-Type': 'application/json'
+
+  if (type === 'json') {
+    options.body = JSON.stringify(request.value.params)
+    options.headers = {
+      'Content-Type': 'application/json'
+    }
+  } else if (type === 'multipart') {
+    const formData = new FormData()
+    for (const name in request.value.params) {
+      console.log(name)
+      console.log(request.value.params[name])
+      formData.append(name, request.value.params[name])
+    }
+    options.body = formData
   }
   // let formdata = new FormData()
   // for (let key in request.value.params) {
@@ -96,10 +107,13 @@ const post = async (route, request = { value: Request.Nil }, options = {}) => {
   try {
     let res = await fetch(`${appUrl}${route}`, options)
     let data = await res.json()
+    if (!data.success) {
+      request.value = Request.FailedOf({ errorMsgList: data.message })
+      return request.value
+    }
     request.value = Request.SuccessOf({ data })
   } catch (e) {
-    console.log(e)
-    request.value = Request.FailedOf({ errorMsg: e.message })
+    request.value = Request.FailedOf({ errorMsgList: [e.message] })
   }
   return request.value
 }

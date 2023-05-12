@@ -10,13 +10,18 @@ export const useExamStore = defineStore('exam', () => {
 
   const logicalExamList = ref(Webresource.Nil)
 
+  const reset = () => {
+    selectedLogicalExam.value = null
+    logicalExamList.value = Webresource.Nil
+    list.value = Webresource.Nil
+  }
+
   const loadList = async () => {
     list.value = Webresource.Loading
 
     let reqUrl = '/exams'
-    if(selectedLogicalExam.value) {
-
-    let { year, subject } = selectedLogicalExam.value
+    if (selectedLogicalExam.value) {
+      let { year, subject } = selectedLogicalExam.value
       reqUrl += `?year=${year}&subject=${subject}`
     }
     let request = await get(reqUrl, null, {}, 'exams')
@@ -61,6 +66,7 @@ export const useExamStore = defineStore('exam', () => {
     selectedLogicalExam,
     updateExerciseScore,
     updateExamScore,
-    calculateExamScore
+    calculateExamScore,
+    reset,
   }
 })

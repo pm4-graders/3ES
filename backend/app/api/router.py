@@ -9,6 +9,20 @@ router = APIRouter(
 )
 
 
+@router.get("/exams/{examId}", response_model=ExamFullResponse, response_model_exclude_none=True)
+async def get_exam(examId: int):
+    """
+    Get exam and all its relationships
+    """
+
+    response = admin.get_exam_full(examId)
+
+    if not response.success:
+        raise HTTPException(status_code=404, detail=const.Message.EXAM_NOT_FOUND.format(examId))
+
+    return response
+
+
 @router.get("/exams", response_model=ExamFullListResponse, response_model_exclude_none=True)
 async def get_exams(year: int = None, subject: str = None):
     """
@@ -23,16 +37,16 @@ async def get_exams(year: int = None, subject: str = None):
     return response
 
 
-@router.get("/exams/{examId}", response_model=ExamFullResponse, response_model_exclude_none=True)
-async def get_exam(examId: int):
+@router.get("/logical-exams", response_model=LogicalExamListResponse, response_model_exclude_none=True)
+async def get_logical_exams(year: int = None, subject: str = None):
     """
-    Get exam and all its relationships
+    Get (search) logical exams for given parameters.
     """
 
-    response = admin.get_exam_full(examId)
+    response = admin.get_logical_exams(year, subject)
 
     if not response.success:
-        raise HTTPException(status_code=404, detail=const.Message.EXAM_NOT_FOUND.format(examId))
+        raise HTTPException(status_code=404, detail=const.Message.LOG_EXAMS_NOT_FOUND)
 
     return response
 
@@ -61,20 +75,6 @@ async def post_exercise(exercisesId: int, exercise: Score):
 
     if not response.success:
         raise HTTPException(status_code=404, detail=const.Message.EXERCISE_NOT_FOUND.format(exercisesId))
-
-    return response
-
-
-@router.get("/logical-exams", response_model=LogicalExamListResponse, response_model_exclude_none=True)
-async def get_exams(year: int = None, subject: str = None):
-    """
-    Get (search) logical exams for given parameters.
-    """
-
-    response = admin.get_logical_exams(year, subject)
-
-    if not response.success:
-        raise HTTPException(status_code=404, detail=const.Message.LOG_EXAMS_NOT_FOUND)
 
     return response
 
