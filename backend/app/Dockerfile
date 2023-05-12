@@ -15,9 +15,9 @@ RUN apt-get update && apt-get install ffmpeg libsm6 libxext6 -y
 
 COPY ./requirements.txt /app/requirements.txt
 
-RUN pip install --no-cache-dir --upgrade -r requirements.txt
+WORKDIR /app
 
-RUN pip install peewee
+RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
 COPY . .
 
