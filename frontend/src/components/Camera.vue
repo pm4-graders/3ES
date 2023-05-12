@@ -8,6 +8,7 @@
 import { ref, onMounted } from 'vue'
 import Modal from '@/components/Modal.vue'
 import Loading from '@/components/Loading.vue'
+import ErrorListAlert from '@/components/ErrorListAlert.vue'
 import { useCameraStore } from '../stores/camera'
 import { storeToRefs } from 'pinia'
 
@@ -71,6 +72,19 @@ const takePhoto = () => {
   )
 }
 
+const takePhotoFromGallery = (e) => {
+  if (e.currentTarget.files.length === 0) {
+
+  }
+  let file = e.currentTarget.files[0]
+  store.setSnapshot(file)
+  // let reader = new FileReader();
+  // reader.addEventListener('load', (fileReadEvent) => {
+  //   console.log(fileReadEvent)
+  // });
+  // reader.readAsText(file);
+}
+
 /**
  * resets the current request of taking and sending a photo
  */
@@ -83,9 +97,15 @@ const reset = () => {
     <div class="device-selector-wrapper">
       <label>Kamera auswählen</label>
       <select class="form-control">
-        <option v-for="device of availableDevices">{{device.label}}</option>
+        <option v-for="device of availableDevices">{{ device.label }}</option>
       </select>
 
+    </div>
+    <div class="gallery-image-input-wrapper">
+      <label class="btn btn-primary d-block" for="galleryImageInput">
+        <i class="fa-solid fa-images"></i>
+      </label>
+      <input id="galleryImageInput" type="file" accept="image/*" class="d-none" @change="takePhotoFromGallery">
     </div>
     <div class="camera-video-wrapper">
       <video class="camera-video" ref="cameraRef" autoplay playsinline muted></video>
@@ -100,13 +120,19 @@ const reset = () => {
     <Modal :show="!currentRequest.comp('Nil')" @close="reset">
       <Loading :loading="currentRequest.comp('Fetching')" :success-badge="currentRequest.comp('Success')">
         <img alt="Dein Scan" :src="snapshotUrl" class="img-fluid w-100 mb-3" />
-        <div class="alert alert-danger" v-if="currentRequest.comp('Failed')">
-          {{ store.currentRequest.errorMsg }}
-        </div>
-        <button @click="store.uploadResult()" class="btn btn-primary w-100">
-          <i class="fa-solid fa-upload"></i>
-          Senden
-        </button>
+        <template v-if="currentRequest.comp('Failed')">
+          <ErrorListAlert :error-list="store.currentRequest.errorMsgList"></ErrorListAlert>
+          <button @click="reset" class="btn btn-info w-100">
+            <i class="fa-solid fa-arrows-rotate"></i>
+            Neu aufnehmen
+          </button>
+        </template>
+        <template v-else>
+          <button @click="store.uploadResult()" class="btn btn-primary w-100">
+            <i class="fa-solid fa-upload"></i>
+            Senden
+          </button>
+        </template>
       </Loading>
     </Modal>
   </div>
