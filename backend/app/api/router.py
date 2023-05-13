@@ -85,3 +85,23 @@ async def post_scan_save(file: UploadFile = File(...)):
     Save a scan (file)
     """
     return scanner.save_scan_wrapper(file)
+
+
+# @router.get("/logical-exams/export", response_model=LogicalExamListResponse, response_model_exclude_none=True)
+# async def get_logical_exams_export(year: int, subject: str):
+#     """
+#     Get (search) logical exams for given parameters.
+#     """
+#
+#     response = admin.get_logical_exams_export(year, subject)
+#
+#     if not response.success:
+#         raise HTTPException(status_code=404, detail=const.Message.LOG_EXAMS_NOT_FOUND)
+#
+#     return response
+
+@router.post("/logical-exams/export")
+async def get_logical_exams_export(year: int, subject: str):
+    test = admin.get_logical_exams_export(year, subject)
+    print("adsf")
+    return test

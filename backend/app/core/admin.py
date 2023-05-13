@@ -2,6 +2,8 @@ from api.schema import BaseResponse, Candidate, Exam, ExamFull, ExamFullResponse
 import core.database_handler as db
 import model.model as model
 import util.constant as const
+import pandas as pd
+import numpy as np
 
 
 def build_exam_full(exam):
@@ -108,3 +110,46 @@ def update_exercise(exercise_id, exercise):
     """
 
     return BaseResponse(success=db.update_exercise(exercise_id, exercise, const.Exercise.CONFIDENCE_MAX))
+
+
+
+def get_logical_exams_export(year, subject):
+    exams = get_exams(year, subject)
+
+    array_values = ["Candicate ID", "Candidate date of birth", "candidate number", "Exam ID", "Exam Score"]
+
+    max_exercises = 0
+    exercieses_number = len(exams.exams)
+
+    for i in range(0, exercieses_number):
+        if len(exams.exams[i].exercises)>max_exercises:
+            max_exercises = len(exams.exams[i].exercises)
+            print(max_exercises)
+
+    for i in range(1, max_exercises + 1):
+        array_values.append(f"Exercise {i} ID")
+        print("Exercise " + str(i) + " ID")
+
+    output_array = np.empty((len(exams.exams) + 1, len(array_values)), dtype=object)
+
+    output_array[0, :] = array_values
+
+    # Loop through the array and fill the subsequent rows
+    for i, value in enumerate(exams.exams):
+        output_array[i + 1, 0] = exams.exams[i].candidate.id
+        output_array[i + 1, 1] = exams.exams[i].candidate.date_of_birth
+        output_array[i + 1, 2] = exams.exams[i].candidate.number
+        output_array[i + 1, 3] = exams.exams[i].id
+        output_array[i + 1, 4] = exams.exams[i].score
+        print(exams.exams[i].exercises[0]['score'])
+
+        output_array[i + 1, 5:] = [exams.exams[i].exercises[j]['score'] for j in range(0, len(exams.exams[i].exercises))]
+
+    df = pd.DataFrame(output_array)
+
+
+    with pd.ExcelWriter(f'{year}_{subject}.xlsx') as writer:
+        df.to_excel(writer, sheet_name="Sheet_1", index=False, header=True)
+
+
+
