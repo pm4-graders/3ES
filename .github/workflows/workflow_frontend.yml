@@ -18,11 +18,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Install npm packages
       - run: npm install
-      - name: Run Linting
       - run: npm run lint
-      - name: Run Unit tests
       - run: npm run test:unit
       - name: Cypress run
         uses: cypress-io/github-action@v5
