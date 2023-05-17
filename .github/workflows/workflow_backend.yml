@@ -13,6 +13,8 @@ jobs:
       run:
         working-directory: ./backend/app
     steps:
+      - name: Install dependencies
+        run: pip install pytest pytest-md pytest-emoji
       - name: Run pytest
         uses: pavelzw/pytest-action@v2
         with:
