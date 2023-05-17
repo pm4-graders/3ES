@@ -20,7 +20,7 @@ jobs:
           python-version: 3.9
       - name: Install testing dependencies
         run: pip install pytest pytest-md pytest-emoji
-      - name: Install testing dependencies
+      - name: Install backend dependencies
         run: pip install -r requirements.txt
       - name: Run pytest
         uses: pavelzw/pytest-action@v2
