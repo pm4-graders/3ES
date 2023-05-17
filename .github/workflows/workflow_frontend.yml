@@ -18,10 +18,19 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+      - name: Install npm packages
       - run: npm install
+      - name: Run Linting
       - run: npm run lint
+      - name: Cypress run
+        uses: cypress-io/github-action@v5
+        with:
+          start: npm run test:e2e:dev
+          wait-on: 'http://localhost:4173'
+          record: false
+          parallel: false
   build:
-    needs: testing
+    #needs: testing
     runs-on: ubuntu-latest
     defaults:
       run:
