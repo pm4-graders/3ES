@@ -25,6 +25,7 @@ jobs:
         uses: cypress-io/github-action@v5
         with:
           start: npm run test:e2e:dev
+          working-directory: frontend
           wait-on: 'http://localhost:4173'
           record: false
           parallel: false
