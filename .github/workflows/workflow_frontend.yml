@@ -9,9 +9,6 @@ on:
 jobs:
   testing:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x]
     steps:
       - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
@@ -23,7 +20,7 @@ jobs:
       - run: npm run lint
       - run: npm run test:e2e 
   build:
-    requires: testing
+    needs: testing
     runs-on: ubuntu-latest
     defaults:
       run:
