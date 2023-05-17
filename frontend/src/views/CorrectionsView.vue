@@ -7,10 +7,25 @@ import { useExamStore } from '@/stores/exam'
 const examStore = useExamStore()
 
 const showScan = ref(null)
+const appUrl = import.meta.env.VITE_API_URL
+
+const deleteExam = async (exam) => {
+  console.log(exam)
+  try{
+    let result = await fetch(appUrl + 'exams/'+exam.id, {method:"DELETE"})
+    let resultData = await result.json()
+  }catch (error){
+    alert('error during delete')
+  }
+  examStore.loadList()
+}
 
 onMounted(() => {
   examStore.reset()
   examStore.loadLogicalExamList()
+  let exam = {}
+  exam.id = 5
+  deleteExam(exam)
 })
 </script>
 <template>
@@ -64,7 +79,7 @@ onMounted(() => {
               <td>
                 <button class="btn btn-secondary" @click="showScan = true">scan</button>
 
-                <button class="btn btn-secondary" @click="deleteEntry= true">delete</button>
+                <button class="btn btn-secondary" @click="deleteExam(exam)">delete</button>
               </td>
             </tr>
           </tbody>
@@ -83,8 +98,6 @@ onMounted(() => {
     <Modal :show="!!showScan" @close="showScan = false">
       <img src="https://placehold.co/400x800" />
     </Modal>
-    <Modal :show="!!deleteEntry">
-      <!-- deleteEntry-->
-    </Modal>
+
   </div>
 </template>
