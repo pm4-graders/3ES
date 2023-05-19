@@ -7,7 +7,32 @@ on:
     paths: 'backend/**'
   workflow_dispatch:
 jobs:
+  testing:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend/app
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+      - name: Install testing dependencies
+        run: pip install pytest pytest-md pytest-emoji
+      - name: Install backend dependencies
+        run: pip install -r requirements.txt
+      - name: Run pytest
+        uses: pavelzw/pytest-action@v2
+        with:
+          verbose: true
+          emoji: true
+          job-summary: true
+          custom-arguments: '-q'
+          click-to-expand: true
+          report-title: 'Test Report'
   build:
+    needs: testing
     runs-on: ubuntu-latest
     defaults:
       run:
