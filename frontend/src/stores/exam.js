@@ -57,8 +57,6 @@ export const useExamStore = defineStore('exam', () => {
   const deleteExam = async (exam) => {
     await deleteReq(`/exams/${exam.id}`)
     await loadList()
-
-
   }
 
   watch(selectedLogicalExam, () => {
@@ -75,6 +73,6 @@ export const useExamStore = defineStore('exam', () => {
     updateExamScore,
     calculateExamScore,
     reset,
-    deleteExam,
+    deleteExam
   }
 })

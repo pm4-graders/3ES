@@ -120,7 +120,7 @@ const post = async (route, request = { value: Request.Nil }, options = {}, type 
   return request.value
 }
 
-const deleteReq = async (route, request = { value: Request.Nil }, options = {}, ) => {
+const deleteReq = async (route, request = { value: Request.Nil }, options = {}) => {
   options.method = 'DELETE'
 
   request.value = Request.Fetching
