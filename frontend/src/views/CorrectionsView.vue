@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue'
 import Loading from '@/components/Loading.vue'
 import Modal from '@/components/Modal.vue'
 import CorrectionInput from '@/components/CorrectionInput.vue'
+import ErrorListAlert from '@/components/ErrorListAlert.vue'
 import { useExamStore } from '@/stores/exam'
 const examStore = useExamStore()
 
@@ -25,6 +26,9 @@ onMounted(() => {
             {{ logicalExam.subject }} {{ logicalExam.year }}
           </option>
         </select>
+      </div>
+      <div v-if="examStore.logicalExamList.comp('Failed')" class="mb-3">
+          <ErrorListAlert :error-list="examStore.logicalExamList.errorMsgList"></ErrorListAlert>
       </div>
     </Loading>
 
@@ -62,7 +66,9 @@ onMounted(() => {
                   @change="examStore.updateExamScore(exam.id, $event)" />
               </td>
               <td>
-                <button class="btn btn-secondary" @click="showScan = true">scan</button>
+                <button class="btn btn-secondary" @click="showScan = true">
+                  <i class="fa-solid fa-image"></i>
+                </button>
               </td>
             </tr>
           </tbody>
