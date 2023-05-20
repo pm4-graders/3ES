@@ -1,6 +1,6 @@
 import { ref, watch } from 'vue'
 import { defineStore } from 'pinia'
-import { get, Webresource, Request, post } from '@/utilities/fetch'
+import { get, Webresource, Request, post, deleteReq } from '@/utilities/fetch'
 import { requestToWebresource } from '../utilities/fetch'
 
 export const useExamStore = defineStore('exam', () => {
@@ -54,6 +54,13 @@ export const useExamStore = defineStore('exam', () => {
     return exam.exercises.reduce((total, exercise) => exercise.score + total, 0)
   }
 
+  const deleteExam = async (exam) => {
+    await deleteReq(`/exams/${exam.id}`)
+    loadList()
+
+
+  }
+
   watch(selectedLogicalExam, () => {
     loadList()
   })
@@ -68,5 +75,6 @@ export const useExamStore = defineStore('exam', () => {
     updateExamScore,
     calculateExamScore,
     reset,
+    deleteExam,
   }
 })
