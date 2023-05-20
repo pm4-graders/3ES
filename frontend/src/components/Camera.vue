@@ -29,8 +29,8 @@ const createCameraElement = () => {
     audio: false,
     video: {
       facingMode: 'environment',
-      width: { ideal: 1800},
-      height: { ideal: 1000}
+      width: { ideal: 1800 },
+      height: { ideal: 1000 }
     }
   })
   navigator.mediaDevices
@@ -44,9 +44,8 @@ const createCameraElement = () => {
 }
 onMounted(async () => {
   let devices = await navigator.mediaDevices.enumerateDevices()
-  devices = devices.filter(device => device.kind === 'videoinput')
+  devices = devices.filter((device) => device.kind === 'videoinput')
   availableDevices.value = devices
-
 })
 onMounted(createCameraElement)
 onMounted(() => {
@@ -74,7 +73,6 @@ const takePhoto = () => {
 
 const takePhotoFromGallery = (e) => {
   if (e.currentTarget.files.length === 0) {
-
   }
   let file = e.currentTarget.files[0]
   store.setSnapshot(file)
@@ -99,13 +97,18 @@ const reset = () => {
       <select class="form-control">
         <option v-for="device of availableDevices">{{ device.label }}</option>
       </select>
-
     </div>
     <div class="gallery-image-input-wrapper">
       <label class="btn btn-primary d-block" for="galleryImageInput">
         <i class="fa-solid fa-images"></i>
       </label>
-      <input id="galleryImageInput" type="file" accept="image/*" class="d-none" @change="takePhotoFromGallery">
+      <input
+        id="galleryImageInput"
+        type="file"
+        accept="image/*"
+        class="d-none"
+        @change="takePhotoFromGallery"
+      />
     </div>
     <div class="camera-video-wrapper">
       <video class="camera-video" ref="cameraRef" autoplay playsinline muted></video>
@@ -118,7 +121,10 @@ const reset = () => {
       </button>
     </div>
     <Modal :show="!currentRequest.comp('Nil')" @close="reset">
-      <Loading :loading="currentRequest.comp('Fetching')" :success-badge="currentRequest.comp('Success')">
+      <Loading
+        :loading="currentRequest.comp('Fetching')"
+        :success-badge="currentRequest.comp('Success')"
+      >
         <img alt="Dein Scan" :src="snapshotUrl" class="img-fluid w-100 mb-3" />
         <template v-if="currentRequest.comp('Failed')">
           <ErrorListAlert :error-list="store.currentRequest.errorMsgList"></ErrorListAlert>

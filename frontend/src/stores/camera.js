@@ -7,7 +7,9 @@ export const useCameraStore = defineStore('camera', () => {
   const blob = ref(null)
 
   function setSnapshot(snapshotBlob) {
-    currentRequest.value = Request.PreparedOf({ params: { file: new File([snapshotBlob], "file")} })
+    currentRequest.value = Request.PreparedOf({
+      params: { file: new File([snapshotBlob], 'file') }
+    })
     blob.value = snapshotBlob
   }
 

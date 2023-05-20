@@ -120,4 +120,22 @@ const post = async (route, request = { value: Request.Nil }, options = {}, type 
   return request.value
 }
 
-export { get, post, Webresource, Request, requestToWebresource }
+const deleteReq = async (route, request = { value: Request.Nil }, options = {}) => {
+  options.method = 'DELETE'
+
+  request.value = Request.Fetching
+  try {
+    let res = await fetch(`${appUrl}${route}`, options)
+    let data = await res.json()
+    if (!data.success) {
+      request.value = Request.FailedOf({ errorMsgList: data.message })
+      return request.value
+    }
+    request.value = Request.SuccessOf({ data })
+  } catch (e) {
+    request.value = Request.FailedOf({ errorMsgList: [e.message] })
+  }
+  return request.value
+}
+
+export { get, post, Webresource, Request, requestToWebresource, deleteReq }
