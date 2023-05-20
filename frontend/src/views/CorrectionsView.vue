@@ -33,7 +33,7 @@ onMounted(() => {
     </Loading>
 
     <Loading :loading="examStore.list.comp('Loading')">
-      <div v-if="examStore.list.comp('Loaded')">
+      <div class="table-wrapper" v-if="examStore.list.comp('Loaded')">
         <table class="table table-row correction-table">
           <thead>
             <tr>
