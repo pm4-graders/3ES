@@ -29,7 +29,7 @@ const createCameraElement = () => {
     audio: false,
     video: {
       facingMode: 'environment',
-      width: { ideal: 2000},
+      width: { ideal: 1800},
       height: { ideal: 1000}
     }
   })
