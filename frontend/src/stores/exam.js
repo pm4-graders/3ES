@@ -56,7 +56,7 @@ export const useExamStore = defineStore('exam', () => {
 
   const deleteExam = async (exam) => {
     await deleteReq(`/exams/${exam.id}`)
-    loadList()
+    await loadList()
 
 
   }
