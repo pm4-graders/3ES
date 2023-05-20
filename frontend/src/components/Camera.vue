@@ -29,8 +29,8 @@ const createCameraElement = () => {
     audio: false,
     video: {
       facingMode: 'environment',
-      width: { ideal: 20160 },
-      height: { ideal: 4096 }
+      width: { ideal: 1800},
+      height: { ideal: 1000}
     }
   })
   navigator.mediaDevices

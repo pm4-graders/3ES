@@ -19,8 +19,8 @@ const props = defineProps({
 <template>
   <nav class="navbar navbar-expand navbar-dark bg-dark fixed-bottom">
     <div class="container-fluid justify-content-center nav navbar-nav">
-      <div v-for="(entry, entryIndex) of props.list" class="nav-item" :key="entryIndex">
-        <router-link class="nav-link m-2 p-3" active-class="app-nav-active" :to="entry.path">
+      <div v-for="(entry, entryIndex) of props.list" class="nav-item" :key="entryIndex" >
+        <router-link class="nav-link m-2 p-2" active-class="app-nav-active" :to="entry.path">
           <a>{{ entry.title }}</a>
         </router-link>
       </div>
@@ -30,9 +30,7 @@ const props = defineProps({
 
 <style lang="scss" scoped>
 .nav-item {
-  max-width: 250px;
-  min-width: 100px;
-  width: 20%;
+  width: 200px;
   margin: 0 5px;
 }
 

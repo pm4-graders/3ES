@@ -166,13 +166,16 @@
     top: -10px;
     right: 0;
     padding: 2px 4px;
-    border-radius: 4px;
+    border-radius: 5px;
     color: white;
     background: $primary;
   }
 }
 
 .correction-table {
+  tr, th {
+    min-width: 5ch;
+  }
   tr.invalid {
     td {
       background: transparentize($danger, 0.5);
@@ -187,4 +190,17 @@
     top: 3px;
     z-index: 10;
   }
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+.form-control {
+  padding: 4px;
+}
+
+.video-container {
+  max-height: 80vh;
+  overflow: hidden;
 }

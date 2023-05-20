@@ -18,7 +18,7 @@ const Request = Type({
 const Webresource = Type({
   Nil: [], // Web resource doesn't exist
   Loading: [], // Web resource is being loaded
-  Failed: { request: Request.Failed }, // Failed to load web resource
+  Failed: { errorMsgList: Array }, // Request failed
   Loaded: { entries: T } // Web resource was successfully loaded
 })
 
@@ -30,7 +30,9 @@ Webresource.e = {
 const requestToWebresource = (request) =>
   Request.case(
     {
-      Failed: (request) => Webresource.FailedOf({ request }),
+      Failed: (request) => {
+        return Webresource.FailedOf({ errorMsgList: request })
+      },
       Success: (entries) => {
         return Webresource.LoadedOf({ entries: entries })
       }

@@ -40,7 +40,7 @@ const confidence = computed(() => {
   <div class="correction-input">
     <input class="form-control" type="number" :value="props.value" @change="change" />
     <div class="confidence-badge" :style="badgeStyle" v-if="props.confidence">
-      confidence: {{confidence}}
+      {{confidence}}
     </div>
   </div>
 </template>

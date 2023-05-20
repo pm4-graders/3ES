@@ -8,10 +8,10 @@ import Navbar from './components/Navbar.vue'
 const logo = ref(true)
 const currentRoute = computed(() => useRoute().name)
 const navList = ref([
-  {
-    title: 'List',
-    path: '/list'
-  },
+  // {
+  //   title: 'List',
+  //   path: '/list'
+  // },
   {
     title: 'Scan',
     path: '/scanner'
