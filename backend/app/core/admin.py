@@ -1,11 +1,17 @@
+import asyncio
+
 from api.schema import BaseResponse, Candidate, Exam, ExamFull, ExamFullResponse, ExamFullListResponse, Exercise, LogicalExam, LogicalExamListResponse
 import core.database_handler as db
 import model.model as model
 import util.constant as const
 import pandas as pd
 import numpy as np
+import nest_asyncio
+import os
 
+EXCELDIR = "output/"
 
+nest_asyncio.apply()
 def build_exam_full(exam):
     """
     Build exam with all its relationships
@@ -113,7 +119,10 @@ def update_exercise(exercise_id, exercise):
 
 
 
-def get_logical_exams_export(year, subject):
+async def get_logical_exams_export(year, subject):
+    loop = asyncio.get_running_loop()
+    exams = await loop.run_in_executor(None, get_exams, year, subject)
+
     exams = get_exams(year, subject)
 
     array_values = ["Candicate ID", "Candidate Number", "Candidate date of birth", "candidate number", "Exam ID", "Exam Score"]
@@ -144,10 +153,15 @@ def get_logical_exams_export(year, subject):
         output_array[i + 1, 6:] = [exams.exams[i].exercises[j]['score'] for j in range(0, len(exams.exams[i].exercises))]
 
     df = pd.DataFrame(output_array)
-    with pd.ExcelWriter(f'{year}_{subject}.xlsx') as writer:
-        df.to_excel(writer, sheet_name="Sheet_1", index=False, header=True)
-    manipulate_excel(f'{year}_{subject}.xlsx', year, subject, ex)
 
+    os.makedirs(EXCELDIR, exist_ok=True)
+    file_path = os.path.join(EXCELDIR, f'{year}_{subject}.xlsx')
+
+    with pd.ExcelWriter(file_path) as writer:
+        df.to_excel(writer, sheet_name="Sheet_1", index=False, header=True)
+
+    manipulate_excel(file_path, year, subject)
+    return file_path
 
 
 def manipulate_excel(excel, year, subject):
@@ -168,7 +182,7 @@ def manipulate_excel(excel, year, subject):
 
     # the first row are numbers of the dataframe, so we need to skip it
 
-    df.to_excel("modified_file.xlsx", index=False)
+    df.to_excel(excel, index=False)
 
 
 
