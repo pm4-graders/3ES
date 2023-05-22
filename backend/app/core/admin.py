@@ -116,7 +116,7 @@ def update_exercise(exercise_id, exercise):
 def get_logical_exams_export(year, subject):
     exams = get_exams(year, subject)
 
-    array_values = ["Candicate ID", "Candidate date of birth", "candidate number", "Exam ID", "Exam Score"]
+    array_values = ["Candicate ID", "Candidate Number", "Candidate date of birth", "candidate number", "Exam ID", "Exam Score"]
 
     max_exercises = 0
     exercieses_number = len(exams.exams)
@@ -131,25 +131,45 @@ def get_logical_exams_export(year, subject):
         print("Exercise " + str(i) + " ID")
 
     output_array = np.empty((len(exams.exams) + 1, len(array_values)), dtype=object)
-
     output_array[0, :] = array_values
 
     # Loop through the array and fill the subsequent rows
     for i, value in enumerate(exams.exams):
         output_array[i + 1, 0] = exams.exams[i].candidate.id
-        output_array[i + 1, 1] = exams.exams[i].candidate.date_of_birth
-        output_array[i + 1, 2] = exams.exams[i].candidate.number
-        output_array[i + 1, 3] = exams.exams[i].id
-        output_array[i + 1, 4] = exams.exams[i].score
-        print(exams.exams[i].exercises[0]['score'])
-
-        output_array[i + 1, 5:] = [exams.exams[i].exercises[j]['score'] for j in range(0, len(exams.exams[i].exercises))]
+        output_array[i + 1, 1] = exams.exams[i].candidate.number
+        output_array[i + 1, 2] = exams.exams[i].candidate.date_of_birth
+        output_array[i + 1, 3] = exams.exams[i].candidate.number
+        output_array[i + 1, 4] = exams.exams[i].id
+        output_array[i + 1, 5] = exams.exams[i].score
+        output_array[i + 1, 6:] = [exams.exams[i].exercises[j]['score'] for j in range(0, len(exams.exams[i].exercises))]
 
     df = pd.DataFrame(output_array)
-
-
     with pd.ExcelWriter(f'{year}_{subject}.xlsx') as writer:
         df.to_excel(writer, sheet_name="Sheet_1", index=False, header=True)
+    manipulate_excel(f'{year}_{subject}.xlsx', year, subject, ex)
+
+
+
+def manipulate_excel(excel, year, subject):
+    df = pd.read_excel(excel)
+    empty_df = pd.DataFrame(np.nan, index=range(6), columns=df.columns)
+
+    # Find the first column name
+    first_column = df.columns[0]
+
+    # Concatenate the original DataFrame to the new DataFrame
+
+
+    empty_df.iloc[0, 0] = "AP Gymnasium: " + str(year)
+    empty_df.iloc[2, 0] = str(subject)
+    empty_df.iloc[4, 0] = "Total:"
+    empty_df.iloc[5, 0] = "Mittelwert:"
+    df = pd.concat([empty_df, df], ignore_index=True)
+
+    # the first row are numbers of the dataframe, so we need to skip it
+
+    df.to_excel("modified_file.xlsx", index=False)
+
 
 
 
