@@ -27,7 +27,6 @@ def save_scan(file: UploadFile):
     loop = asyncio.get_event_loop()
     coroutine = create_upload_file_async(file)
     picture_path = loop.run_until_complete(coroutine)
-
     # call computer vision
     try:
         image = cv2.imread(picture_path)
@@ -40,13 +39,16 @@ def save_scan(file: UploadFile):
 
     # database save
     exam_id = db.save_scan_db(exam_object)
-
     if not exam_id:
+
         raise Exception(const.Message.EXAM_EXISTS)
 
     # get exam data
     response = get_exam_full(exam_id)
     response.message = message
+    response.path = picture_path
+
+
 
     return response
 

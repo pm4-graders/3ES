@@ -9,7 +9,7 @@ router = APIRouter(
     prefix='/api'
 )
 
-router.mount("/static", StaticFiles(directory="static"), name="static")
+
 @router.get("/exams/{examId}", response_model=ExamFullResponse, response_model_exclude_none=True)
 async def get_exam(examId: int):
     """
