@@ -14,7 +14,7 @@ nest_asyncio.apply()
 
 recognizer = DigitRecognizer()
 
-IMAGEDIR = "images/"
+IMAGEDIR = "static/images/"
 
 
 def save_scan(file: UploadFile):
@@ -31,10 +31,8 @@ def save_scan(file: UploadFile):
     # call computer vision
     try:
         image = cv2.imread(picture_path)
-        print("image", image)
         exam_object = recognizer.recognize_digits_in_photo(image)
     except Exception as exc:
-        print(exc)
         raise Exception(const.Message.CV_EXCEPTION.format(exc))
 
     # validation

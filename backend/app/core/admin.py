@@ -9,7 +9,7 @@ import numpy as np
 import nest_asyncio
 import os
 
-EXCELDIR = "output/"
+EXCELDIR = "static/output/"
 
 nest_asyncio.apply()
 def build_exam_full(exam):

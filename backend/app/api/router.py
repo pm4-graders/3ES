@@ -3,12 +3,13 @@ from .schema import BaseResponse, ExamFullResponse, ExamFullListResponse, Logica
 import core.admin as admin
 import core.scanner as scanner
 import util.constant as const
+from fastapi.staticfiles import StaticFiles
 
 router = APIRouter(
     prefix='/api'
 )
 
-
+router.mount("/static", StaticFiles(directory="static"), name="static")
 @router.get("/exams/{examId}", response_model=ExamFullResponse, response_model_exclude_none=True)
 async def get_exam(examId: int):
     """
