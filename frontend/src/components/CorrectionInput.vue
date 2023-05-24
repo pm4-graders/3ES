@@ -26,13 +26,21 @@ const badgeStyle = computed(() => {
 const change = (e) => {
   emit('change', e.target.value)
 }
+
+const confidence = computed(() => {
+  if (!props.confidence) {
+    return ''
+  }
+
+  return props.confidence.toFixed(2)
+})
 </script>
 
 <template>
   <div class="correction-input">
     <input class="form-control" type="number" :value="props.value" @change="change" />
     <div class="confidence-badge" :style="badgeStyle" v-if="props.confidence">
-      confidence: {{ props.confidence }}
+      {{ confidence }}
     </div>
   </div>
 </template>

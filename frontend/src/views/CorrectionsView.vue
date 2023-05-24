@@ -3,12 +3,16 @@ import { onMounted, ref } from 'vue'
 import Loading from '@/components/Loading.vue'
 import Modal from '@/components/Modal.vue'
 import CorrectionInput from '@/components/CorrectionInput.vue'
+import ErrorListAlert from '@/components/ErrorListAlert.vue'
 import { useExamStore } from '@/stores/exam'
 const examStore = useExamStore()
 
 const showScan = ref(null)
 
-onMounted(examStore.loadLogicalExamList)
+onMounted(() => {
+  examStore.reset()
+  examStore.loadLogicalExamList()
+})
 </script>
 <template>
   <div>
@@ -26,10 +30,13 @@ onMounted(examStore.loadLogicalExamList)
           </option>
         </select>
       </div>
+      <div v-if="examStore.logicalExamList.comp('Failed')" class="mb-3">
+        <ErrorListAlert :error-list="examStore.logicalExamList.errorMsgList"></ErrorListAlert>
+      </div>
     </Loading>
 
     <Loading :loading="examStore.list.comp('Loading')">
-      <div v-if="examStore.list.comp('Loaded')">
+      <div class="table-wrapper" v-if="examStore.list.comp('Loaded')">
         <table class="table table-row correction-table">
           <thead>
             <tr>
@@ -50,8 +57,8 @@ onMounted(examStore.loadLogicalExamList)
             >
               <td>
                 {{ exam.candidate.number }}
-                <br>
-                <small>Scan-Datum: {{$filters.formatDatetime(exam.created_at)}}</small>
+                <br />
+                <small>Scan-Datum: {{ $filters.formatDatetime(exam.created_at) }}</small>
               </td>
               <td>
                 {{ $filters.formatDate(exam.candidate.date_of_birth) }}
@@ -71,14 +78,19 @@ onMounted(examStore.loadLogicalExamList)
                 />
               </td>
               <td>
-                <button class="btn btn-secondary" @click="showScan = true">scan</button>
+                <button class="btn btn-secondary" @click="showScan = true">
+                  <i class="fa-solid fa-image"></i>
+                </button>
+                <button class="btn btn-danger" @click="examStore.deleteExam(exam)">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
       <div v-if="examStore.list.comp('Failed')">
-        <div class="alert alert-danger">{{ examStore.list.request }}</div>
+        <ErrorListAlert :error-list="examStore.list.errorMsgList"></ErrorListAlert>
       </div>
       <div v-if="examStore.selectedLogicalExam" class="p-3 text-center">
         <button class="btn btn-primary btn-lg">

@@ -1,6 +1,6 @@
 import { ref, watch } from 'vue'
 import { defineStore } from 'pinia'
-import { get, Webresource, Request, post } from '@/utilities/fetch'
+import { get, Webresource, Request, post, deleteReq } from '@/utilities/fetch'
 import { requestToWebresource } from '../utilities/fetch'
 
 export const useExamStore = defineStore('exam', () => {
@@ -10,13 +10,18 @@ export const useExamStore = defineStore('exam', () => {
 
   const logicalExamList = ref(Webresource.Nil)
 
+  const reset = () => {
+    selectedLogicalExam.value = null
+    logicalExamList.value = Webresource.Nil
+    list.value = Webresource.Nil
+  }
+
   const loadList = async () => {
     list.value = Webresource.Loading
 
     let reqUrl = '/exams'
-    if(selectedLogicalExam.value) {
-
-    let { year, subject } = selectedLogicalExam.value
+    if (selectedLogicalExam.value) {
+      let { year, subject } = selectedLogicalExam.value
       reqUrl += `?year=${year}&subject=${subject}`
     }
     let request = await get(reqUrl, null, {}, 'exams')
@@ -49,6 +54,11 @@ export const useExamStore = defineStore('exam', () => {
     return exam.exercises.reduce((total, exercise) => exercise.score + total, 0)
   }
 
+  const deleteExam = async (exam) => {
+    await deleteReq(`/exams/${exam.id}`)
+    await loadList()
+  }
+
   watch(selectedLogicalExam, () => {
     loadList()
   })
@@ -61,6 +71,8 @@ export const useExamStore = defineStore('exam', () => {
     selectedLogicalExam,
     updateExerciseScore,
     updateExamScore,
-    calculateExamScore
+    calculateExamScore,
+    reset,
+    deleteExam
   }
 })

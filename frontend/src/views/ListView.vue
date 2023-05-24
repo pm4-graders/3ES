@@ -11,10 +11,13 @@ onMounted(examStore.loadList)
     <Loading :loading="examStore.list.comp('Loading')">
       <div if="examStore.list.comp('Loaded')">
         <ul class="list-group list-group-stripe">
-          <li v-for="(exam, index) in examStore.list.entries" class="list-group-item" :key="exam.id"
-            :style="{ transitionDelay: 0.3 * index + 's' }">
+          <li
+            v-for="(exam, index) in examStore.list.entries"
+            class="list-group-item"
+            :key="exam.id"
+            :style="{ transitionDelay: 0.3 * index + 's' }"
+          >
             <div class="row">
-
               <div class="col-9">
                 <div>Kandidaten Nr: {{ exam.candidate.number }}</div>
                 <div>Geburtstag: {{ $filters.formatDate(exam.candidate.date_of_birth) }}</div>

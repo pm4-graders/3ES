@@ -1,14 +1,13 @@
-FROM tiangolo/uvicorn-gunicorn-fastapi:python3.9
+FROM python:3.9
 
-# install stuff for cv2
-RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
+COPY ./requirements.txt /code/app/requirements.txt
 
-COPY ./requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir --upgrade -r /code/app/requirements.txt
 
-RUN pip install --no-cache-dir --upgrade -r requirements.txt
+RUN apt-get update && apt-get install ffmpeg libsm6 libxext6 -y
 
-COPY . .
+COPY . /code/app
 
-#EXPOSE 5000
+WORKDIR /code/app
 
-#USER app
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]

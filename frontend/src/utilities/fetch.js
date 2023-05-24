@@ -10,7 +10,7 @@ const Request = Type({
   Nil: [], // Request hasn't been made yet
   Prepared: { params: T }, // Request parameters have been prepared
   Fetching: [], // Request is being fetched
-  Failed: { errorMsg: String }, // Request failed
+  Failed: { errorMsgList: Array }, // Request failed
   Success: { data: T } // Request was successful
 })
 
@@ -18,7 +18,7 @@ const Request = Type({
 const Webresource = Type({
   Nil: [], // Web resource doesn't exist
   Loading: [], // Web resource is being loaded
-  Failed: { request: Request.Failed }, // Failed to load web resource
+  Failed: { errorMsgList: Array }, // Request failed
   Loaded: { entries: T } // Web resource was successfully loaded
 })
 
@@ -30,7 +30,9 @@ Webresource.e = {
 const requestToWebresource = (request) =>
   Request.case(
     {
-      Failed: (request) => Webresource.FailedOf({ request }),
+      Failed: (request) => {
+        return Webresource.FailedOf({ errorMsgList: request })
+      },
       Success: (entries) => {
         return Webresource.LoadedOf({ entries: entries })
       }
@@ -73,9 +75,9 @@ const get = async (route, request = null, options = {}, entriesKey = 'entries') 
       request.value = Request.SuccessOf({ data: data[entriesKey] })
       return request.value
     }
-    request.value = Request.FailedOf({ errorMsg: 'API Fehler' })
+    request.value = Request.FailedOf({ errorMsgList: ['API Fehler'] })
   } catch (e) {
-    request.value = Request.FailedOf({ errorMsg: e.message })
+    request.value = Request.FailedOf({ errorMsgList: [e.message] })
   }
   return request.value
 }
@@ -107,12 +109,33 @@ const post = async (route, request = { value: Request.Nil }, options = {}, type 
   try {
     let res = await fetch(`${appUrl}${route}`, options)
     let data = await res.json()
+    if (!data.success) {
+      request.value = Request.FailedOf({ errorMsgList: data.message })
+      return request.value
+    }
     request.value = Request.SuccessOf({ data })
   } catch (e) {
-    console.log(e)
-    request.value = Request.FailedOf({ errorMsg: e.message })
+    request.value = Request.FailedOf({ errorMsgList: [e.message] })
   }
   return request.value
 }
 
-export { get, post, Webresource, Request, requestToWebresource }
+const deleteReq = async (route, request = { value: Request.Nil }, options = {}) => {
+  options.method = 'DELETE'
+
+  request.value = Request.Fetching
+  try {
+    let res = await fetch(`${appUrl}${route}`, options)
+    let data = await res.json()
+    if (!data.success) {
+      request.value = Request.FailedOf({ errorMsgList: data.message })
+      return request.value
+    }
+    request.value = Request.SuccessOf({ data })
+  } catch (e) {
+    request.value = Request.FailedOf({ errorMsgList: [e.message] })
+  }
+  return request.value
+}
+
+export { get, post, Webresource, Request, requestToWebresource, deleteReq }
