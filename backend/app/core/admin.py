@@ -27,6 +27,7 @@ def build_exam_full(exam):
         subject=exam[model.Exam.subject.name],
         score=exam[model.Exam.score.name],
         confidence=exam[model.Exam.confidence.name],
+        picture_path=exam[model.Exam.picture_path.name],
         created_at=exam[model.Exam.created_at.name],
         updated_at=exam[model.Exam.updated_at.name],
         candidate=Candidate(

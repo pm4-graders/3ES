@@ -31,6 +31,7 @@ def save_scan(file: UploadFile):
     try:
         image = cv2.imread(picture_path)
         exam_object = recognizer.recognize_digits_in_photo(image)
+        exam_object.exam.picture_path = picture_path
     except Exception as exc:
         raise Exception(const.Message.CV_EXCEPTION.format(exc))
 
