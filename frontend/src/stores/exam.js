@@ -88,6 +88,6 @@ export const useExamStore = defineStore('exam', () => {
     reset,
     deleteExam,
     getExport,
-    exportRequest,
+    exportRequest
   }
 })

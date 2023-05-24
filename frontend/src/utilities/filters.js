@@ -10,6 +10,5 @@ export default {
   imageUrl(value) {
     let staticFilesPath = import.meta.env.VITE_STATIC_FILES_URL
     return staticFilesPath + '/' + value
-  },
-
+  }
 }

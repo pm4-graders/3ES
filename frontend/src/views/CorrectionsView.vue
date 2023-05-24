@@ -10,7 +10,7 @@ const examStore = useExamStore()
 const showExam = ref(null)
 
 const deleteExam = (exam) => {
-  if (!confirm("Eintrag wirklich löschen?")) return
+  if (!confirm('Eintrag wirklich löschen?')) return
 
   examStore.deleteExam(exam)
 }
@@ -25,10 +25,17 @@ onMounted(() => {
     <LoadingComponent :loading="examStore.logicalExamList.comp('Loading')">
       <div v-if="examStore.logicalExamList.comp('Loaded')" class="mb-3">
         <label class="form-label">Prüfung auswählen</label>
-        <select class="form-select" v-model="examStore.selectedLogicalExam" data-test="logical-exam-select">
+        <select
+          class="form-select"
+          v-model="examStore.selectedLogicalExam"
+          data-test="logical-exam-select"
+        >
           <option :value="null">-- Bitte auswählen --</option>
-          <option v-for="(logicalExam, logicalExamIndex) of examStore.logicalExamList.entries" :value="logicalExam"
-            :key="logicalExamIndex">
+          <option
+            v-for="(logicalExam, logicalExamIndex) of examStore.logicalExamList.entries"
+            :value="logicalExam"
+            :key="logicalExamIndex"
+          >
             {{ logicalExam.subject }} {{ logicalExam.year }}
           </option>
         </select>
@@ -53,8 +60,12 @@ onMounted(() => {
             </tr>
           </thead>
           <tbody>
-            <tr v-for="exam of examStore.list.entries"
-              :class="{ invalid: exam.score !== examStore.calculateExamScore(exam) }" :key="exam.id" :data-test-id="exam.id">
+            <tr
+              v-for="exam of examStore.list.entries"
+              :class="{ invalid: exam.score !== examStore.calculateExamScore(exam) }"
+              :key="exam.id"
+              :data-test-id="exam.id"
+            >
               <td>
                 {{ exam.candidate.number }}
                 <br />
@@ -64,18 +75,32 @@ onMounted(() => {
                 {{ $filters.formatDate(exam.candidate.date_of_birth) }}
               </td>
               <td v-for="exercise of exam.exercises" :key="exercise.id">
-                <CorrectionInput :value="exercise.score" :confidence="exercise.confidence"
-                  @change="examStore.updateExerciseScore(exercise.id, $event)" />
+                <CorrectionInput
+                  :value="exercise.score"
+                  :confidence="exercise.confidence"
+                  @change="examStore.updateExerciseScore(exercise.id, $event)"
+                />
               </td>
               <td>
-                <CorrectionInput :value="exam.score" :confidence="exam.confidence"
-                  @change="examStore.updateExamScore(exam.id, $event)" />
+                <CorrectionInput
+                  :value="exam.score"
+                  :confidence="exam.confidence"
+                  @change="examStore.updateExamScore(exam.id, $event)"
+                />
               </td>
               <td>
-                <button class="btn btn-secondary" @click="showExam = exam" data-test="show-exam-button">
+                <button
+                  class="btn btn-secondary"
+                  @click="showExam = exam"
+                  data-test="show-exam-button"
+                >
                   <i class="fa-solid fa-image"></i>
                 </button>
-                <button class="btn btn-danger" @click="deleteExam(exam)" data-test="delete-exam-button">
+                <button
+                  class="btn btn-danger"
+                  @click="deleteExam(exam)"
+                  data-test="delete-exam-button"
+                >
                   <i class="fa-solid fa-trash"></i>
                 </button>
               </td>
@@ -102,7 +127,12 @@ onMounted(() => {
       </div>
     </LoadingComponent>
     <ModalComponent :show="!!showExam" @close="showExam = false">
-      <img :src="$filters.imageUrl(showExam.picture_path)" class="w-100" alt="Prüfungsscan" data-test="exam-image"/>
+      <img
+        :src="$filters.imageUrl(showExam.picture_path)"
+        class="w-100"
+        alt="Prüfungsscan"
+        data-test="exam-image"
+      />
     </ModalComponent>
   </div>
 </template>

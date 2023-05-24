@@ -113,7 +113,14 @@ const reset = () => {
       />
     </div>
     <div class="camera-video-wrapper">
-      <video class="camera-video" ref="cameraRef" autoplay playsinline muted data-test="camera-video"></video>
+      <video
+        class="camera-video"
+        ref="cameraRef"
+        autoplay
+        playsinline
+        muted
+        data-test="camera-video"
+      ></video>
     </div>
     <canvas class="canvas-photo" v-show="false" ref="canvasRef"></canvas>
 
@@ -127,7 +134,7 @@ const reset = () => {
         :loading="currentRequest.comp('Fetching')"
         :success-badge="currentRequest.comp('Success')"
       >
-        <img alt="Dein Scan" :src="snapshotUrl" class="img-fluid w-100 mb-3" data-test="snapshot"/>
+        <img alt="Dein Scan" :src="snapshotUrl" class="img-fluid w-100 mb-3" data-test="snapshot" />
         <template v-if="currentRequest.comp('Failed')">
           <ErrorListAlert :error-list="store.currentRequest.errorMsgList"></ErrorListAlert>
           <button @click="reset" class="btn btn-info w-100" data-test="reset-button">
@@ -136,7 +143,11 @@ const reset = () => {
           </button>
         </template>
         <template v-else>
-          <button @click="store.uploadResult()" class="btn btn-primary w-100" data-test="submit-button">
+          <button
+            @click="store.uploadResult()"
+            class="btn btn-primary w-100"
+            data-test="submit-button"
+          >
             <i class="fa-solid fa-upload"></i>
             Senden
           </button>
