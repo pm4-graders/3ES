@@ -91,9 +91,9 @@ class DigitRecognizer:
 
                 total_score, total_score_confidence = self.predict_double_number(result_cell, class_labels, model)
 
-        exam = cv_res.Exam(2023, "Mathematik", total_score, total_score_confidence, exercises)  # TODO replace year & subject & add exam id from recognized_text[1]
+        exam = cv_res.Exam(2023, "Mathematik", total_score, total_score_confidence, exercises)  # TODO replace year & subject & add exam id from recognized_text[0]
 
-        return cv_res.CVResult(cv_res.Candidate(recognized_text[0], recognized_text[2]), exam=exam) 
+        return cv_res.CVResult(cv_res.Candidate(recognized_text[1], recognized_text[2]), exam=exam) 
 
 
     def predict_double_number(self, original_cell, class_labels, model):
