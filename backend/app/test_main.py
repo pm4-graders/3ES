@@ -31,7 +31,7 @@ class TestApiRouter(unittest.TestCase):
 
         self.db_candidate = Candidate.create(number='1', date_of_birth=datetime.date(2000, 1, 1))
         self.db_exam = Exam.create(year=YEAR_EXISTING, subject=SUBJECT_EXISTING, score=90, confidence=0.8,
-                                   candidate=self.db_candidate)
+                                   candidate=self.db_candidate, picture_path="/test.jpg")
         self.db_exercise1 = Exercise.create(number='1', score=9.0, confidence=0.8, exam=self.db_exam)
         self.db_exercise2 = Exercise.create(number='2', score=8.5, confidence=0.9, exam=self.db_exam)
 
@@ -221,7 +221,7 @@ class TestCoreDatabaseHandler(unittest.TestCase):
 
         self.db_candidate = Candidate.create(number='1', date_of_birth=datetime.date(2000, 1, 1))
         self.db_exam = Exam.create(year=YEAR_EXISTING, subject=SUBJECT_EXISTING, score=90, confidence=0.8,
-                                   candidate=self.db_candidate)
+                                   candidate=self.db_candidate, picture_exam="/scan.jpg")
         self.db_exercise1 = Exercise.create(number='1', score=9.0, confidence=0.8, exam=self.db_exam)
         self.db_exercise2 = Exercise.create(number='2', score=8.5, confidence=0.9, exam=self.db_exam)
         self.db_exam_empty = Exam.create(year=YEAR_EXISTING, subject=SUBJECT_EXISTING, score=90,
@@ -399,7 +399,7 @@ class TestCoreDatabaseHandler(unittest.TestCase):
         cv_data = get_dummy_cv_result()
         exam_count = len(db.read_exams(year=None, subject=None))
 
-        # Test inserting a new scan by comparing exam
+        # Test inserting a new scan by comp:aring exam
         exam_id = db.save_scan_db(cv_data)
         exam_count += 1
         self.assertEqual(exam_id, exam_count)
