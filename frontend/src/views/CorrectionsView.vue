@@ -102,7 +102,7 @@ onMounted(() => {
       </div>
     </Loading>
     <Modal :show="!!showExam" @close="showExam = false">
-      <img :src="$filters.imageUrl(showExam.picture_path)" class="w-100" />
+      <img :src="$filters.imageUrl(showExam.picture_path)" class="w-100" alt="Prüfungsscan" />
     </Modal>
   </div>
 </template>
