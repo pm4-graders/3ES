@@ -24,7 +24,7 @@ images.append(cv2.imread(IMAGEDIR + "crunched.jpg"))
 
 recognizer = DigitRecognizer()
 
-cv_result = recognizer.recognize_digits_in_photo(images[0])
+cv_result = recognizer.recognize_digits_in_photo(images[1])
 
 #cv2.imshow('image', image)
 for index, image in enumerate(images):
