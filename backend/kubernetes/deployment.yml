@@ -27,9 +27,9 @@ spec:
         imagePullPolicy: Always
         resources:
           requests:
-            cpu: 100m
+            cpu: 500m
           limits:
-            cpu: 100m
+            cpu: 500m
       imagePullSecrets:
       - name: graders-3es
 ---
