@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref } from 'vue'
-import Loading from '@/components/Loading.vue'
-import Modal from '@/components/Modal.vue'
+import LoadingComponent from '@/components/LoadingComponent.vue'
+import ModalComponent from '@/components/ModalComponent.vue'
 import CorrectionInput from '@/components/CorrectionInput.vue'
 import ErrorListAlert from '@/components/ErrorListAlert.vue'
 import { useExamStore } from '@/stores/exam'
@@ -22,7 +22,7 @@ onMounted(() => {
 </script>
 <template>
   <div>
-    <Loading :loading="examStore.logicalExamList.comp('Loading')">
+    <LoadingComponent :loading="examStore.logicalExamList.comp('Loading')">
       <div v-if="examStore.logicalExamList.comp('Loaded')" class="mb-3">
         <label class="form-label">Prüfung auswählen</label>
         <select class="form-select" v-model="examStore.selectedLogicalExam" data-test="logical-exam-select">
@@ -36,9 +36,9 @@ onMounted(() => {
       <div v-if="examStore.logicalExamList.comp('Failed')" class="mb-3">
         <ErrorListAlert :error-list="examStore.logicalExamList.errorMsgList"></ErrorListAlert>
       </div>
-    </Loading>
+    </LoadingComponent>
 
-    <Loading :loading="examStore.list.comp('Loading')">
+    <LoadingComponent :loading="examStore.list.comp('Loading')">
       <div class="table-wrapper" v-if="examStore.list.comp('Loaded')">
         <table class="table table-row correction-table">
           <thead>
@@ -100,9 +100,9 @@ onMounted(() => {
           </button>
         </template>
       </div>
-    </Loading>
-    <Modal :show="!!showExam" @close="showExam = false">
+    </LoadingComponent>
+    <ModalComponent :show="!!showExam" @close="showExam = false">
       <img :src="$filters.imageUrl(showExam.picture_path)" class="w-100" alt="Prüfungsscan" data-test="exam-image"/>
-    </Modal>
+    </ModalComponent>
   </div>
 </template>

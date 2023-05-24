@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted } from 'vue'
-import Loading from '@/components/Loading.vue'
+import LoadingComponent from '@/components/LoadingComponent.vue'
 import { useExamStore } from '@/stores/exam'
 const examStore = useExamStore()
 
@@ -8,7 +8,7 @@ onMounted(examStore.loadList)
 </script>
 <template>
   <div>
-    <Loading :loading="examStore.list.comp('Loading')">
+    <LoadingComponent :loading="examStore.list.comp('Loading')">
       <div if="examStore.list.comp('Loaded')">
         <ul class="list-group list-group-stripe">
           <li
@@ -35,6 +35,6 @@ onMounted(examStore.loadList)
       <div v-if="examStore.list.comp('Failed')">
         <div class="alert alert-danger">{{ examStore.list.request }}</div>
       </div>
-    </Loading>
+    </LoadingComponent>
   </div>
 </template>

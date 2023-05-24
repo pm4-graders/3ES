@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 
 import { mount } from '@vue/test-utils'
-import Loading from '../Loading.vue'
+import Loading from '../LoadingComponent.vue'
 
 describe('Loading', () => {
   it('renders default slot when loading and successBadge props are falsy', () => {

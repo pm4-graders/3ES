@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import Modal from '../Modal.vue'
+import Modal from '../ModalComponent.vue'
 
 describe('Modal', () => {
   it('renders with props', async () => {

@@ -20,5 +20,6 @@ module.exports = {
   ],
   parserOptions: {
     ecmaVersion: 'latest'
-  }
+  },
+  ignorePatterns: ['cypress.config.js', 'cypress/*']
 }

@@ -1,8 +1,8 @@
 <script setup>
-import Camera from '@/components/Camera.vue'
+import CameraComponent from '@/components/CameraComponent.vue'
 </script>
 <template>
   <div>
-    <Camera></Camera>
+    <CameraComponent></CameraComponent>
   </div>
 </template>

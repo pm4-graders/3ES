@@ -6,8 +6,8 @@
  * the "takePhoto" button. The snapshot is then converted to a PNG blob and stored in the "snapshotUrl" variable in the Pinia store.
  */
 import { ref, onMounted } from 'vue'
-import Modal from '@/components/Modal.vue'
-import Loading from '@/components/Loading.vue'
+import ModalComponent from '@/components/ModalComponent.vue'
+import LoadingComponent from '@/components/LoadingComponent.vue'
 import ErrorListAlert from '@/components/ErrorListAlert.vue'
 import { useCameraStore } from '../stores/camera'
 import { storeToRefs } from 'pinia'
@@ -73,6 +73,7 @@ const takePhoto = () => {
 
 const takePhotoFromGallery = (e) => {
   if (e.currentTarget.files.length === 0) {
+    return
   }
   let file = e.currentTarget.files[0]
   store.setSnapshot(file)
@@ -95,7 +96,7 @@ const reset = () => {
     <div class="device-selector-wrapper">
       <label>Kamera auswählen</label>
       <select class="form-control">
-        <option v-for="device of availableDevices">{{ device.label }}</option>
+        <option v-for="(device, i) of availableDevices" :key="i">{{ device.label }}</option>
       </select>
     </div>
     <div class="gallery-image-input-wrapper" data-test="photo-from-gallery-button">
@@ -121,8 +122,8 @@ const reset = () => {
         <i class="fa-solid fa-camera"></i>
       </button>
     </div>
-    <Modal :show="!currentRequest.comp('Nil')" @close="reset" data-test="submit-modal">
-      <Loading
+    <ModalComponent :show="!currentRequest.comp('Nil')" @close="reset" data-test="submit-modal">
+      <LoadingComponent
         :loading="currentRequest.comp('Fetching')"
         :success-badge="currentRequest.comp('Success')"
       >
@@ -140,7 +141,7 @@ const reset = () => {
             Senden
           </button>
         </template>
-      </Loading>
-    </Modal>
+      </LoadingComponent>
+    </ModalComponent>
   </div>
 </template>
