@@ -3,6 +3,7 @@ from .schema import BaseResponse, ExamFullResponse, ExamFullListResponse, Logica
 import core.admin as admin
 import core.scanner as scanner
 import util.constant as const
+from fastapi.staticfiles import StaticFiles
 
 router = APIRouter(
     prefix='/api'
@@ -99,3 +100,20 @@ async def post_scan_save(file: UploadFile = File(...)):
     Save a scan (file)
     """
     return scanner.save_scan_wrapper(file)
+
+
+@router.get("/logical-exams/export")
+async def get_logical_exams_export(year: int, subject: str):
+    """
+    Get (search) logical exams for given parameters, and export them to xlsx.
+    """
+    path = await admin.get_logical_exams_export(year, subject)
+
+    if path is None or not isinstance(path, str):
+        raise HTTPException(status_code=404, detail="Logical exams export failed")
+
+    response = {
+        'success': True,
+        'path': path
+    }
+    return response

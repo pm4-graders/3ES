@@ -10,6 +10,6 @@ describe('Header', () => {
         title
       }
     })
-    expect(wrapper.find('h3').text()).toBe(title)
+    expect(wrapper.find('[data-test="title"]').text()).toBe(title)
   })
 })

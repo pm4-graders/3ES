@@ -51,7 +51,8 @@ def insert_exam(exam, db_candidate):
             subject=exam[Exam.subject.name],
             score=exam[Exam.score.name],
             confidence=exam[Exam.confidence.name],
-            candidate=db_candidate
+            candidate=db_candidate,
+            picture_path=exam[Exam.picture_path.name],
         )
     else:
         # existing
@@ -216,6 +217,7 @@ def save_scan_db(cv_data: cv_res.CVResult):
 
         # exam
         exam = vars(cv_data.exam)
+        print(exam)
         db_exam = insert_exam(exam, db_candidate)
 
         if db_exam is not None:

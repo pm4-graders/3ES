@@ -7,7 +7,13 @@ import ErrorListAlert from '@/components/ErrorListAlert.vue'
 import { useExamStore } from '@/stores/exam'
 const examStore = useExamStore()
 
-const showScan = ref(null)
+const showExam = ref(null)
+
+const deleteExam = (exam) => {
+  if (!confirm("Eintrag wirklich löschen?")) return
+
+  examStore.deleteExam(exam)
+}
 
 onMounted(() => {
   examStore.reset()
@@ -21,11 +27,8 @@ onMounted(() => {
         <label class="form-label">Prüfung auswählen</label>
         <select class="form-select" v-model="examStore.selectedLogicalExam">
           <option :value="null">-- Bitte auswählen --</option>
-          <option
-            v-for="(logicalExam, logicalExamIndex) of examStore.logicalExamList.entries"
-            :value="logicalExam"
-            :key="logicalExamIndex"
-          >
+          <option v-for="(logicalExam, logicalExamIndex) of examStore.logicalExamList.entries" :value="logicalExam"
+            :key="logicalExamIndex">
             {{ logicalExam.subject }} {{ logicalExam.year }}
           </option>
         </select>
@@ -50,11 +53,8 @@ onMounted(() => {
             </tr>
           </thead>
           <tbody>
-            <tr
-              v-for="exam of examStore.list.entries"
-              :class="{ invalid: exam.score !== examStore.calculateExamScore(exam) }"
-              :key="exam.id"
-            >
+            <tr v-for="exam of examStore.list.entries"
+              :class="{ invalid: exam.score !== examStore.calculateExamScore(exam) }" :key="exam.id">
               <td>
                 {{ exam.candidate.number }}
                 <br />
@@ -64,24 +64,18 @@ onMounted(() => {
                 {{ $filters.formatDate(exam.candidate.date_of_birth) }}
               </td>
               <td v-for="exercise of exam.exercises" :key="exercise.id">
-                <CorrectionInput
-                  :value="exercise.score"
-                  :confidence="exercise.confidence"
-                  @change="examStore.updateExerciseScore(exercise.id, $event)"
-                />
+                <CorrectionInput :value="exercise.score" :confidence="exercise.confidence"
+                  @change="examStore.updateExerciseScore(exercise.id, $event)" />
               </td>
               <td>
-                <CorrectionInput
-                  :value="exam.score"
-                  :confidence="exam.confidence"
-                  @change="examStore.updateExamScore(exam.id, $event)"
-                />
+                <CorrectionInput :value="exam.score" :confidence="exam.confidence"
+                  @change="examStore.updateExamScore(exam.id, $event)" />
               </td>
               <td>
-                <button class="btn btn-secondary" @click="showScan = true">
+                <button class="btn btn-secondary" @click="showExam = exam">
                   <i class="fa-solid fa-image"></i>
                 </button>
-                <button class="btn btn-danger" @click="examStore.deleteExam(exam)">
+                <button class="btn btn-danger" @click="deleteExam(exam)">
                   <i class="fa-solid fa-trash"></i>
                 </button>
               </td>
@@ -93,14 +87,22 @@ onMounted(() => {
         <ErrorListAlert :error-list="examStore.list.errorMsgList"></ErrorListAlert>
       </div>
       <div v-if="examStore.selectedLogicalExam" class="p-3 text-center">
-        <button class="btn btn-primary btn-lg">
-          <i class="fa-solid fa-file-excel"></i>
-          Excel herunterladen
-        </button>
+        <template v-if="examStore.exportRequest.comp('Loading')">
+          <button class="btn btn-primary btn-lg" type="button" disabled>
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Excel wird generiert...
+          </button>
+        </template>
+        <template v-else>
+          <button class="btn btn-primary btn-lg" @click="examStore.getExport()" type="button">
+            <i class="fa-solid fa-file-excel"></i>
+            Excel herunterladen
+          </button>
+        </template>
       </div>
     </Loading>
-    <Modal :show="!!showScan" @close="showScan = false">
-      <img src="https://placehold.co/400x800" />
+    <Modal :show="!!showExam" @close="showExam = false">
+      <img :src="$filters.imageUrl(showExam.picture_path)" class="w-100" alt="Prüfungsscan" />
     </Modal>
   </div>
 </template>

@@ -22,6 +22,7 @@ class Exam(BaseModel):
     subject: str
     score: float
     confidence: float
+    picture_path: str
     created_at: datetime
     updated_at: Optional[datetime] = None
 
@@ -46,6 +47,7 @@ class ExamFullListResponse(BaseResponse):
 
 class ExamFullResponse(BaseResponse):
     exam: Optional[ExamFull] = None
+    path: Optional[str] = None
 
 
 class LogicalExam(BaseModel):
