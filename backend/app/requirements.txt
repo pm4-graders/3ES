@@ -16,10 +16,12 @@ aiofiles==23.1.0
 
 # backend/cv
 opencv-contrib-python==4.7.0.72
+easyocr==1.6.2
 torch==2.0.0
 torchvision==0.15.1
 torchaudio==2.0.1
 keras==2.12.0
 tensorflow==2.12.0
 imutils==0.5.4
+python-dateutil==2.8.2
 #nvidia-cudnn-cu11

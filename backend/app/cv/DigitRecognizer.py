@@ -7,6 +7,7 @@ from cv.Models.mobilenet import MobileNet
 import cv.Models.utils as utils
 from cv.DocumentSegmentationCV import DocumentSegmentationCV
 from cv.DocumentSegmentationCNN import DocumentSegmentationCNN
+from cv.TextRecognizer import TextRecognizer
 import core.cv_result as cv_res
 
 class DigitRecognizer:
@@ -17,18 +18,7 @@ class DigitRecognizer:
         # initialize any variables
         global DEBUG_MODE
         DEBUG_MODE = debug_mode
-        pass
-    
-    def recognize_digits_in_frame(self, video_stream):
-        """
-        Recognize handwritten digits in a video frame.
-
-        Parameters:
-        todo.
-        """
-        # convert the base64-encoded frame to a numpy array
-        frame = cv2.imdecode(np.frombuffer(base64.b64decode(frame), dtype=np.uint8), cv2.IMREAD_COLOR)
-        
+        self.text_recognizer = TextRecognizer(debug_mode)
         pass
     
     def recognize_digits_in_photo(self, photo):
@@ -36,7 +26,7 @@ class DigitRecognizer:
         Recognize handwritten digits in a photo.
 
         Parameters:
-        Photo:
+        Photo: cv2.imread or similarly parsed photo object
         """
         global DEBUG_MODE
         
@@ -53,6 +43,10 @@ class DigitRecognizer:
         if(DEBUG_MODE):
             self.debug_display_image('aligned',aligned_photo)
         
+        recognized_text = self.text_recognizer.recognize_text(aligned_photo)
+
+        print(recognized_text)
+
         grid_mask, grid = self.find_grid_in_image(aligned_photo)
 
         if(DEBUG_MODE):
@@ -97,9 +91,9 @@ class DigitRecognizer:
 
                 total_score, total_score_confidence = self.predict_double_number(result_cell, class_labels, model)
 
-        exam = cv_res.Exam(2023, "Mathematik", total_score, total_score_confidence, exercises)  # TODO replace year & subject
+        exam = cv_res.Exam(2023, "Mathematik", total_score, total_score_confidence, exercises)  # TODO replace year & subject & add exam id from recognized_text[1]
 
-        return cv_res.CVResult(cv_res.Candidate("NR-123", "2000-12-31"), exam=exam)  # TODO replace number & date_of_birth
+        return cv_res.CVResult(cv_res.Candidate(recognized_text[0], recognized_text[2]), exam=exam) 
 
 
     def predict_double_number(self, original_cell, class_labels, model):
