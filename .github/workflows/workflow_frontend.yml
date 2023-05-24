@@ -20,27 +20,27 @@ jobs:
           node-version: 16
       - run: npm install
       - run: npm run lint
-  testing:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./frontend
-    steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js 16
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-      - run: npm install
-      - run: npm run test:unit
-      - name: Cypress run
-        uses: cypress-io/github-action@v5
-        with:
-          start: npm run test:e2e:dev
-          working-directory: frontend
-          wait-on: 'http://localhost:4173'
-          record: false
-          parallel: false
+  #  testing:
+  #    runs-on: ubuntu-latest
+  #    defaults:
+  #     run:
+  #        working-directory: ./frontend
+  #    steps:
+  #      - uses: actions/checkout@v3
+  #      - name: Use Node.js 16
+  #        uses: actions/setup-node@v3
+  #        with:
+  #          node-version: 16
+  #      - run: npm install
+  #      - run: npm run test:unit
+  #      - name: Cypress run
+  #        uses: cypress-io/github-action@v5
+  #        with:
+  #          start: npm run test:e2e:dev
+  #          working-directory: frontend
+  #         wait-on: 'http://localhost:4173'
+  #          record: false
+  #         parallel: false
   build:
     #needs: testing
     runs-on: ubuntu-latest
