@@ -221,7 +221,7 @@ class TestCoreDatabaseHandler(unittest.TestCase):
 
         self.db_candidate = Candidate.create(number='1', date_of_birth=datetime.date(2000, 1, 1))
         self.db_exam = Exam.create(year=YEAR_EXISTING, subject=SUBJECT_EXISTING, score=90, confidence=0.8,
-                                   candidate=self.db_candidate, picture_exam="/scan.jpg")
+                                   candidate=self.db_candidate, picture_path="/scan.jpg")
         self.db_exercise1 = Exercise.create(number='1', score=9.0, confidence=0.8, exam=self.db_exam)
         self.db_exercise2 = Exercise.create(number='2', score=8.5, confidence=0.9, exam=self.db_exam)
         self.db_exam_empty = Exam.create(year=YEAR_EXISTING, subject=SUBJECT_EXISTING, score=90,
