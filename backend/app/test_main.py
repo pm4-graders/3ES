@@ -227,7 +227,7 @@ class TestCoreDatabaseHandler(unittest.TestCase):
         self.db_exam_empty = Exam.create(year=YEAR_EXISTING, subject=SUBJECT_EXISTING, score=90,
                                          confidence=0.8, candidate=self.db_candidate)
         self.exam = {Exam.year.name: 2022, Exam.subject.name: SUBJECT_EXISTING, Exam.score.name: 8,
-                     Exam.confidence.name: 0.9}
+                     Exam.confidence.name: 0.9, Exam.picture_path.name: "/scan.jpg"}
         self.exercise3 = {Exercise.number.name: '3', Exercise.score.name: 3, Exercise.confidence.name: 0.8}
 
     def tearDown(self):
