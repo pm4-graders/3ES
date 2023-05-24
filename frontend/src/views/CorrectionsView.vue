@@ -25,7 +25,7 @@ onMounted(() => {
     <Loading :loading="examStore.logicalExamList.comp('Loading')">
       <div v-if="examStore.logicalExamList.comp('Loaded')" class="mb-3">
         <label class="form-label">Prüfung auswählen</label>
-        <select class="form-select" v-model="examStore.selectedLogicalExam">
+        <select class="form-select" v-model="examStore.selectedLogicalExam" data-test="logical-exam-select">
           <option :value="null">-- Bitte auswählen --</option>
           <option v-for="(logicalExam, logicalExamIndex) of examStore.logicalExamList.entries" :value="logicalExam"
             :key="logicalExamIndex">
@@ -54,7 +54,7 @@ onMounted(() => {
           </thead>
           <tbody>
             <tr v-for="exam of examStore.list.entries"
-              :class="{ invalid: exam.score !== examStore.calculateExamScore(exam) }" :key="exam.id">
+              :class="{ invalid: exam.score !== examStore.calculateExamScore(exam) }" :key="exam.id" :data-test-id="exam.id">
               <td>
                 {{ exam.candidate.number }}
                 <br />
@@ -72,10 +72,10 @@ onMounted(() => {
                   @change="examStore.updateExamScore(exam.id, $event)" />
               </td>
               <td>
-                <button class="btn btn-secondary" @click="showExam = exam">
+                <button class="btn btn-secondary" @click="showExam = exam" data-test="show-exam-button">
                   <i class="fa-solid fa-image"></i>
                 </button>
-                <button class="btn btn-danger" @click="deleteExam(exam)">
+                <button class="btn btn-danger" @click="deleteExam(exam)" data-test="delete-exam-button">
                   <i class="fa-solid fa-trash"></i>
                 </button>
               </td>
@@ -102,7 +102,7 @@ onMounted(() => {
       </div>
     </Loading>
     <Modal :show="!!showExam" @close="showExam = false">
-      <img :src="$filters.imageUrl(showExam.picture_path)" class="w-100" alt="Prüfungsscan" />
+      <img :src="$filters.imageUrl(showExam.picture_path)" class="w-100" alt="Prüfungsscan" data-test="exam-image"/>
     </Modal>
   </div>
 </template>

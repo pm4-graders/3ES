@@ -23,7 +23,7 @@ const props = defineProps({
           <span class="visually-hidden">Loading...</span>
         </div>
       </div>
-      <div v-if="props.successBadge" class="success-wrapper">
+      <div v-if="props.successBadge" class="success-wrapper" data-test="success-badge">
         <i class="fa-solid fa-circle-check fa-3x text-success"></i>
       </div>
       <!-- @slot The content that will be displayed in the component. This slot will be displayed together with the loading spinner or success badge if either of them is enabled. -->

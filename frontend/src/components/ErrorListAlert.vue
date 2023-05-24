@@ -7,7 +7,7 @@ const props = defineProps({
 })
 </script>
 <template>
-  <div class="alert alert-danger" v-if="errorList">
+  <div class="alert alert-danger" v-if="errorList" data-test="error-alert">
     <div v-for="error of errorList">{{ error }}</div>
   </div>
 </template>

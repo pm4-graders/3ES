@@ -98,7 +98,7 @@ const reset = () => {
         <option v-for="device of availableDevices">{{ device.label }}</option>
       </select>
     </div>
-    <div class="gallery-image-input-wrapper">
+    <div class="gallery-image-input-wrapper" data-test="photo-from-gallery-button">
       <label class="btn btn-primary d-block" for="galleryImageInput">
         <i class="fa-solid fa-images"></i>
       </label>
@@ -108,33 +108,34 @@ const reset = () => {
         accept="image/*"
         class="d-none"
         @change="takePhotoFromGallery"
+        data-test="photo-from-gallery-input"
       />
     </div>
     <div class="camera-video-wrapper">
-      <video class="camera-video" ref="cameraRef" autoplay playsinline muted></video>
+      <video class="camera-video" ref="cameraRef" autoplay playsinline muted data-test="camera-video"></video>
     </div>
     <canvas class="canvas-photo" v-show="false" ref="canvasRef"></canvas>
 
     <div class="actions">
-      <button @click="takePhoto" class="btn btn-primary btn-lg">
+      <button @click="takePhoto" class="btn btn-primary btn-lg" data-test="take-photo-button">
         <i class="fa-solid fa-camera"></i>
       </button>
     </div>
-    <Modal :show="!currentRequest.comp('Nil')" @close="reset">
+    <Modal :show="!currentRequest.comp('Nil')" @close="reset" data-test="submit-modal">
       <Loading
         :loading="currentRequest.comp('Fetching')"
         :success-badge="currentRequest.comp('Success')"
       >
-        <img alt="Dein Scan" :src="snapshotUrl" class="img-fluid w-100 mb-3" />
+        <img alt="Dein Scan" :src="snapshotUrl" class="img-fluid w-100 mb-3" data-test="snapshot"/>
         <template v-if="currentRequest.comp('Failed')">
           <ErrorListAlert :error-list="store.currentRequest.errorMsgList"></ErrorListAlert>
-          <button @click="reset" class="btn btn-info w-100">
+          <button @click="reset" class="btn btn-info w-100" data-test="reset-button">
             <i class="fa-solid fa-arrows-rotate"></i>
             Neu aufnehmen
           </button>
         </template>
         <template v-else>
-          <button @click="store.uploadResult()" class="btn btn-primary w-100">
+          <button @click="store.uploadResult()" class="btn btn-primary w-100" data-test="submit-button">
             <i class="fa-solid fa-upload"></i>
             Senden
           </button>
