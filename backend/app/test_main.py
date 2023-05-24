@@ -397,6 +397,7 @@ class TestCoreDatabaseHandler(unittest.TestCase):
 
     def test_save_scan_db(self):
         cv_data = get_dummy_cv_result()
+        cv_data.exam.picture_path = '/test.jpg'
         exam_count = len(db.read_exams(year=None, subject=None))
 
         # Test inserting a new scan by comp:aring exam
