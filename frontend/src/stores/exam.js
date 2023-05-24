@@ -2,6 +2,8 @@ import { ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 import { get, Webresource, Request, post, deleteReq } from '@/utilities/fetch'
 import { requestToWebresource } from '../utilities/fetch'
+import download from '@/utilities/download'
+import filters from '@/utilities/filters'
 
 export const useExamStore = defineStore('exam', () => {
   const list = ref(Webresource.Nil)
@@ -9,6 +11,7 @@ export const useExamStore = defineStore('exam', () => {
   const selectedLogicalExam = ref(null)
 
   const logicalExamList = ref(Webresource.Nil)
+  const exportRequest = ref(Request.Nil)
 
   const reset = () => {
     selectedLogicalExam.value = null
@@ -59,6 +62,16 @@ export const useExamStore = defineStore('exam', () => {
     await loadList()
   }
 
+  const getExport = async () => {
+    let reqUrl = '/logical-exams/export'
+    if (selectedLogicalExam.value) {
+      let { year, subject } = selectedLogicalExam.value
+      reqUrl += `?year=${year}&subject=${subject}`
+    }
+    let request = await get(reqUrl, exportRequest, {}, 'path')
+    download(filters.imageUrl(request.data), request.data.split('/').reverse()[0])
+  }
+
   watch(selectedLogicalExam, () => {
     loadList()
   })
@@ -73,6 +86,8 @@ export const useExamStore = defineStore('exam', () => {
     updateExamScore,
     calculateExamScore,
     reset,
-    deleteExam
+    deleteExam,
+    getExport,
+    exportRequest,
   }
 })

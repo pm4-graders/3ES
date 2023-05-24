@@ -163,3 +163,5 @@ cython_debug/
 /app/images/
 /app/exam.db
 /app/images/*
+/app/static/images/*
+/app/static/output/*

@@ -107,10 +107,13 @@ async def get_logical_exams_export(year: int, subject: str):
     """
     Get (search) logical exams for given parameters, and export them to xlsx.
     """
-    response = await admin.get_logical_exams_export(year, subject)
+    path = await admin.get_logical_exams_export(year, subject)
 
-    if response is None or not isinstance(response, str):
+    if path is None or not isinstance(path, str):
         raise HTTPException(status_code=404, detail="Logical exams export failed")
 
+    response = {
+        'success': True,
+        'path': path
+    }
     return response
-

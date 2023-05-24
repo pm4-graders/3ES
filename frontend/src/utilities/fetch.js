@@ -138,4 +138,4 @@ const deleteReq = async (route, request = { value: Request.Nil }, options = {}) 
   return request.value
 }
 
-export { get, post, Webresource, Request, requestToWebresource, deleteReq }
+export { get, post, Webresource, Request, requestToWebresource, deleteReq, appUrl }
