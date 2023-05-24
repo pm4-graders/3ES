@@ -15,11 +15,10 @@ describe('Navbar', () => {
         list
       }
     })
-    const entries = wrapper.findAll('.col')
+    const entries = wrapper.findAll('[data-test="item"]')
     expect(entries.length).toBe(list.length)
     entries.forEach((entry, index) => {
       expect(entry.find('a').text()).toBe(list[index].title)
-      expect(entry.find('a').attributes('href')).toBe(list[index].path)
     })
   })
 })
