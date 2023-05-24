@@ -42,7 +42,7 @@ jobs:
   #          record: false
   #         parallel: false
   build:
-    #needs: testing
+    needs: linting
     runs-on: ubuntu-latest
     defaults:
       run:
