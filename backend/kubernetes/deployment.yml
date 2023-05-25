@@ -25,11 +25,11 @@ spec:
         ports:
         - containerPort: 8080
         imagePullPolicy: Always
-        resources:
-          requests:
-            cpu: 100m
-          limits:
-            cpu: 100m
+        #resources:
+         # requests:
+          #  cpu: 100m
+          #limits:
+          #  cpu: 100m
       imagePullSecrets:
       - name: graders-3es
 ---
