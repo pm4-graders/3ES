@@ -16,7 +16,7 @@ aiofiles==23.1.0
 
 # backend/cv
 opencv-contrib-python==4.5.3.56
-#easyocr==1.6.2
+easyocr==1.6.2
 torch==2.0.0
 torchvision==0.15.1
 torchaudio==2.0.1
