@@ -87,7 +87,7 @@ def get_exams(year, subject):
         exams_rs.append(build_exam_full(exam))
 
     return ExamFullListResponse(
-        success=True if exams_rs else False,
+        success=True,
         exams=exams_rs
     )
 
@@ -106,7 +106,7 @@ def get_logical_exams(year, subject):
         ))
 
     return LogicalExamListResponse(
-        success=True if logical_exams_rs else False,
+        success=True,
         logical_exams=logical_exams_rs
     )
 

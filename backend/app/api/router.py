@@ -44,12 +44,7 @@ async def get_exams(year: int = None, subject: str = None):
     Get (search) exams for given parameters.
     """
 
-    response = admin.get_exams(year, subject)
-
-    if not response.success:
-        raise HTTPException(status_code=404, detail=const.Message.EXAMS_NOT_FOUND)
-
-    return response
+    return admin.get_exams(year, subject)
 
 
 @router.get("/logical-exams", response_model=LogicalExamListResponse, response_model_exclude_none=True)
@@ -58,12 +53,7 @@ async def get_logical_exams(year: int = None, subject: str = None):
     Get (search) logical exams for given parameters.
     """
 
-    response = admin.get_logical_exams(year, subject)
-
-    if not response.success:
-        raise HTTPException(status_code=404, detail=const.Message.LOG_EXAMS_NOT_FOUND)
-
-    return response
+    return admin.get_logical_exams(year, subject)
 
 
 @router.post("/exams/{examId}", response_model=BaseResponse, response_model_exclude_none=True)

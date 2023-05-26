@@ -63,7 +63,7 @@ class TestApiRouter(unittest.TestCase):
 
         # Test retrieving a not existing exam
         exams_full_rs = self.client.get("/api/exams?year" + str(YEAR_NOT_EXISTING) + "&subject=" + SUBJECT_NOT_EXISTING)
-        assert exams_full_rs.status_code == 404
+        assert exams_full_rs.status_code == 200
 
     def test_get_logical_exams(self):
         # Test retrieving an exam that exists
@@ -77,7 +77,7 @@ class TestApiRouter(unittest.TestCase):
         # Test retrieving a not existing exam
         logical_exams_rs = self.client.get(
             "/api/logical-exams?year" + str(YEAR_NOT_EXISTING) + "&subject=" + SUBJECT_NOT_EXISTING)
-        assert logical_exams_rs.status_code == 404
+        assert logical_exams_rs.status_code == 200
 
     def test_post_exam(self):
         json_score = {"score": 5.1}
@@ -174,7 +174,7 @@ class TestCoreAdmin(unittest.TestCase):
 
         # Test retrieving not existing exams
         exams_full_rs = admin.get_exams(year=YEAR_NOT_EXISTING, subject=SUBJECT_NOT_EXISTING)
-        self.assertFalse(exams_full_rs.success)
+        self.assertTrue(exams_full_rs.success)
         self.assertFalse(exams_full_rs.exams)
 
     def test_get_logical_exams(self):
@@ -185,7 +185,7 @@ class TestCoreAdmin(unittest.TestCase):
 
         # Test retrieving not existing logical exams
         logical_exams_rs = admin.get_logical_exams(year=YEAR_NOT_EXISTING, subject=SUBJECT_NOT_EXISTING)
-        self.assertFalse(logical_exams_rs.success)
+        self.assertTrue(logical_exams_rs.success)
         self.assertFalse(logical_exams_rs.logical_exams)
 
     def test_update_exam(self):
