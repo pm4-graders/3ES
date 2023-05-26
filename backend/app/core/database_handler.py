@@ -41,6 +41,7 @@ def insert_exam(exam, db_candidate):
         subject=exam[Exam.subject.name],
         # score=exam[Exam.score.name],
         # confidence=exam[Exam.confidence.name],
+        # picture_path=exam[Exam.picture_path.name],
         candidate=db_candidate
     )
 
@@ -51,8 +52,8 @@ def insert_exam(exam, db_candidate):
             subject=exam[Exam.subject.name],
             score=exam[Exam.score.name],
             confidence=exam[Exam.confidence.name],
-            candidate=db_candidate,
             picture_path=exam[Exam.picture_path.name],
+            candidate=db_candidate,
         )
     else:
         # existing

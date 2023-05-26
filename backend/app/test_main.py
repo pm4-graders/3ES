@@ -146,6 +146,7 @@ class TestCoreAdmin(unittest.TestCase):
         self.assertEqual(exam_full.subject, exam[Exam.subject.name])
         self.assertEqual(exam_full.score, exam[Exam.score.name])
         self.assertEqual(exam_full.confidence, exam[Exam.confidence.name])
+        self.assertEqual(exam_full.picture_path, exam[Exam.picture_path.name])
         self.assertEqual(exam_full.created_at, exam[Exam.created_at.name])
         self.assertEqual(exam_full.created_at, exam[Exam.created_at.name])
         self.assertEqual(exam_full.candidate.id, candidate[Candidate.id.name])
@@ -221,13 +222,13 @@ class TestCoreDatabaseHandler(unittest.TestCase):
 
         self.db_candidate = Candidate.create(number='1', date_of_birth=datetime.date(2000, 1, 1))
         self.db_exam = Exam.create(year=YEAR_EXISTING, subject=SUBJECT_EXISTING, score=90, confidence=0.8,
-                                   candidate=self.db_candidate, picture_path="/scan.jpg")
+                                   candidate=self.db_candidate, picture_path="/test.jpg")
         self.db_exercise1 = Exercise.create(number='1', score=9.0, confidence=0.8, exam=self.db_exam)
         self.db_exercise2 = Exercise.create(number='2', score=8.5, confidence=0.9, exam=self.db_exam)
         self.db_exam_empty = Exam.create(year=YEAR_EXISTING, subject=SUBJECT_EXISTING, score=90,
                                          confidence=0.8, candidate=self.db_candidate)
         self.exam = {Exam.year.name: 2022, Exam.subject.name: SUBJECT_EXISTING, Exam.score.name: 8,
-                     Exam.confidence.name: 0.9, Exam.picture_path.name: "/scan.jpg"}
+                     Exam.confidence.name: 0.9, Exam.picture_path.name: "/test.jpg"}
         self.exercise3 = {Exercise.number.name: '3', Exercise.score.name: 3, Exercise.confidence.name: 0.8}
 
     def tearDown(self):
@@ -325,6 +326,7 @@ class TestCoreDatabaseHandler(unittest.TestCase):
         self.assertEqual(exam[Exam.subject.name], self.db_exam.subject)
         self.assertEqual(exam[Exam.score.name], self.db_exam.score)
         self.assertEqual(exam[Exam.confidence.name], self.db_exam.confidence)
+        self.assertEqual(exam[Exam.picture_path.name], self.db_exam.picture_path)
         self.assertEqual(exam[Exam.candidate.name], self.db_exam.candidate.id)
 
         # Test retrieving a not existing exam
@@ -469,6 +471,7 @@ class TestCoreScanner(unittest.TestCase):
 
     def test_validate_cv_result(self):
         cv_data = get_dummy_cv_result()
+        cv_data.exam.picture_path = '/test.jpg'
 
         # Test validation with success
         message = scanner.validate_cv_result(cv_data)

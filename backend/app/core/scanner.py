@@ -55,7 +55,6 @@ def save_scan(file: UploadFile):
     # get exam data
     response = get_exam_full(exam_id)
     response.message = message
-    response.path = picture_path
 
     return response
 

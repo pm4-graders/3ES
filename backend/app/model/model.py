@@ -39,8 +39,8 @@ class Exam(BaseModel):
     subject = CharField(max_length=100)
     score = FloatField()
     confidence = FloatField()
-    candidate = ForeignKeyField(Candidate, backref=const.Entity.EXAMS)
     picture_path = CharField(max_length=255, default="")
+    candidate = ForeignKeyField(Candidate, backref=const.Entity.EXAMS)
 
     class Meta:
         database = db
