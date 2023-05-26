@@ -10,7 +10,7 @@ class TextRecognizer:
     def __init__(self, debug_mode=False):
         # initialize any variables
         global DEBUG_MODE
-        DEBUG_MODE = debug_mode
+        DEBUG_MODE = True
 
         self.reader = Reader(["de"], gpu=0)
 
@@ -72,7 +72,7 @@ class TextRecognizer:
                         recognized[2] = date
                 
                 if attribute == "year_with_text":
-                    if("Aufnahme" in text):
+                    if("Aufnahme" in text or "prüf" in text):
                         recognized[3] = int(''.join(filter(str.isdigit, text)))
                 if attribute == "test_name":
                     if not("ohne" in text or "Tasch" in text or "rechner" in text):
