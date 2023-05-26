@@ -62,6 +62,7 @@ class DigitRecognizer:
         class_labels = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 
         exercises = []
+        score = 0
         total_score = 0
         total_score_confidence = 0
         
@@ -85,13 +86,13 @@ class DigitRecognizer:
                 
                 pred_class_label, pred_confidence = self.predict_handwritten_cell(result_cell, class_labels, model)
 
-                exercises.append(cv_res.Exercise(index, pred_class_label, pred_confidence, 0))  # TODO replace 0 with max_score
+                exercises.append(cv_res.Exercise(index, pred_class_label, 0, 0, pred_confidence))  # TODO replace 0 with score and total_score
             elif(index % column_count != 0):
                 #print("Last Handwritten Cell, 'Total'")
 
-                total_score, total_score_confidence = self.predict_double_number(result_cell, class_labels, model)
+                score, total_score_confidence = self.predict_double_number(result_cell, class_labels, model)
 
-        exam = cv_res.Exam(2023, "Mathematik", total_score, total_score_confidence, exercises)  # TODO replace year & subject & add exam id from recognized_text[0]
+        exam = cv_res.Exam(2023, "Mathematik", score, total_score, total_score_confidence, exercises)  # TODO FILL TOTAL_SCORE, replace year & subject & add exam id from recognized_text[0]
 
         return cv_res.CVResult(cv_res.Candidate(recognized_text[1], recognized_text[2]), exam=exam) 
 

@@ -30,10 +30,10 @@ class TestApiRouter(unittest.TestCase):
         self.db.create_tables([Exam, Exercise, Candidate])
 
         self.db_candidate = Candidate.create(number='1', date_of_birth=datetime.date(2000, 1, 1))
-        self.db_exam = Exam.create(year=YEAR_EXISTING, subject=SUBJECT_EXISTING, score=90, confidence=0.8,
-                                   candidate=self.db_candidate, picture_path="/test.jpg")
-        self.db_exercise1 = Exercise.create(number='1', score=9.0, confidence=0.8, exam=self.db_exam)
-        self.db_exercise2 = Exercise.create(number='2', score=8.5, confidence=0.9, exam=self.db_exam)
+        self.db_exam = Exam.create(number="ABC1", year=YEAR_EXISTING, subject=SUBJECT_EXISTING, score=90, total_score=90, confidence=0.8,
+                                   picture_path="/test.jpg", candidate=self.db_candidate)
+        self.db_exercise1 = Exercise.create(number='1', score=9.0, total_score=9.0, confidence=0.8, exam=self.db_exam)
+        self.db_exercise2 = Exercise.create(number='2', score=8.5, total_score=8.5, confidence=0.9, exam=self.db_exam)
 
     def test_delete_exam(self):
         # Test deleting an exam that exists
@@ -118,10 +118,10 @@ class TestCoreAdmin(unittest.TestCase):
         self.db.create_tables([Exam, Exercise, Candidate])
 
         self.db_candidate = Candidate.create(number='1', date_of_birth=datetime.date(2000, 1, 1))
-        self.db_exam = Exam.create(year=YEAR_EXISTING, subject=SUBJECT_EXISTING, score=90, confidence=0.8,
-                                   candidate=self.db_candidate)
-        self.db_exercise1 = Exercise.create(number='1', score=9.0, confidence=0.8, exam=self.db_exam)
-        self.db_exercise2 = Exercise.create(number='2', score=8.5, confidence=0.9, exam=self.db_exam)
+        self.db_exam = Exam.create(number="ABC1", year=YEAR_EXISTING, subject=SUBJECT_EXISTING, score=90, total_score=90, confidence=0.8,
+                                   picture_path="/test.jpg", candidate=self.db_candidate)
+        self.db_exercise1 = Exercise.create(number='1', score=9.0, total_score=9.0, confidence=0.8, exam=self.db_exam)
+        self.db_exercise2 = Exercise.create(number='2', score=8.5, total_score=8.5, confidence=0.9, exam=self.db_exam)
 
     def tearDown(self):
         self.db.drop_tables([Exam, Exercise, Candidate])
@@ -142,9 +142,11 @@ class TestCoreAdmin(unittest.TestCase):
 
         exam_full = admin.build_exam_full(exam)
         self.assertEqual(exam_full.id, exam[Exam.id.name])
+        self.assertEqual(exam_full.number, exam[Exam.number.name])
         self.assertEqual(exam_full.year, exam[Exam.year.name])
         self.assertEqual(exam_full.subject, exam[Exam.subject.name])
         self.assertEqual(exam_full.score, exam[Exam.score.name])
+        self.assertEqual(exam_full.total_score, exam[Exam.total_score.name])
         self.assertEqual(exam_full.confidence, exam[Exam.confidence.name])
         self.assertEqual(exam_full.picture_path, exam[Exam.picture_path.name])
         self.assertEqual(exam_full.created_at, exam[Exam.created_at.name])
@@ -221,15 +223,15 @@ class TestCoreDatabaseHandler(unittest.TestCase):
         self.db.create_tables([Exam, Exercise, Candidate])
 
         self.db_candidate = Candidate.create(number='1', date_of_birth=datetime.date(2000, 1, 1))
-        self.db_exam = Exam.create(year=YEAR_EXISTING, subject=SUBJECT_EXISTING, score=90, confidence=0.8,
-                                   candidate=self.db_candidate, picture_path="/test.jpg")
-        self.db_exercise1 = Exercise.create(number='1', score=9.0, confidence=0.8, exam=self.db_exam)
-        self.db_exercise2 = Exercise.create(number='2', score=8.5, confidence=0.9, exam=self.db_exam)
-        self.db_exam_empty = Exam.create(year=YEAR_EXISTING, subject=SUBJECT_EXISTING, score=90,
-                                         confidence=0.8, candidate=self.db_candidate)
-        self.exam = {Exam.year.name: 2022, Exam.subject.name: SUBJECT_EXISTING, Exam.score.name: 8,
+        self.db_exam = Exam.create(number="ABC1", year=YEAR_EXISTING, subject=SUBJECT_EXISTING, score=90, total_score=90,
+                                   confidence=0.8, picture_path="/test.jpg", candidate=self.db_candidate)
+        self.db_exercise1 = Exercise.create(number='1', score=9.0, total_score=9.0, confidence=0.8, exam=self.db_exam)
+        self.db_exercise2 = Exercise.create(number='2', score=8.5, total_score=8.5, confidence=0.9, exam=self.db_exam)
+        self.db_exam_empty = Exam.create(number="ABC1", year=YEAR_EXISTING, subject=SUBJECT_EXISTING, score=90, total_score=90,
+                                         confidence=0.8, picture_path="/test.jpg", candidate=self.db_candidate)
+        self.exam = {Exam.number.name: "ABC1", Exam.year.name: 2022, Exam.subject.name: SUBJECT_EXISTING, Exam.score.name: 8, Exam.total_score.name: 8,
                      Exam.confidence.name: 0.9, Exam.picture_path.name: "/test.jpg"}
-        self.exercise3 = {Exercise.number.name: '3', Exercise.score.name: 3, Exercise.confidence.name: 0.8}
+        self.exercise3 = {Exercise.number.name: '3', Exercise.score.name: 3, Exercise.total_score.name: 3, Exercise.confidence.name: 0.8}
 
     def tearDown(self):
         self.db.drop_tables([Exam, Exercise, Candidate])
@@ -270,10 +272,13 @@ class TestCoreDatabaseHandler(unittest.TestCase):
         # Test inserting a new exam for a candidate
         db_exam = db.insert_exam(self.exam, self.db_candidate)
         self.assertIsNotNone(db_exam)
+        self.assertEqual(db_exam.number, self.exam[Exam.number.name])
         self.assertEqual(db_exam.year, self.exam[Exam.year.name])
         self.assertEqual(db_exam.subject, self.exam[Exam.subject.name])
         self.assertEqual(db_exam.score, self.exam[Exam.score.name])
+        self.assertEqual(db_exam.total_score, self.exam[Exam.total_score.name])
         self.assertEqual(db_exam.confidence, self.exam[Exam.confidence.name])
+        self.assertEqual(db_exam.picture_path, self.exam[Exam.picture_path.name])
         self.assertEqual(db_exam.candidate, self.db_candidate)
 
         # Test retrieving an existing exam for a candidate
@@ -286,6 +291,7 @@ class TestCoreDatabaseHandler(unittest.TestCase):
         self.assertIsNotNone(db_exercise)
         self.assertEqual(db_exercise.number, self.exercise3[Exercise.number.name])
         self.assertEqual(db_exercise.score, self.exercise3[Exercise.score.name])
+        self.assertEqual(db_exercise.total_score, self.exercise3[Exercise.total_score.name])
         self.assertEqual(db_exercise.confidence, self.exercise3[Exercise.confidence.name])
         self.assertEqual(db_exercise.exam, self.db_exam)
 
@@ -322,9 +328,11 @@ class TestCoreDatabaseHandler(unittest.TestCase):
         # Test reading an exam that exists
         exam = db.read_exam(self.db_exam.id)
         self.assertIsNotNone(exam)
+        self.assertEqual(exam[Exam.number.name], self.db_exam.number)
         self.assertEqual(exam[Exam.year.name], self.db_exam.year)
         self.assertEqual(exam[Exam.subject.name], self.db_exam.subject)
         self.assertEqual(exam[Exam.score.name], self.db_exam.score)
+        self.assertEqual(exam[Exam.total_score.name], self.db_exam.total_score)
         self.assertEqual(exam[Exam.confidence.name], self.db_exam.confidence)
         self.assertEqual(exam[Exam.picture_path.name], self.db_exam.picture_path)
         self.assertEqual(exam[Exam.candidate.name], self.db_exam.candidate.id)
@@ -363,6 +371,7 @@ class TestCoreDatabaseHandler(unittest.TestCase):
         self.assertEqual(2, len(exercises))
         self.assertEqual(exercises[0][Exercise.number.name], self.db_exercise1.number)
         self.assertEqual(exercises[0][Exercise.score.name], self.db_exercise1.score)
+        self.assertEqual(exercises[0][Exercise.total_score.name], self.db_exercise1.total_score)
         self.assertEqual(exercises[0][Exercise.confidence.name], self.db_exercise1.confidence)
 
         # Test reading empty exercises by exam that exist
@@ -483,9 +492,19 @@ class TestCoreScanner(unittest.TestCase):
         self.assertTrue(message)
         self.assertEqual(len(message), 1)
         self.assertEqual(message[0], const.Validation.W_EXA_SCORE_EQ)
+        cv_data.exam.score = 3.25
 
         # Test validation with only case 2
-        cv_data.exam.exercises[0].score = 3.75
+        cv_data.exam.total_score = 5.00
+        message = scanner.validate_cv_result(cv_data)
+        self.assertTrue(message)
+        self.assertEqual(len(message), 1)
+        self.assertEqual(message[0], const.Validation.W_EXA_TOTAL_SCORE_EQ)
+        cv_data.exam.total_score = 3.25
+
+        # Test validation with only case 3
+        cv_data.exam.score = 3.75
+        cv_data.exam.exercises[0].score = 2.5
         message = scanner.validate_cv_result(cv_data)
         self.assertTrue(message)
         self.assertEqual(len(message), 1)
@@ -493,13 +512,15 @@ class TestCoreScanner(unittest.TestCase):
 
         # Test validation with all cases
         cv_data.exam.score = 5.00
+        cv_data.exam.total_score = 5.00
         cv_data.exam.exercises[1].score = 5
         message = scanner.validate_cv_result(cv_data)
         self.assertTrue(message)
-        self.assertEqual(len(message), 3)
+        self.assertEqual(len(message), 4)
         self.assertEqual(message[0], const.Validation.W_EXA_SCORE_EQ)
-        self.assertEqual(message[1], const.Validation.W_EXE_SCORE_EQ.format("1.a"))
-        self.assertEqual(message[2], const.Validation.W_EXE_SCORE_EQ.format("1.b"))
+        self.assertEqual(message[1], const.Validation.W_EXA_TOTAL_SCORE_EQ)
+        self.assertEqual(message[2], const.Validation.W_EXE_SCORE_EQ.format("1.a"))
+        self.assertEqual(message[3], const.Validation.W_EXE_SCORE_EQ.format("1.b"))
 
 
 class TestModelModel(unittest.TestCase):
@@ -513,10 +534,10 @@ def get_dummy_cv_result():
     Create and return a cv result with dummy values.
     """
 
-    json_data = '{"candidate":{"number":"CHSG-23.123","date_of_birth":"2010-01-01"},"exam":{"year":2023,' \
-                '"subject":"ABC English","score":4.00,"confidence":0.91, "exercises":[{' \
-                '"number":"1.a","score":2.75,"confidence":0.88,"max_score":3},{"number":"1.b","score":1.25,' \
-                '"confidence":0.98,"max_score":2}]}}'
+    json_data = '{"candidate":{"number":"CHSG-23.123","date_of_birth":"2010-01-01"},"exam":{"number":"ABC1","year":2023,' \
+                '"subject":"ABC English","score":3.25,"total_score":3.25,"confidence":0.91, "exercises":[{' \
+                '"number":"1.a","score":2,"total_score":2,"confidence":0.88},{"number":"1.b","score":1.25,' \
+                '"total_score":1.25,"confidence":0.98}]}}'
 
     data_dict = json.loads(json_data)
 
@@ -526,10 +547,9 @@ def get_dummy_cv_result():
     exam_data = data_dict['exam']
     exercises = []
     for exercise_data in exam_data['exercises']:
-        exercise = cv_res.Exercise(exercise_data['number'], exercise_data['score'], exercise_data['confidence'],
-                                   exercise_data['max_score'])
+        exercise = cv_res.Exercise(exercise_data['number'], exercise_data['score'], exercise_data['total_score'], exercise_data['confidence'])
         exercises.append(exercise)
 
-    exam = cv_res.Exam(exam_data['year'], exam_data['subject'], exam_data['score'], exam_data['confidence'], exercises)
+    exam = cv_res.Exam(exam_data['number'], exam_data['year'], exam_data['subject'], exam_data['score'], exam_data['total_score'], exam_data['confidence'], exercises)
 
     return cv_res.CVResult(candidate, exam)

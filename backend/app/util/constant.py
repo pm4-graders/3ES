@@ -35,4 +35,5 @@ class Message:
 
 class Validation:
     W_EXA_SCORE_EQ = "Warning: The score of the exam is unequal to the sum of the scores of the associated exercises."
-    W_EXE_SCORE_EQ = "Warning: The score of exercise with number {0} exceeds its maximum score."
+    W_EXA_TOTAL_SCORE_EQ = "Warning: The total score of the exam is unequal to the sum of the total scores of the associated exercises."
+    W_EXE_SCORE_EQ = "Warning: The score of exercise with number {0} exceeds its total score."

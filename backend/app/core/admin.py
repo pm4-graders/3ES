@@ -1,6 +1,7 @@
 import asyncio
 
-from api.schema import BaseResponse, Candidate, Exam, ExamFull, ExamFullResponse, ExamFullListResponse, Exercise, LogicalExam, LogicalExamListResponse
+from api.schema import BaseResponse, Candidate, Exam, ExamFull, ExamFullResponse, ExamFullListResponse, Exercise, \
+    LogicalExam, LogicalExamListResponse
 import core.database_handler as db
 import model.model as model
 import util.constant as const
@@ -12,6 +13,8 @@ import os
 EXCELDIR = "static/output/"
 
 nest_asyncio.apply()
+
+
 def build_exam_full(exam):
     """
     Build exam with all its relationships
@@ -23,9 +26,11 @@ def build_exam_full(exam):
     # exam
     exam_rs = ExamFull(
         id=exam[model.Exam.id.name],
+        number=exam[model.Exam.number.name],
         year=exam[model.Exam.year.name],
         subject=exam[model.Exam.subject.name],
         score=exam[model.Exam.score.name],
+        total_score=exam[model.Exam.total_score.name],
         confidence=exam[model.Exam.confidence.name],
         picture_path=exam[model.Exam.picture_path.name],
         created_at=exam[model.Exam.created_at.name],
@@ -127,20 +132,20 @@ def update_exercise(exercise_id, exercise):
     return BaseResponse(success=db.update_exercise(exercise_id, exercise, const.Exercise.CONFIDENCE_MAX))
 
 
-
 async def get_logical_exams_export(year, subject):
     loop = asyncio.get_running_loop()
     exams = await loop.run_in_executor(None, get_exams, year, subject)
 
     exams = get_exams(year, subject)
 
-    array_values = ["Candicate ID", "Candidate Number", "Candidate date of birth", "candidate number", "Exam ID", "Exam Score"]
+    array_values = ["Candicate ID", "Candidate Number", "Candidate date of birth", "candidate number", "Exam ID",
+                    "Exam Score"]
 
     max_exercises = 0
     exercieses_number = len(exams.exams)
 
     for i in range(0, exercieses_number):
-        if len(exams.exams[i].exercises)>max_exercises:
+        if len(exams.exams[i].exercises) > max_exercises:
             max_exercises = len(exams.exams[i].exercises)
             print(max_exercises)
 
@@ -159,7 +164,8 @@ async def get_logical_exams_export(year, subject):
         output_array[i + 1, 3] = exams.exams[i].candidate.number
         output_array[i + 1, 4] = exams.exams[i].id
         output_array[i + 1, 5] = exams.exams[i].score
-        output_array[i + 1, 6:] = [exams.exams[i].exercises[j]['score'] for j in range(0, len(exams.exams[i].exercises))]
+        output_array[i + 1, 6:] = [exams.exams[i].exercises[j]['score'] for j in
+                                   range(0, len(exams.exams[i].exercises))]
 
     df = pd.DataFrame(output_array)
 
@@ -182,7 +188,6 @@ def manipulate_excel(excel, year, subject):
 
     # Concatenate the original DataFrame to the new DataFrame
 
-
     empty_df.iloc[0, 0] = "AP Gymnasium: " + str(year)
     empty_df.iloc[2, 0] = str(subject)
     empty_df.iloc[4, 0] = "Total:"
@@ -192,7 +197,3 @@ def manipulate_excel(excel, year, subject):
     # the first row are numbers of the dataframe, so we need to skip it
 
     df.to_excel(excel, index=False)
-
-
-
-
