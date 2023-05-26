@@ -37,11 +37,11 @@ class TestApiRouter(unittest.TestCase):
 
     def test_delete_exam(self):
         # Test deleting an exam that exists
-        base_rs = self.client.get("/api/exams/1")
+        base_rs = self.client.delete("/api/exams/1")
         assert base_rs.status_code == 200
 
         # Test deleting a not existing exam
-        base_rs = self.client.get("/api/exams/" + str(ID_NOT_EXISTING))
+        base_rs = self.client.delete("/api/exams/" + str(ID_NOT_EXISTING))
         assert base_rs.status_code == 404
 
     def test_get_exam(self):
