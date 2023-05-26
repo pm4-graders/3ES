@@ -1,11 +1,11 @@
 from datetime import date, datetime
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 
 
 class BaseResponse(BaseModel):
     success: bool
-    message: Optional[list[str]] = None
+    message: Optional[List[str]] = None
 
 
 class Candidate(BaseModel):
@@ -21,8 +21,8 @@ class Exam(BaseModel):
     number: str
     year: int
     subject: str
-    score: float
-    total_score: float
+    score: float = None
+    total_score: float = None
     confidence: float
     picture_path: str
     created_at: datetime
@@ -32,8 +32,8 @@ class Exam(BaseModel):
 class Exercise(BaseModel):
     id: int
     number: str
-    score: float
-    total_score: float
+    score: float = None
+    total_score: float = None
     confidence: float
     created_at: datetime
     updated_at: Optional[datetime] = None
@@ -41,11 +41,11 @@ class Exercise(BaseModel):
 
 class ExamFull(Exam):
     candidate: Candidate
-    exercises: list[Exercise]
+    exercises: List[Exercise]
 
 
 class ExamFullListResponse(BaseResponse):
-    exams: list[ExamFull]
+    exams: List[ExamFull]
 
 
 class ExamFullResponse(BaseResponse):
@@ -59,7 +59,7 @@ class LogicalExam(BaseModel):
 
 
 class LogicalExamListResponse(BaseResponse):
-    logical_exams: list[LogicalExam]
+    logical_exams: List[LogicalExam]
 
 
 class Score(BaseModel):
