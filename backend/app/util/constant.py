@@ -25,6 +25,7 @@ class Candidate:
 
 class Message:
     CV_EXCEPTION = "Computer Vision: {0}"
+    CV_NULL = "CV returned NULL object or field."
     EXAM_EXISTS = "Exam already exists."
     EXAM_NOT_FOUND = "Exam {0} not found."
     EXAMS_NOT_FOUND = "No exams found."
@@ -34,4 +35,5 @@ class Message:
 
 class Validation:
     W_EXA_SCORE_EQ = "Warning: The score of the exam is unequal to the sum of the scores of the associated exercises."
-    W_EXE_SCORE_EQ = "Warning: The score of exercise with number {0} exceeds its maximum score."
+    W_EXA_TOTAL_SCORE_EQ = "Warning: The total score of the exam is unequal to the sum of the total scores of the associated exercises."
+    W_EXE_SCORE_EQ = "Warning: The score of exercise with number {0} exceeds its total score."

@@ -18,9 +18,11 @@ class Candidate(BaseModel):
 
 class Exam(BaseModel):
     id: int
+    number: str
     year: int
     subject: str
     score: float
+    total_score: float
     confidence: float
     picture_path: str
     created_at: datetime
@@ -31,6 +33,7 @@ class Exercise(BaseModel):
     id: int
     number: str
     score: float
+    total_score: float
     confidence: float
     created_at: datetime
     updated_at: Optional[datetime] = None

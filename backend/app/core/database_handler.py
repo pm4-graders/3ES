@@ -37,22 +37,27 @@ def insert_exam(exam, db_candidate):
 
     # check existence using get_or_none
     db_exam = Exam.get_or_none(
+        number=exam[Exam.number.name],
         year=exam[Exam.year.name],
         subject=exam[Exam.subject.name],
         # score=exam[Exam.score.name],
+        # total_score=exam[Exam.total_score.name],
         # confidence=exam[Exam.confidence.name],
+        # picture_path=exam[Exam.picture_path.name],
         candidate=db_candidate
     )
 
     if db_exam is None:
         # insert
         db_exam = Exam.create(
+            number=exam[Exam.number.name],
             year=exam[Exam.year.name],
             subject=exam[Exam.subject.name],
             score=exam[Exam.score.name],
+            total_score=exam[Exam.total_score.name],
             confidence=exam[Exam.confidence.name],
-            candidate=db_candidate,
             picture_path=exam[Exam.picture_path.name],
+            candidate=db_candidate,
         )
     else:
         # existing
@@ -70,6 +75,7 @@ def insert_exercise(exercise, db_exam):
     db_exercise = Exercise.get_or_none(
         number=exercise[Exercise.number.name],
         # score=exercise[Exercise.score.name],
+        # total_score=exercise[Exercise.total_score.name],
         # confidence=exercise[Exercise.confidence.name],
         exam=db_exam
     )
@@ -79,6 +85,7 @@ def insert_exercise(exercise, db_exam):
         db_exercise = Exercise.create(
             number=exercise[Exercise.number.name],
             score=exercise[Exercise.score.name],
+            total_score=exercise[Exercise.total_score.name],
             confidence=exercise[Exercise.confidence.name],
             exam=db_exam
         )
