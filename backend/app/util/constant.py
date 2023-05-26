@@ -25,7 +25,7 @@ class Candidate:
 
 class Message:
     CV_EXCEPTION = "Computer Vision: {0}"
-    CV_NULL = "CV returned NULL object."
+    CV_NULL = "CV returned NULL object or field."
     EXAM_EXISTS = "Exam already exists."
     EXAM_NOT_FOUND = "Exam {0} not found."
     EXAMS_NOT_FOUND = "No exams found."

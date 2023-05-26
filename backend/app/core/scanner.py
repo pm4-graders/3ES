@@ -35,7 +35,9 @@ def save_scan(file: UploadFile):
 
         exam_object = recognizer.recognize_digits_in_photo(image)
 
-        if exam_object is None:
+        if exam_object is None \
+                or exam_object.exam.number is None or exam_object.exam.year is None or exam_object.exam.subject is None \
+                or exam_object.candidate.number is None or exam_object.candidate.date_of_birth is None:
             raise Exception(const.Message.CV_NULL)
 
         exam_object.exam.picture_path = picture_path
@@ -48,8 +50,8 @@ def save_scan(file: UploadFile):
 
     # database save
     exam_id = db.save_scan_db(exam_object)
-    if not exam_id:
 
+    if not exam_id:
         raise Exception(const.Message.EXAM_EXISTS)
 
     # get exam data
