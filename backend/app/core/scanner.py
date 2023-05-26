@@ -27,11 +27,19 @@ def save_scan(file: UploadFile):
     loop = asyncio.get_event_loop()
     coroutine = create_upload_file_async(file)
     picture_path = loop.run_until_complete(coroutine)
+
     # call computer vision
     try:
+
         image = cv2.imread(picture_path)
+
         exam_object = recognizer.recognize_digits_in_photo(image)
+
+        if exam_object is None:
+            raise Exception(const.Message.CV_NULL)
+
         exam_object.exam.picture_path = picture_path
+
     except Exception as exc:
         raise Exception(const.Message.CV_EXCEPTION.format(exc))
 
@@ -48,8 +56,6 @@ def save_scan(file: UploadFile):
     response = get_exam_full(exam_id)
     response.message = message
     response.path = picture_path
-
-
 
     return response
 
