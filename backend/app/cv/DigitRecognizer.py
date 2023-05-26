@@ -94,7 +94,7 @@ class DigitRecognizer:
                 total_exam = self.text_recognizer.recognize_grid_number(points_cell) # TODO: put total_exam into the exam data structure.                
                 total_score, total_score_confidence = self.predict_double_number(result_cell, class_labels, model)
 
-        exam = cv_res.Exam(recognized_text[3], recognized_text[4], total_score, total_exam, total_score_confidence, exercises)
+        exam = cv_res.Exam(recognized_text[0], recognized_text[3], recognized_text[4], total_score, total_exam, total_score_confidence, exercises)
 
         return cv_res.CVResult(cv_res.Candidate(recognized_text[1], recognized_text[2]), exam=exam) 
 
