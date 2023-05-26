@@ -21,8 +21,8 @@ class Exam(BaseModel):
     number: str
     year: int
     subject: str
-    score: float = None
-    total_score: float = None
+    score: Optional[float] = None
+    total_score: Optional[float] = None
     confidence: float
     picture_path: str
     created_at: datetime
@@ -32,8 +32,8 @@ class Exam(BaseModel):
 class Exercise(BaseModel):
     id: int
     number: str
-    score: float = None
-    total_score: float = None
+    score: Optional[float] = None
+    total_score: Optional[float] = None
     confidence: float
     created_at: datetime
     updated_at: Optional[datetime] = None
