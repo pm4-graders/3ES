@@ -93,7 +93,7 @@ def validate_cv_result(cv_data):
 
     # 3 - check each exercise score with its total_score
     for exercise in cv_data.exam.exercises:
-        if exercise.score > exercise.total_score:
+        if (exercise.score if exercise.score is not None else 999) > (exercise.total_score if exercise.total_score is not None else 0):
             message.append(const.Validation.W_EXE_SCORE_EQ.format(exercise.number))
 
     return message

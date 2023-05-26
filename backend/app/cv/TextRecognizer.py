@@ -10,7 +10,7 @@ class TextRecognizer:
     def __init__(self, debug_mode=False):
         # initialize any variables
         global DEBUG_MODE
-        DEBUG_MODE = True
+        DEBUG_MODE = debug_mode
 
         self.reader = Reader(["de"], gpu=0)
 

@@ -38,8 +38,8 @@ class Exam(BaseModel):
     number = CharField(max_length=40)
     year = IntegerField()
     subject = CharField(max_length=100)
-    score = FloatField()
-    total_score = FloatField()
+    score = FloatField(null=True)
+    total_score = FloatField(null=True)
     confidence = FloatField()
     picture_path = CharField(max_length=255, default="")
     candidate = ForeignKeyField(Candidate, backref=const.Entity.EXAMS)
@@ -51,8 +51,8 @@ class Exam(BaseModel):
 class Exercise(BaseModel):
     id = AutoField()
     number = CharField(max_length=10)
-    score = FloatField()
-    total_score = FloatField()
+    score = FloatField(null=True)
+    total_score = FloatField(null=True)
     confidence = FloatField()
     exam = ForeignKeyField(Exam, backref=const.Entity.EXERCISES)
 

@@ -21,10 +21,10 @@ class Exam:
         self.exercises = exercises
 
     def calc_exercises_score(self):
-        return sum(exercise.score for exercise in self.exercises)
+        return sum(exercise.score if exercise.score is not None else 0 for exercise in self.exercises)
 
     def calc_exercises_total_score(self):
-        return sum(exercise.total_score for exercise in self.exercises)
+        return sum(exercise.total_score if exercise.total_score is not None else 0 for exercise in self.exercises)
 
 
 class Exercise:
