@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: registry.digitalocean.com/graders-3es/frontend:latest
+        image: registry.digitalocean.com/registry-3es/frontend:latest
         ports:
         - containerPort: 8080
         imagePullPolicy: Always
