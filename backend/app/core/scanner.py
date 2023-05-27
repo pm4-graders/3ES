@@ -35,15 +35,11 @@ def save_scan(file: UploadFile):
 
         exam_object = recognizer.recognize_digits_in_photo(image)
 
-        if exam_object is None \
-                or exam_object.exam.number is None or exam_object.exam.year is None or exam_object.exam.subject is None \
-                or exam_object.candidate.number is None or exam_object.candidate.date_of_birth is None:
-            raise Exception(const.Message.CV_NULL)
-
-        exam_object.exam.picture_path = picture_path
-
     except Exception as exc:
         raise Exception(const.Message.CV_EXCEPTION.format(exc))
+
+    # data
+    exam_object.exam.picture_path = picture_path
 
     # validation
     message = validate_cv_result(exam_object)
