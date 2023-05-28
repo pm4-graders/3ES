@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: registry.digitalocean.com/graders-3es/backend:latest
+        image: ${{ secrets.REGISTRY_NAME }}/backend:latest
         ports:
         - containerPort: 8080
         imagePullPolicy: Always
