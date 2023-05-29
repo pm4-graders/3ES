@@ -31,7 +31,7 @@ spec:
           #limits:
           #  cpu: 100m
       imagePullSecrets:
-      - name: graders-3es
+      - name: registry-3es
 ---
 apiVersion: v1
 kind: Service
