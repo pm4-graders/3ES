@@ -39,7 +39,7 @@ metadata:
   name: frontend-service
   annotations:
     service.beta.kubernetes.io/do-loadbalancer-protocol: "https"
-    #service.beta.kubernetes.io/do-loadbalancer-certificate-id: "3f07de25-11c8-4cef-bc6f-5fdbf36215d1"
+    service.beta.kubernetes.io/do-loadbalancer-certificate-id: "7e5be4df-1acc-4b27-863e-f4bd64b42256"
 spec:
   type: LoadBalancer
   ports:
