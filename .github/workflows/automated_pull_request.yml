@@ -22,4 +22,4 @@ jobs:
         pr_label: "auto-pr"                              
         pr_draft: true                                    
         pr_allow_empty: false         
-        github_token: ${{ secrets.GITHUB_GRADERS_PR }}      
+        github_token: ${{ secrets.ACCESS_TOKEN_GRADERS }}      
