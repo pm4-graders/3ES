@@ -20,6 +20,22 @@ jobs:
           node-version: 16
       - run: npm install
       - run: npm run lint
+  cypress-run:
+    runs-on: ubuntu-22.04
+    needs: linting
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Download the build folder
+        uses: actions/download-artifact@v3
+        with:
+          name: build
+      - name: Cypress run
+        uses: cypress-io/github-action@v5
+        with:
+          build: npm run build
+          record: true
+          start: npm start
   #  testing:
   #    runs-on: ubuntu-latest
   #    defaults:
