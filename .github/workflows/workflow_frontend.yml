@@ -22,7 +22,7 @@ jobs:
       - run: npm run lint
   cypress-run:
     runs-on: ubuntu-22.04
-    needs: linting
+    needs: build
     steps:
       - name: Checkout
         uses: actions/checkout@v3
