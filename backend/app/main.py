@@ -3,6 +3,7 @@ from api import router
 from model import database, model
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+import os
 
 # run app
 app = FastAPI()
@@ -17,7 +18,8 @@ app.add_middleware(
 
 app.include_router(router.router)
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+static_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "static")
+app.mount("/static", StaticFiles(directory=static_path), name="static")
 
 # run db
 database.db.connect()
