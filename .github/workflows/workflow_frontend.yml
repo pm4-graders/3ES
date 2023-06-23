@@ -36,7 +36,7 @@ jobs:
           cache: 'npm'
           cache-dependency-path: ./frontend/package-lock.json
       - run: npm install
-      - run: npm run lint
+      - run: npm cypress
       # - name: Download the build folder
       #   uses: actions/download-artifact@v3
       #   with:
