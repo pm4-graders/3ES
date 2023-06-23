@@ -22,6 +22,9 @@ jobs:
       - run: npm run lint
   cypress-run:
     runs-on: ubuntu-22.04
+    defaults:
+      run:
+        working-directory: ./frontend
     needs: linting
     steps:
       - name: Checkout
