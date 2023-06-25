@@ -10,7 +10,6 @@ COPY . /code/app
 
 WORKDIR /code/app
 
-RUN pwd
 RUN mkdir static
 
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]

@@ -27,29 +27,32 @@ def save_scan(file: UploadFile):
     loop = asyncio.get_event_loop()
     coroutine = create_upload_file_async(file)
     picture_path = loop.run_until_complete(coroutine)
+
     # call computer vision
     try:
+
         image = cv2.imread(picture_path)
+
         exam_object = recognizer.recognize_digits_in_photo(image)
-        exam_object.exam.picture_path = picture_path
+
     except Exception as exc:
         raise Exception(const.Message.CV_EXCEPTION.format(exc))
+
+    # data
+    exam_object.exam.picture_path = picture_path
 
     # validation
     message = validate_cv_result(exam_object)
 
     # database save
     exam_id = db.save_scan_db(exam_object)
-    if not exam_id:
 
+    if not exam_id:
         raise Exception(const.Message.EXAM_EXISTS)
 
     # get exam data
     response = get_exam_full(exam_id)
     response.message = message
-    response.path = picture_path
-
-
 
     return response
 
@@ -80,9 +83,13 @@ def validate_cv_result(cv_data):
     if cv_data.exam.score != cv_data.exam.calc_exercises_score():
         message.append(const.Validation.W_EXA_SCORE_EQ)
 
-    # 2 - check each exercise score with its max_score
+    # 2 - check exam total_score with sum(exercise.total_score)
+    if cv_data.exam.total_score != cv_data.exam.calc_exercises_total_score():
+        message.append(const.Validation.W_EXA_TOTAL_SCORE_EQ)
+
+    # 3 - check each exercise score with its total_score
     for exercise in cv_data.exam.exercises:
-        if exercise.score > exercise.max_score:
+        if (exercise.score if exercise.score is not None else 999) > (exercise.total_score if exercise.total_score is not None else 0):
             message.append(const.Validation.W_EXE_SCORE_EQ.format(exercise.number))
 
     return message

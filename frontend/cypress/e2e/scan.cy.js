@@ -2,7 +2,7 @@ let newScanId = 1
 
 describe('scanner', () => {
   beforeEach(() => {
-    cy.intercept('http://127.0.0.1:8000/api/scan/save').as('apiScanSave')
+    cy.intercept('http://127.0.0.1:4173/api/scan/save').as('apiScanSave')
     cy.viewport('iphone-8')
     cy.visit('/#/scanner')
   })

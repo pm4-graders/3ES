@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: registry.digitalocean.com/graders-3es/backend:latest
+        image: registry.digitalocean.com/registry-3es/backend:latest
         ports:
         - containerPort: 8080
         imagePullPolicy: Always
@@ -31,7 +31,7 @@ spec:
           #limits:
           #  cpu: 100m
       imagePullSecrets:
-      - name: graders-3es
+      - name: registry-3es
 ---
 apiVersion: v1
 kind: Service
@@ -39,7 +39,7 @@ metadata:
   name: backend-service
   annotations:
     service.beta.kubernetes.io/do-loadbalancer-protocol: "https"
-    service.beta.kubernetes.io/do-loadbalancer-certificate-id: "03da62ec-47d2-4a7b-90d8-fb06a73ab2c5"
+    service.beta.kubernetes.io/do-loadbalancer-certificate-id: "67238d93-8a9b-4589-81ea-973f7cf2c303"
 spec:
   type: LoadBalancer
   ports:

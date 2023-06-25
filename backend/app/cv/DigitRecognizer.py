@@ -9,6 +9,7 @@ from cv.DocumentSegmentationCV import DocumentSegmentationCV
 from cv.DocumentSegmentationCNN import DocumentSegmentationCNN
 from cv.TextRecognizer import TextRecognizer
 import core.cv_result as cv_res
+from cv.Config import Config
 
 class DigitRecognizer:
     
@@ -42,8 +43,8 @@ class DigitRecognizer:
         
         if(DEBUG_MODE):
             self.debug_display_image('aligned',aligned_photo)
-        
-        recognized_text = self.text_recognizer.recognize_text(aligned_photo)
+        config = Config()
+        recognized_text = self.text_recognizer.recognize_text(aligned_photo, config)
 
         print(recognized_text)
 
@@ -85,13 +86,15 @@ class DigitRecognizer:
                 
                 pred_class_label, pred_confidence = self.predict_handwritten_cell(result_cell, class_labels, model)
 
-                exercises.append(cv_res.Exercise(index, pred_class_label, pred_confidence, 0))  # TODO replace 0 with max_score
+                total_exercise = self.text_recognizer.recognize_grid_number(points_cell)
+                
+                exercises.append(cv_res.Exercise(index, pred_class_label, total_exercise, pred_confidence))
             elif(index % column_count != 0):
-                #print("Last Handwritten Cell, 'Total'")
 
+                total_exam = self.text_recognizer.recognize_grid_number(points_cell)
                 total_score, total_score_confidence = self.predict_double_number(result_cell, class_labels, model)
 
-        exam = cv_res.Exam(2023, "Mathematik", total_score, total_score_confidence, exercises)  # TODO replace year & subject & add exam id from recognized_text[0]
+        exam = cv_res.Exam(recognized_text[0], recognized_text[3], recognized_text[4], total_score, total_exam, total_score_confidence, exercises)
 
         return cv_res.CVResult(cv_res.Candidate(recognized_text[1], recognized_text[2]), exam=exam) 
 

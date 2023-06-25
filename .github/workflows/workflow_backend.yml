@@ -32,7 +32,7 @@ jobs:
           click-to-expand: true
           report-title: 'Test Report'
   build:
-    #needs: testing
+    needs: testing
     runs-on: ubuntu-latest
     defaults:
       run:

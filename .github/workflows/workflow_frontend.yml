@@ -20,6 +20,20 @@ jobs:
           node-version: 16
       - run: npm install
       - run: npm run lint
+  unit-test:
+    runs-on: ubuntu-latest
+    needs: linting
+    defaults:
+      run:
+        working-directory: ./frontend
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - run: npm install
+      - run: npm run test:unit
   #  testing:
   #    runs-on: ubuntu-latest
   #    defaults:
@@ -42,7 +56,7 @@ jobs:
   #          record: false
   #         parallel: false
   build:
-    needs: linting
+    needs: ['unit-test']
     runs-on: ubuntu-latest
     defaults:
       run:
