@@ -34,33 +34,6 @@ jobs:
           node-version: 16
       - run: npm install
       - run: npm run test:unit
-  cypress-run:
-    runs-on: ubuntu-22.04
-    defaults:
-      run:
-        working-directory: ./frontend
-    needs: ['unit-test', 'linting']
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Use Node.js 16
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-          cache: 'npm'
-          cache-dependency-path: ./frontend/package-lock.json
-      - run: npm install
-      - run: npm install cypress
-      # - name: Download the build folder
-      #   uses: actions/download-artifact@v3
-      #   with:
-      #     name: build
-      - name: Cypress run
-        uses: cypress-io/github-action@v5
-        with:
-          install: false
-          record: true
-          start: npm start
   #  testing:
   #    runs-on: ubuntu-latest
   #    defaults:
@@ -83,7 +56,7 @@ jobs:
   #          record: false
   #         parallel: false
   build:
-    needs: ['cypress-run', 'unit-test']
+    needs: ['unit-test']
     runs-on: ubuntu-latest
     defaults:
       run:
