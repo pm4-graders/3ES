@@ -2,7 +2,7 @@ let newScanId = 1
 
 describe('scanner', () => {
   beforeEach(() => {
-    cy.intercept('http://127.0.0.1:4173/api/scan/save').as('apiScanSave')
+    cy.intercept('http://127.0.0.1:8000/api/scan/save').as('apiScanSave')
     cy.viewport('iphone-8')
     cy.visit('/#/scanner')
   })
@@ -73,10 +73,10 @@ describe('scanner', () => {
 describe('check corrections', () => {
   beforeEach(() => {
     cy.visit('/#/corrections')
-    cy.get('[data-test="logical-exam-select"]').select('Mathematik 2023')
+    cy.get('[data-test="logical-exam-select"]').select('Mathematik 1 2023')
   })
   it('should display new scan', () => {
-    cy.get('[data-test="logical-exam-select"]').select('Mathematik 2023')
+    cy.get('[data-test="logical-exam-select"]').select('Mathematik 1 2023')
     cy.get('[data-test-id="'+newScanId+'"]').should('be.visible')
 
   })
