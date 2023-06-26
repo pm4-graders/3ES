@@ -69,6 +69,8 @@ onMounted(() => {
               <td>
                 {{ exam.candidate.number }}
                 <br />
+                <small>Pürfungsnummer:</small> {{exam.number}}
+                <br />
                 <small>Scan-Datum: {{ $filters.formatDatetime(exam.created_at) }}</small>
               </td>
               <td>
