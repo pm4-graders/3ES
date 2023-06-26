@@ -64,6 +64,10 @@ describe('scanner', () => {
     cy.get('[data-test="snapshot"]').should('be.visible')
     cy.get('[data-test="submit-button"]').should('be.visible').click()
 
+    cy.wait('@apiScanSave').then((interception) => {
+      assert.isFalse(interception.response.body.success)
+    })
+
     cy.get('[data-test="submit-modal"] [data-test="error-alert"]').should('be.visible')
     cy.get('[data-test="reset-button"]').should('be.visible').click()
 
