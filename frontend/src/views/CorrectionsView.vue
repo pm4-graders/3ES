@@ -46,7 +46,7 @@ onMounted(() => {
     </LoadingComponent>
 
     <LoadingComponent :loading="examStore.list.comp('Loading')">
-      <div class="table-wrapper" v-if="examStore.list.comp('Loaded')">
+      <div class="table-wrapper" v-if="examStore.list.comp('Loaded') && examStore.list.entries && examStore.list.entries.length > 0">
         <table class="table table-row correction-table">
           <thead>
             <tr>
