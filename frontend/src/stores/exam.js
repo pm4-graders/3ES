@@ -20,6 +20,7 @@ export const useExamStore = defineStore('exam', () => {
   }
 
   const loadList = async () => {
+    if(!selectedLogicalExam.value) return
     list.value = Webresource.Loading
 
     let reqUrl = '/exams'

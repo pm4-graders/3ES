@@ -93,12 +93,12 @@ const reset = () => {
 </script>
 <template>
   <div class="video-container" v-if="currentRequest">
-    <div class="device-selector-wrapper">
-      <label>Kamera auswählen</label>
-      <select class="form-control">
-        <option v-for="(device, i) of availableDevices" :key="i">{{ device.label }}</option>
-      </select>
-    </div>
+    <!-- <div class="device-selector-wrapper"> -->
+    <!--   <label>Kamera auswählen</label> -->
+    <!--   <select class="form-control"> -->
+    <!--     <option v-for="(device, i) of availableDevices" :key="i">{{ device.label }}</option> -->
+    <!--   </select> -->
+    <!-- </div> -->
     <div class="gallery-image-input-wrapper" data-test="photo-from-gallery-button">
       <label class="btn btn-primary d-block" for="galleryImageInput">
         <i class="fa-solid fa-images"></i>

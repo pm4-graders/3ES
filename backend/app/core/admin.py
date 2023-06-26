@@ -160,9 +160,9 @@ async def get_logical_exams_export(year, subject):
     for i, value in enumerate(exams.exams):
         output_array[i + 1, 0] = exams.exams[i].candidate.id
         output_array[i + 1, 1] = exams.exams[i].candidate.number
-        output_array[i + 1, 2] = exams.exams[i].candidate.date_of_birth
+        output_array[i + 1, 2] = exams.exams[i].candidate.date_of_birth.strftime("%m.%d.%Y")
         output_array[i + 1, 3] = exams.exams[i].candidate.number
-        output_array[i + 1, 4] = exams.exams[i].id
+        output_array[i + 1, 4] = exams.exams[i].number
         output_array[i + 1, 5] = exams.exams[i].score
         output_array[i + 1, 6:] = [exams.exams[i].exercises[j]['score'] for j in
                                    range(0, len(exams.exams[i].exercises))]
